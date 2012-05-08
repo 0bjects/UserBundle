@@ -14,7 +14,7 @@ add this lines to your deps file:
 
 [DoctrineFixturesBundle]
     git=http://github.com/symfony/DoctrineFixturesBundle.git
-    target=/bundles/Symfony/Bundle/DoctrineFixturesBundle
+    target=bundles/Symfony/Bundle/DoctrineFixturesBundle
 
 [UserBundle]
     git=repo@184.107.198.186:/home/repos/UserBundle.git

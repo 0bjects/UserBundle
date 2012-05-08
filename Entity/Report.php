@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table
  * @ORM\Entity(repositoryClass="Objects\UserBundle\Entity\ReportRepository")
+ * @author Mahmoud
  */
 class Report {
 
@@ -36,5 +37,50 @@ class Report {
      * @ORM\JoinColumn(name="reported_user_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)
      */
     private $reportedUser;
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * Set user
+     *
+     * @param Objects\UserBundle\Entity\User $user
+     */
+    public function setUser(\Objects\UserBundle\Entity\User $user) {
+        $this->user = $user;
+    }
+
+    /**
+     * Get user
+     *
+     * @return Objects\UserBundle\Entity\User 
+     */
+    public function getUser() {
+        return $this->user;
+    }
+
+    /**
+     * Set reportedUser
+     *
+     * @param Objects\UserBundle\Entity\User $reportedUser
+     */
+    public function setReportedUser(\Objects\UserBundle\Entity\User $reportedUser) {
+        $this->reportedUser = $reportedUser;
+    }
+
+    /**
+     * Get reportedUser
+     *
+     * @return Objects\UserBundle\Entity\User 
+     */
+    public function getReportedUser() {
+        return $this->reportedUser;
+    }
 
 }

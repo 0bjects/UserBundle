@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\Role\RoleInterface;
  * @UniqueEntity(fields={"name"})
  * @ORM\Table
  * @ORM\Entity
+ * @author Mahmoud
  */
 class Role implements RoleInterface {
 
@@ -49,15 +50,6 @@ class Role implements RoleInterface {
 
     public function __toString() {
         return $this->getName();
-    }
-
-    /**
-     * Get userRole
-     *
-     * @return ArrayCollection  
-     */
-    public function getRoleUsers() {
-        return $this->roleUsers;
     }
 
     /**
@@ -118,5 +110,22 @@ class Role implements RoleInterface {
         $this->roleUsers = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
+    /**
+     * Get userRole
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getRoleUsers() {
+        return $this->roleUsers;
+    }
+
+    /**
+     * Add roleUsers
+     *
+     * @param Objects\UserBundle\Entity\User $roleUsers
+     */
+    public function addUser(\Objects\UserBundle\Entity\User $roleUsers) {
+        $this->roleUsers[] = $roleUsers;
+    }
 
 }

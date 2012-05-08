@@ -13,12 +13,21 @@ use Doctrine\ORM\Mapping as ORM;
  * @UniqueEntity(fields={"facebookId"}, groups={"facebook_id"})
  * @ORM\Table
  * @ORM\Entity(repositoryClass="Objects\UserBundle\Entity\SocialAccountsRepository")
+ * @author Mahmoud
  */
 class SocialAccounts {
 
     /**
+     * @var integer $id
+     *
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\User", inversedBy="twitter", fetch="EAGER")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\User", inversedBy="socialAccounts", fetch="EAGER")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)
      */
     private $user;
@@ -70,7 +79,7 @@ class SocialAccounts {
      * @Assert\NotBlank
      */
     private $facebookId;
-    
+
     /**
      * @var string $access_token
      *
@@ -87,5 +96,175 @@ class SocialAccounts {
      */
     private $postToFB = TRUE;
 
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * Set oauth_token
+     *
+     * @param string $oauthToken
+     */
+    public function setOauthToken($oauthToken) {
+        $this->oauth_token = $oauthToken;
+    }
+
+    /**
+     * Get oauth_token
+     *
+     * @return string 
+     */
+    public function getOauthToken() {
+        return $this->oauth_token;
+    }
+
+    /**
+     * Set oauth_token_secret
+     *
+     * @param string $oauthTokenSecret
+     */
+    public function setOauthTokenSecret($oauthTokenSecret) {
+        $this->oauth_token_secret = $oauthTokenSecret;
+    }
+
+    /**
+     * Get oauth_token_secret
+     *
+     * @return string 
+     */
+    public function getOauthTokenSecret() {
+        return $this->oauth_token_secret;
+    }
+
+    /**
+     * Set twitterId
+     *
+     * @param string $twitterId
+     */
+    public function setTwitterId($twitterId) {
+        $this->twitterId = $twitterId;
+    }
+
+    /**
+     * Get twitterId
+     *
+     * @return string 
+     */
+    public function getTwitterId() {
+        return $this->twitterId;
+    }
+
+    /**
+     * Set screenName
+     *
+     * @param string $screenName
+     */
+    public function setScreenName($screenName) {
+        $this->screenName = $screenName;
+    }
+
+    /**
+     * Get screenName
+     *
+     * @return string 
+     */
+    public function getScreenName() {
+        return $this->screenName;
+    }
+
+    /**
+     * Set postToTwitter
+     *
+     * @param boolean $postToTwitter
+     */
+    public function setPostToTwitter($postToTwitter) {
+        $this->postToTwitter = $postToTwitter;
+    }
+
+    /**
+     * Get postToTwitter
+     *
+     * @return boolean 
+     */
+    public function getPostToTwitter() {
+        return $this->postToTwitter;
+    }
+
+    /**
+     * Set facebookId
+     *
+     * @param string $facebookId
+     */
+    public function setFacebookId($facebookId) {
+        $this->facebookId = $facebookId;
+    }
+
+    /**
+     * Get facebookId
+     *
+     * @return string 
+     */
+    public function getFacebookId() {
+        return $this->facebookId;
+    }
+
+    /**
+     * Set access_token
+     *
+     * @param string $accessToken
+     */
+    public function setAccessToken($accessToken) {
+        $this->access_token = $accessToken;
+    }
+
+    /**
+     * Get access_token
+     *
+     * @return string 
+     */
+    public function getAccessToken() {
+        return $this->access_token;
+    }
+
+    /**
+     * Set postToFB
+     *
+     * @param boolean $postToFB
+     */
+    public function setPostToFB($postToFB) {
+        $this->postToFB = $postToFB;
+    }
+
+    /**
+     * Get postToFB
+     *
+     * @return boolean 
+     */
+    public function getPostToFB() {
+        return $this->postToFB;
+    }
+
+    /**
+     * Set user
+     *
+     * @param Objects\UserBundle\Entity\User $user
+     */
+    public function setUser(\Objects\UserBundle\Entity\User $user) {
+        $this->user = $user;
+    }
+
+    /**
+     * Get user
+     *
+     * @return Objects\UserBundle\Entity\User 
+     */
+    public function getUser() {
+        return $this->user;
+    }
 
 }

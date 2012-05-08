@@ -32,6 +32,21 @@ class User implements AdvancedUserInterface {
     private $id;
 
     /**
+     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\socialAccounts", mappedBy="user", fetch="EAGER",cascade={"remove","update","persist"})
+     */
+    private $socialAccounts;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="\Objects\UserBundle\Entity\Role")
+     * @ORM\JoinTable(name="user_role",
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)}
+     * )
+     * @var ArrayCollection $userRoles
+     */
+    protected $userRoles;
+
+    /**
      * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Report", mappedBy="user",cascade={"persist","remove"})
      */
     private $reportedUsers;
@@ -40,22 +55,6 @@ class User implements AdvancedUserInterface {
      * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Report", mappedBy="reportedUser",cascade={"persist","remove"})
      */
     private $reoprtedMe;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="\Objects\UserBundle\Entity\Role")
-     * @ORM\JoinTable(name="user_role",
-     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)}
-     * )
-     *
-     * @var ArrayCollection $userRoles
-     */
-    protected $userRoles;
-
-    /**
-     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\socialAccounts", mappedBy="user", fetch="EAGER",cascade={"remove","update","persist"})
-     */
-    private $socialAccounts;
 
     /**
      * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Blocked", mappedBy="user")
@@ -217,6 +216,24 @@ class User implements AdvancedUserInterface {
     public $file;
 
     /**
+     * Set image
+     *
+     * @param string $image
+     */
+    public function setImage($image) {
+        $this->image = $image;
+    }
+
+    /**
+     * Get image
+     *
+     * @return string 
+     */
+    public function getImage() {
+        return $this->image;
+    }
+
+    /**
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
      */
@@ -315,6 +332,9 @@ class User implements AdvancedUserInterface {
         return 'images/users-profiles-images';
     }
 
+    /**
+     * initialize the main default attributes 
+     */
     public function __construct() {
         $this->createdAt = new \DateTime();
         $this->lastLoginDateTime = new \DateTime();
@@ -328,6 +348,9 @@ class User implements AdvancedUserInterface {
         $this->reoprtedMe = new ArrayCollection();
     }
 
+    /**
+     * @return string the object name
+     */
     public function __toString() {
         if ($this->firstName) {
             if ($this->lastName) {
@@ -447,6 +470,384 @@ class User implements AdvancedUserInterface {
      */
     public function isEnabled() {
         return $this->enabled;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * Set loginName
+     *
+     * @param string $loginName
+     */
+    public function setLoginName($loginName) {
+        $this->loginName = $loginName;
+    }
+
+    /**
+     * Get loginName
+     *
+     * @return string 
+     */
+    public function getLoginName() {
+        return $this->loginName;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     */
+    public function setEmail($email) {
+        $this->email = $email;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string 
+     */
+    public function getEmail() {
+        return $this->email;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     */
+    public function setPassword($password) {
+        $this->password = $password;
+    }
+
+    /**
+     * Set confirmationCode
+     *
+     * @param string $confirmationCode
+     */
+    public function setConfirmationCode($confirmationCode) {
+        $this->confirmationCode = $confirmationCode;
+    }
+
+    /**
+     * Get confirmationCode
+     *
+     * @return string 
+     */
+    public function getConfirmationCode() {
+        return $this->confirmationCode;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return date 
+     */
+    public function getCreatedAt() {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set lastLoginDateTime
+     *
+     * @param datetime $lastLoginDateTime
+     */
+    public function setLastLoginDateTime($lastLoginDateTime) {
+        $this->lastLoginDateTime = $lastLoginDateTime;
+    }
+
+    /**
+     * Get lastLoginDateTime
+     *
+     * @return datetime 
+     */
+    public function getLastLoginDateTime() {
+        return $this->lastLoginDateTime;
+    }
+
+    /**
+     * Set firstName
+     *
+     * @param string $firstName
+     */
+    public function setFirstName($firstName) {
+        $this->firstName = $firstName;
+    }
+
+    /**
+     * Get firstName
+     *
+     * @return string 
+     */
+    public function getFirstName() {
+        return $this->firstName;
+    }
+
+    /**
+     * Set lastName
+     *
+     * @param string $lastName
+     */
+    public function setLastName($lastName) {
+        $this->lastName = $lastName;
+    }
+
+    /**
+     * Get lastName
+     *
+     * @return string 
+     */
+    public function getLastName() {
+        return $this->lastName;
+    }
+
+    /**
+     * Set about
+     *
+     * @param text $about
+     */
+    public function setAbout($about) {
+        $this->about = $about;
+    }
+
+    /**
+     * Get about
+     *
+     * @return text 
+     */
+    public function getAbout() {
+        return $this->about;
+    }
+
+    /**
+     * Set gender
+     *
+     * @param boolean $gender
+     */
+    public function setGender($gender) {
+        $this->gender = $gender;
+    }
+
+    /**
+     * Get gender
+     *
+     * @return boolean 
+     */
+    public function getGender() {
+        return $this->gender;
+    }
+
+    /**
+     * Set dateOfBirth
+     *
+     * @param date $dateOfBirth
+     */
+    public function setDateOfBirth($dateOfBirth) {
+        $this->dateOfBirth = $dateOfBirth;
+    }
+
+    /**
+     * Get dateOfBirth
+     *
+     * @return date 
+     */
+    public function getDateOfBirth() {
+        return $this->dateOfBirth;
+    }
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     */
+    public function setUrl($url) {
+        $this->url = $url;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string 
+     */
+    public function getUrl() {
+        return $this->url;
+    }
+
+    /**
+     * Set countryCode
+     *
+     * @param string $countryCode
+     */
+    public function setCountryCode($countryCode) {
+        $this->countryCode = $countryCode;
+    }
+
+    /**
+     * Get countryCode
+     *
+     * @return string 
+     */
+    public function getCountryCode() {
+        return $this->countryCode;
+    }
+
+    /**
+     * Set suggestedLanguage
+     *
+     * @param string $suggestedLanguage
+     */
+    public function setSuggestedLanguage($suggestedLanguage) {
+        $this->suggestedLanguage = $suggestedLanguage;
+    }
+
+    /**
+     * Get suggestedLanguage
+     *
+     * @return string 
+     */
+    public function getSuggestedLanguage() {
+        return $this->suggestedLanguage;
+    }
+
+    /**
+     * Set locked
+     *
+     * @param boolean $locked
+     */
+    public function setLocked($locked) {
+        $this->locked = $locked;
+    }
+
+    /**
+     * Get locked
+     *
+     * @return boolean 
+     */
+    public function getLocked() {
+        return $this->locked;
+    }
+
+    /**
+     * Set enabled
+     *
+     * @param boolean $enabled
+     */
+    public function setEnabled($enabled) {
+        $this->enabled = $enabled;
+    }
+
+    /**
+     * Get enabled
+     *
+     * @return boolean 
+     */
+    public function getEnabled() {
+        return $this->enabled;
+    }
+
+    /**
+     * Set salt
+     *
+     * @param string $salt
+     */
+    public function setSalt($salt) {
+        $this->salt = $salt;
+    }
+
+    /**
+     * Add reportedUser
+     *
+     * @param Objects\UserBundle\Entity\Report $reportedUser
+     */
+    public function addReportedUser(\Objects\UserBundle\Entity\Report $reportedUser) {
+        $this->reportedUsers[] = $reportedUser;
+    }
+
+    /**
+     * Get reportedUsers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getReportedUsers() {
+        return $this->reportedUsers;
+    }
+
+    /**
+     * Get reoprtedMe
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getReoprtedMe() {
+        return $this->reoprtedMe;
+    }
+
+    /**
+     * Add userRoles
+     *
+     * @param Objects\UserBundle\Entity\Role $userRoles
+     */
+    public function addRole(\Objects\UserBundle\Entity\Role $userRoles) {
+        $this->userRoles[] = $userRoles;
+    }
+
+    /**
+     * Get userRoles
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getUserRoles() {
+        return $this->userRoles;
+    }
+
+    /**
+     * Set socialAccounts
+     *
+     * @param Objects\UserBundle\Entity\socialAccounts $socialAccounts
+     */
+    public function setSocialAccounts(\Objects\UserBundle\Entity\socialAccounts $socialAccounts) {
+        $this->socialAccounts = $socialAccounts;
+    }
+
+    /**
+     * Get socialAccounts
+     *
+     * @return Objects\UserBundle\Entity\socialAccounts 
+     */
+    public function getSocialAccounts() {
+        return $this->socialAccounts;
+    }
+
+    /**
+     * Add blockedUser
+     *
+     * @param Objects\UserBundle\Entity\Blocked $blockedUser
+     */
+    public function addBlockedUser(\Objects\UserBundle\Entity\Blocked $blockedUser) {
+        $this->blockedUsers[] = $blockedUser;
+    }
+
+    /**
+     * Get blockedUsers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getBlockedUsers() {
+        return $this->blockedUsers;
+    }
+
+    /**
+     * Get blockedMe
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getBlockedMe() {
+        return $this->blockedMe;
     }
 
 }
