@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="">
+        <body>
+            <trans-unit id="1">
+                <source>Login</source>
+                <target>Login</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>Login Name</source>
+                <target>Login Name</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>Password</source>
+                <target>Password</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>Remember me</source>
+                <target>Remember me</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>forgot your password</source>
+                <target>forgot your password</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>Bad credentials</source>
+                <target>Login name is not correct</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>The presented password is invalid.</source>
+                <target>The password is not correct</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>User account is locked.</source>
+                <target>User account is locked</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>User account is disabled.</source>
+                <target>User account has been deleted</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>Email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>ReEmail</source>
+                <target>ReEmail</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>RePassword</source>
+                <target>RePassword</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>welcome</source>
+                <target>welcome</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>your password is</source>
+                <target>your password is</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>press on the next link to activate your account</source>
+                <target>press on the next link to activate your account</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>your account is now active</source>
+                <target>your account is now active</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>invalid confirmation code</source>
+                <target>invalid confirmation code</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>nothing to do</source>
+                <target>nothing to do</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>the entered email was not found</source>
+                <target>the entered email was not found</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>done please check your email</source>
+                <target>done please check your email</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -37,7 +37,7 @@ class LoadUserData implements FixtureInterface {
 
         // create admin user
         $user1 = new User();
-        $user1->setUserName('mahmoud');
+        $user1->setLoginName('mahmoud');
         $user1->setPassword('123');
         $user1->setEmail('mahmoud@objects.ws');
         $user1->hashPassword();
@@ -46,7 +46,7 @@ class LoadUserData implements FixtureInterface {
 
         // create active user
         $user2 = new User();
-        $user2->setUserName('Ahmed');
+        $user2->setLoginName('Ahmed');
         $user2->setPassword('123');
         $user2->setEmail('ahmed@objects.ws');
         $user2->hashPassword();
@@ -54,9 +54,9 @@ class LoadUserData implements FixtureInterface {
         $manager->persist($user2);
 
 
-        //create a user 
+        //create a user
         $user3 = new User();
-        $user3->setUserName('mirehan');
+        $user3->setLoginName('mirehan');
         $user3->setPassword('123');
         $user3->setEmail('mirehan@objects.ws');
         $user3->hashPassword();
@@ -66,7 +66,7 @@ class LoadUserData implements FixtureInterface {
 
         //create a user that can update username
         $user4 = new User();
-        $user4->setUserName('sammer');
+        $user4->setLoginName('sammer');
         $user4->setPassword('123');
         $user4->setEmail('sammer@objects.ws');
         $user4->hashPassword();
@@ -74,9 +74,9 @@ class LoadUserData implements FixtureInterface {
         $user4->getUserRoles()->add($roleUserName);
         $manager->persist($user4);
 
-        //create a NotActivated user 
+        //create a NotActivated user
         $user5 = new User();
-        $user5->setUserName('notactive');
+        $user5->setLoginName('notactive');
         $user5->setPassword('123');
         $user5->setEmail('notactive@objects.ws');
         $user5->hashPassword();

@@ -1,0 +1,8 @@
+login:
+    pattern:  /login
+    defaults: { _controller: ObjectsUserBundle:User:login }
+
+# routing files
+user:
+    resource: "@ObjectsUserBundle/Resources/config/routing/user.yml"
+    prefix:   /user

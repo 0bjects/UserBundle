@@ -41,13 +41,6 @@ class Role implements RoleInterface {
      */
     private $description;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="\Objects\UserBundle\Entity\User", mappedBy="userRoles")
-     *
-     * @var ArrayCollection $userRoles
-     */
-    private $roleUsers;
-
     public function __toString() {
         return $this->getName();
     }
@@ -104,28 +97,6 @@ class Role implements RoleInterface {
      */
     public function getRole() {
         return $this->getName();
-    }
-
-    public function __construct() {
-        $this->roleUsers = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Get userRole
-     *
-     * @return \Doctrine\Common\Collections\ArrayCollection
-     */
-    public function getRoleUsers() {
-        return $this->roleUsers;
-    }
-
-    /**
-     * Add roleUsers
-     *
-     * @param Objects\UserBundle\Entity\User $roleUsers
-     */
-    public function addUser(\Objects\UserBundle\Entity\User $roleUsers) {
-        $this->roleUsers[] = $roleUsers;
     }
 
 }

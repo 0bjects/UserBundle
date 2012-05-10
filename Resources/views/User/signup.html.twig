@@ -1,0 +1,31 @@
+{% extends '::base.html.twig' %}
+{% block title %}{% trans %}SignUp{% endtrans %}{% endblock %}
+
+{% block body %}
+{% if form_errors(form) %}
+    <div>{{ form_errors(form) }}</div>
+{% endif %}
+<form action="{{ url('signup') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_errors(form.loginName) }}<br/>
+    <label>{% trans %}Login Name{% endtrans %}:</label>
+    {{ form_widget(form.loginName) }}<br/>
+
+    {{ form_errors(form.email) }}<br/>
+    <label>{% trans %}Email{% endtrans %}:</label>
+    {{ form_widget(form.email.Email) }}<br/>
+
+    <label>{% trans %}ReEmail{% endtrans %}:</label>
+    {{ form_widget(form.email.ReEmail) }}<br/>
+
+    {{ form_errors(form.password) }}<br/>
+    <label>{% trans %}Password{% endtrans %}:</label>
+    {{ form_widget(form.password.Password) }}<br/>
+
+    <label>{% trans %}RePassword{% endtrans %}:</label>
+    {{ form_widget(form.password.RePassword) }}<br/>
+
+    {{ form_rest(form) }}
+
+    <input type="submit" name="signup" value="{% trans %}SignUp{% endtrans %}" />
+</form>
+{% endblock %}

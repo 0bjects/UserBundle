@@ -13,8 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Objects\UserBundle\Entity\User
  * 
- * @UniqueEntity(fields={"loginName"}, groups={"userName","registration","adminUser","editUsrName","MobileRegistration"})
- * @UniqueEntity(fields={"email"}, groups={"email","registration","adminUser","adminEditUser","editemail","MobileRegistration"})
+ * @UniqueEntity(fields={"loginName"}, groups={"signup"})
+ * @UniqueEntity(fields={"email"}, groups={"signup"})
  * @ORM\Table(indexes={@ORM\Index(name="search_user_name", columns={"loginName"})})
  * @ORM\Entity(repositoryClass="Objects\UserBundle\Entity\UserRepository")
  * @ORM\HasLifecycleCallbacks
@@ -32,7 +32,7 @@ class User implements AdvancedUserInterface {
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\socialAccounts", mappedBy="user", fetch="EAGER",cascade={"remove","update","persist"})
+     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\SocialAccounts", mappedBy="user", fetch="EAGER",cascade={"remove","update","persist"})
      */
     private $socialAccounts;
 
@@ -42,7 +42,7 @@ class User implements AdvancedUserInterface {
      *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)},
      *     inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)}
      * )
-     * @var ArrayCollection $userRoles
+     * @var \Doctrine\Common\Collections\ArrayCollection $userRoles
      */
     protected $userRoles;
 
@@ -70,7 +70,7 @@ class User implements AdvancedUserInterface {
      * @var string $loginName
      *
      * @ORM\Column(name="loginName", type="string", length=255, nullable=true, unique=true)
-     * @Assert\NotBlank(groups={"userName","registration","editUsrName","MobileRegistration"})
+     * @Assert\NotNull(groups={"signup"})
      */
     private $loginName;
 
@@ -78,8 +78,8 @@ class User implements AdvancedUserInterface {
      * @var string $email
      *
      * @ORM\Column(name="email", type="string", length=255, unique=true, nullable=true)
-     * @Assert\NotBlank(groups={"registration","editemail","adminUser","adminEditUser","MobileRegistration"})
-     * @Assert\Email(groups={"email","registration","editemail","adminUser","adminEditUser","MobileRegistration"})
+     * @Assert\NotNull(groups={"signup"})
+     * @Assert\Email(groups={"signup"})
      */
     private $email;
 
@@ -87,8 +87,8 @@ class User implements AdvancedUserInterface {
      * @var string $password
      *
      * @ORM\Column(name="password", type="string", length=255)
-     * @Assert\NotBlank(groups={"registration","adminUser","MobileRegistration"})
-     * @Assert\MinLength(limit=6, groups={"registration","adminUser","MobileRegistration"},message = "must be 6 characters at least.")
+     * @Assert\NotNull(groups={"signup"})
+     * @Assert\MinLength(limit=6, groups={"signup"})
      */
     private $password;
 
@@ -96,7 +96,6 @@ class User implements AdvancedUserInterface {
      * @var string $confirmationCode
      *
      * @ORM\Column(name="confirmationCode", type="string", length=64)
-     * @Assert\NotBlank
      */
     private $confirmationCode;
 

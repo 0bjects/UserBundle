@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="validators.en.xliff">
+        <body>
+            <trans-unit id="1">
+                <source>The emails don't match</source>
+                <target>البريد الألكترونى لا يشبه تكراره</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>The passwords don't match</source>
+                <target>كلمة المرور لا تشبه تكرارها</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

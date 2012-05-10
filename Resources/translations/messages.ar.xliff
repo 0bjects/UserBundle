@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="messages.en.xliff">
+        <body>
+            <trans-unit id="1">
+                <source>Login</source>
+                <target>الدخول</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>Login Name</source>
+                <target>اسم الدخول</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>Password</source>
+                <target>كلمة المرور</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>Remember me</source>
+                <target>تذكرنى</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>forgot your password</source>
+                <target>نسيت كلمة المرور</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>Bad credentials</source>
+                <target>خطأ فى أسم الدخول</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>The presented password is invalid.</source>
+                <target>كلمة المرور غير صحيحه</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>User account is locked.</source>
+                <target>لقد تم ايقاف هذا الحساب</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>User account is disabled.</source>
+                <target>لقد تم مسح هذا الحساب</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>Email</source>
+                <target>البريد الألكترونى</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>ReEmail</source>
+                <target>أعد البريد الألكترونى</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>RePassword</source>
+                <target>أعد كلمة المرور</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>welcome</source>
+                <target>اهلا</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>your password is</source>
+                <target>كلمة مرورك هى</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>press on the next link to activate your account</source>
+                <target>أضغط على اللينك التالى لتفعيل حسابك</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>your account is now active</source>
+                <target>لقد تم تفعيل حسابك</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>invalid confirmation code</source>
+                <target>خطأ فى تأكيد الحساب</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>nothing to do</source>
+                <target>لم يحدث اى تغيير</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>the entered email was not found</source>
+                <target>البريد الألكترونى غير موجود</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>done please check your email</source>
+                <target>تم بنجاح من فضلك تفقد بريدك الألكترونى</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

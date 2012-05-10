@@ -1,0 +1,16 @@
+{% if error %}
+    <div>{{ error.message|trans }}</div>
+{% endif %}
+
+<form action="{{ url('login_check') }}" method="post">
+    <label for="username">{% trans %}Login Name{% endtrans %}:</label>
+    <input type="text" id="username" name="_username" placeholder="Login Name" value="{{ last_username }}" /><br/>
+
+    <label for="password">{% trans %}Password{% endtrans %}:</label>
+    <input type="password" id="password" name="_password" /><br/>
+    
+    <label for="remember_me">{% trans %}Remember me{% endtrans %}:</label>
+    <input type="checkbox" id="remember_me" name="_remember_me" checked /><br/>
+
+    <input type="submit" name="login" value="{% trans %}Login{% endtrans %}" />
+</form>
