@@ -1,5 +1,5 @@
 update_login_time:
-    pattern: /auth/updatelogintime
+    pattern: /auth/update/logintime
     defaults: { _controller: ObjectsUserBundle:User:updateLoginTime }
 
 signup:
