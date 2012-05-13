@@ -82,6 +82,30 @@
                 <source>done please check your email</source>
                 <target>done please check your email</target>
             </trans-unit>
+            <trans-unit id="21">
+                <source>this email was sent to allow you to change your password visit the next link to change it</source>
+                <target>this email was sent to allow you to change your password visit the next link to change it</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>Forgot Password</source>
+                <target>Forgot Password</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>Change Password</source>
+                <target>Change Password</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>password changed</source>
+                <target>password changed</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>new user</source>
+                <target>new user</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>Sign up</source>
+                <target>Sign up</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

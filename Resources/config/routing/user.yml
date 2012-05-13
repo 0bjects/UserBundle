@@ -1,16 +1,22 @@
+# routes that requires login from the fire wall
 update_login_time:
     pattern: /auth/update/logintime
     defaults: { _controller: ObjectsUserBundle:User:updateLoginTime }
-
-signup:
-    pattern: /signup
-    defaults: { _controller: ObjectsUserBundle:User:signUp }
 
 user_active:
     pattern: /auth/active/{confirmationCode}
     defaults: { _controller: ObjectsUserBundle:User:activation }
 
+# routes visible for every one
+signup:
+    pattern: /signup
+    defaults: { _controller: ObjectsUserBundle:User:signUp }
+
 forgot_password:
     pattern: /forgot/password
     defaults: { _controller: ObjectsUserBundle:User:forgotPassword }
+
+change_password:
+    pattern: /change/password/{confirmationCode}/{email}
+    defaults: { _controller: ObjectsUserBundle:User:changePassword, confirmationCode: ~, email: ~ }
 

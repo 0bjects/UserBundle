@@ -82,20 +82,20 @@ class UserController extends Controller {
         $user->setLastLoginDateTime(new \DateTime());
         //save the new login time in the database
         $this->getDoctrine()->getEntityManager()->flush();
-        //check if we have a previous requested route
-        $rediretRoute = $session->get('redirectRoute', FALSE);
-        if (!$rediretRoute) {
+        //check if we have a url to redirect to
+        $rediretUrl = $session->get('redirectUrl', FALSE);
+        if (!$rediretUrl) {
             //check if firewall redirected the user
-            $rediretRoute = $session->get('_security.target_path');
-            if (!$rediretRoute) {
+            $rediretUrl = $session->get('_security.target_path');
+            if (!$rediretUrl) {
                 //redirect to home page
-                $rediretRoute = '/';
+                $rediretUrl = '/';
             }
         } else {
-            //remove the redirect route from the session
-            $session->remove('redirectRoute');
+            //remove the redirect url from the session
+            $session->remove('redirectUrl');
         }
-        return $this->redirect($rediretRoute);
+        return $this->redirect($rediretUrl);
     }
 
     /**
@@ -164,11 +164,10 @@ class UserController extends Controller {
             $roleName = 'ROLE_NOTACTIVE';
         }
         //prepare the body of the email
-        $body = $this->renderView('ObjectsUserBundle:User:welcome_email.html.twig', array(
-            'loginName' => $user->getLoginName(),
+        $body = $this->renderView('ObjectsUserBundle:User:Emails\welcome_to_site.html.twig', array(
+            'user' => $user,
             'password' => $user->getPassword(),
-            'active' => $active,
-            'confirmationCode' => $user->getConfirmationCode()
+            'active' => $active
                 ));
         //save the user data in the database
         $em = $this->getDoctrine()->getEntityManager();
@@ -198,7 +197,7 @@ class UserController extends Controller {
             $this->container->get('security.context')->setToken($token);
         } catch (\Exception $e) {
             //failed to login the user go to the login page
-            return $this->redirect('login');
+            return $this->redirect($this->generateUrl('login', array(), TRUE));
         }
         //go to the home page
         return $this->redirect('/');
@@ -218,39 +217,39 @@ class UserController extends Controller {
         $session = $this->getRequest()->getSession();
         //get the translator object
         $translator = $this->get('translator');
-        //check if the confirmation code is correct
-        if ($user->getConfirmationCode() == $confirmationCode) {
-            //save the user data in the database
-            $em = $this->getDoctrine()->getEntityManager();
-            //get a user role object
-            $roleUser = $em->getRepository('ObjectsUserBundle:Role')->findOneByName('ROLE_USER');
-            //get the current user roles
-            $userRoles = $user->getUserRoles();
-            //try to get the not active role
-            foreach ($userRoles as $key => $userRole) {
-                //check if this role is the not active role
-                if ($userRole->getName() == 'ROLE_NOTACTIVE') {
-                    //remove the not active role
-                    $userRoles->remove($key);
-                    //end the search
-                    break;
+        //get the entity manager
+        $em = $this->getDoctrine()->getEntityManager();
+        //get a user role object
+        $roleUser = $em->getRepository('ObjectsUserBundle:Role')->findOneByName('ROLE_USER');
+        //check if the user is already active (the user might visit the link twice)
+        if ($user->getUserRoles()->contains($roleUser)) {
+            //set a notice flag
+            $session->setFlash('notice', $translator->trans('nothing to do'));
+        } else {
+            //check if the confirmation code is correct
+            if ($user->getConfirmationCode() == $confirmationCode) {
+                //get the current user roles
+                $userRoles = $user->getUserRoles();
+                //try to get the not active role
+                foreach ($userRoles as $key => $userRole) {
+                    //check if this role is the not active role
+                    if ($userRole->getName() == 'ROLE_NOTACTIVE') {
+                        //remove the not active role
+                        $userRoles->remove($key);
+                        //end the search
+                        break;
+                    }
                 }
-            }
-            //set user role if the user does not already have it (the user might visit the link twice)
-            if (!$user->getUserRoles()->contains($roleUser)) {
-                //set user role
+                //add the user role
                 $user->addRole($roleUser);
+                //save the new role for the user
+                $em->flush();
                 //set a success flag
                 $session->setFlash('success', $translator->trans('your account is now active'));
             } else {
-                //set a notice flag
-                $session->setFlash('notice', $translator->trans('nothing to do'));
+                //set an error flag
+                $session->setFlash('error', $translator->trans('invalid confirmation code'));
             }
-            //save the new role for the user
-            $em->flush();
-        } else {
-            //set an error flag
-            $session->setFlash('error', $translator->trans('invalid confirmation code'));
         }
         //go to the home page
         return $this->redirect('/');
@@ -260,6 +259,7 @@ class UserController extends Controller {
      * forgot your password action
      * this function gets the user email and sends him email to let him change his password
      * @author mahmoud
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function forgotPasswordAction() {
         //check that a logged in user can not access this action
@@ -289,40 +289,34 @@ class UserController extends Controller {
             if ($form->isValid()) {
                 //get the translator object
                 $translator = $this->get('translator');
+                //get the form data
+                $data = $form->getData();
                 //get the email
-                $email = $form->getData()->getEmail();
+                $email = $data['email'];
                 //search for the user with the entered email
                 $user = $this->getDoctrine()->getRepository('ObjectsUserBundle:User')->findOneBy(array('email' => $email));
                 //check if we found the user
                 if ($user) {
-                    //make a new token
-                    $confirmationCode = md5(uniqid(rand()));
-                    //set the new token for the user
-                    $user->setConfirmationCode($confirmationCode);
+                    //set a new token for the user
+                    $user->setConfirmationCode(md5(uniqid(rand())));
                     //save the new user token into database
                     $this->getDoctrine()->getEntityManager()->flush();
                     //prepare the body of the email
-                    $body = $this->renderView('ObjectsUserBundle:User:forgot_password.html.twig', array(
-                        'user' => $user,
-                        'confirmationCode' => $confirmationCode
-                            ));
+                    $body = $this->renderView('ObjectsUserBundle:User:Emails\forgot_your_password.html.twig', array('user' => $user));
                     //prepare the message object
                     $message = \Swift_Message::newInstance()
-                            ->setSubject($this->get('translator')->trans('change your password'))
+                            ->setSubject($this->get('translator')->trans('forgot your password'))
                             ->setFrom($this->container->getParameter('mailer_user'))
                             ->setTo($user->getEmail())
                             ->setBody($body)
                     ;
                     //send the email
                     $this->get('mailer')->send($message);
-
-
-
                     //set the success message
-                    $error = $translator->trans('the entered email was not found');
+                    $success = $translator->trans('done please check your email');
                 } else {
                     //set the error message
-                    $success = $translator->trans('done please check your email');
+                    $error = $translator->trans('the entered email was not found');
                 }
             }
         }
@@ -330,6 +324,106 @@ class UserController extends Controller {
                     'form' => $form->createView(),
                     'error' => $error,
                     'success' => $success
+                ));
+    }
+
+    /**
+     * the change of password page
+     * @author mahmoud
+     * @param string|NULL $confirmationCode the token sent to the user email
+     * @param string|NULL $email the user email
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function changePasswordAction($confirmationCode = NULL, $email = NULL) {
+        //get the request object
+        $request = $this->getRequest();
+        //get the session object
+        $session = $request->getSession();
+        //get the translator object
+        $translator = $this->get('translator');
+        //get the entity manager
+        $em = $this->getDoctrine()->getEntityManager();
+        //the success of login flag used to generate corrcet submit route for the form
+        $loginSuccess = FALSE;
+        //check if the user came from the email link
+        if ($confirmationCode && $email) {
+            //try to get the user from the database
+            $user = $this->getDoctrine()->getRepository('ObjectsUserBundle:User')->findoneBy(array('email' => $email, 'confirmationCode' => $confirmationCode));
+            //check if we found the user
+            if ($user) {
+                //try to login the user
+                try {
+                    // create the authentication token
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    // give it to the security context
+                    $this->container->get('security.context')->setToken($token);
+                    //update the login time
+                    $user->setLastLoginDateTime(new \DateTime());
+                    //save the new login time
+                    $em->flush();
+                    //check if the user is active
+                    if (FALSE === $this->get('security.context')->isGranted('ROLE_USER')) {
+                        //activate the user if not active
+                        $this->activationAction($confirmationCode);
+                        //clear the flashes set by the activation action
+                        $session->clearFlashes();
+                    }
+                    //set the login success flag
+                    $loginSuccess = TRUE;
+                } catch (\Exception $e) {
+                    
+                }
+            } else {
+                //set an error flag
+                $session->setFlash('error', $translator->trans('invalid email or confirmation code'));
+                //go to home page
+                return $this->redirect('/');
+            }
+        } else {
+            //check if the user is logged in from the login form
+            if (FALSE === $this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
+                //set the redirect url to the login action
+                $session->set('redirectUrl', $this->generateUrl('change_password', array(), TRUE));
+                //require the login from the user
+                return $this->redirect($this->generateUrl('login', array(), TRUE));
+            } else {
+                //get the user object from the firewall
+                $user = $this->get('security.context')->getToken()->getUser();
+                //set the login success flag
+                $loginSuccess = TRUE;
+            }
+        }
+        //create a password form
+        $form = $this->createFormBuilder($user, array(
+                    'validation_groups' => array('password')
+                ))
+                ->add('password', 'repeated', array(
+                    'type' => 'password',
+                    'first_name' => "Password",
+                    'second_name' => "RePassword",
+                    'invalid_message' => "The passwords don't match",
+                ))
+                ->getForm();
+        //check if form is posted
+        if ($request->getMethod() == 'POST') {
+            //bind the user data to the form
+            $form->bindRequest($request);
+            //check if form is valid
+            if ($form->isValid()) {
+                //encrypt the password
+                $user->hashPassword();
+                //save the new hashed password
+                $em->flush();
+                //set the success flag
+                $session->setFlash('success', $translator->trans('password changed'));
+                //go to home page
+                return $this->redirect('/');
+            }
+        }
+        return $this->render('ObjectsUserBundle:User:change_password.html.twig', array(
+                    'form' => $form->createView(),
+                    'loginSuccess' => $loginSuccess,
+                    'user' => $user
                 ));
     }
 

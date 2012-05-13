@@ -1,4 +1,0 @@
-{% trans %}welcome{% endtrans %} {{ loginName }} {% trans %}your password is{% endtrans %}: "{{ password }}"
-{% if active == false %}
-{% trans %}press on the next link to activate your account{% endtrans %} {{ url('user_active', {'confirmationCode': confirmationCode}) }}
-{% endif %}

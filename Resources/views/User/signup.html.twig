@@ -1,5 +1,5 @@
 {% extends '::base.html.twig' %}
-{% block title %}{% trans %}SignUp{% endtrans %}{% endblock %}
+{% block title %}{% trans %}Sign up{% endtrans %}{% endblock %}
 
 {% block body %}
 {% if form_errors(form) %}
@@ -26,6 +26,6 @@
 
     {{ form_rest(form) }}
 
-    <input type="submit" name="signup" value="{% trans %}SignUp{% endtrans %}" />
+    <input type="submit" name="signup" value="{% trans %}Sign up{% endtrans %}" />
 </form>
 {% endblock %}

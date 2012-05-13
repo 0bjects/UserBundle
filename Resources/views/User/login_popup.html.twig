@@ -14,3 +14,5 @@
 
     <input type="submit" name="login" value="{% trans %}Login{% endtrans %}" />
 </form>
+<a title="{% trans %}forgot your password{% endtrans %}" href="{{ url('forgot_password') }}">{% trans %}forgot your password{% endtrans %}?</a><br />
+{% trans %}new user{% endtrans %} <a title="{% trans %}Sign up{% endtrans %}" href="{{ url('signup') }}">{% trans %}Sign up{% endtrans %}?</a>

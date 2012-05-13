@@ -82,6 +82,30 @@
                 <source>done please check your email</source>
                 <target>تم بنجاح من فضلك تفقد بريدك الألكترونى</target>
             </trans-unit>
+            <trans-unit id="21">
+                <source>this email was sent to allow you to change your password visit the next link to change it</source>
+                <target>هذه الرساله أرسلت اليك لتمكنك من تغيير كلمة المرور أضغط على اللينك القادم لتغييرها</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>Forgot Password</source>
+                <target>نسيت كلمة المرور</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>Change Password</source>
+                <target>تغيير كلمة المرور</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>password changed</source>
+                <target>تم تغيير كلمة المرور</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>new user</source>
+                <target>مستخدم جديد</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>Sign up</source>
+                <target>أشترك معنا</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

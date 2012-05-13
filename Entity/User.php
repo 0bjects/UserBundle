@@ -87,8 +87,8 @@ class User implements AdvancedUserInterface {
      * @var string $password
      *
      * @ORM\Column(name="password", type="string", length=255)
-     * @Assert\NotNull(groups={"signup"})
-     * @Assert\MinLength(limit=6, groups={"signup"})
+     * @Assert\NotNull(groups={"signup", "password"})
+     * @Assert\MinLength(limit=6, groups={"signup", "password"})
      */
     private $password;
 
@@ -203,10 +203,10 @@ class User implements AdvancedUserInterface {
     private $temp;
 
     /**
-     * this flag is for detecting if the image has already been uploaded
-     * @var boolean $uploaded
+     * this flag is for detecting if the image has been handled
+     * @var boolean $imageHandeled
      */
-    private $uploaded = FALSE;
+    private $imageHandeled = FALSE;
 
     /**
      * @Assert\Image
@@ -237,27 +237,42 @@ class User implements AdvancedUserInterface {
      * @ORM\PreUpdate()
      */
     public function preUpload() {
-        if (NULL === $this->file || $this->uploaded) {
-            return;
-        }
-        //get the image extension
-        $extension = $this->file->guessExtension();
-        //generate a random image name
-        $img = uniqid();
-        //check that this name does not exist
-        while (@file_exists($this->getUploadRootDir() . "/$img.$extension")) {
-            //try to find a new unique name
+        if (NULL !== $this->file && !$this->imageHandeled) {
+            //get the image extension
+            $extension = $this->file->guessExtension();
+            //generate a random image name
             $img = uniqid();
+            //get the image upload directory
+            $uploadDir = $this->getUploadRootDir();
+            //check if the upload directory exists
+            if (!@is_dir($uploadDir)) {
+                //get the old umask
+                $oldumask = umask(0);
+                //not a directory probably the first time for this category try to create the directory
+                $success = @mkdir($uploadDir, 0755, TRUE);
+                //reset the umask
+                umask($oldumask);
+                //check if we created the folder
+                if(!$success){
+                    //could not create the folder throw an exception to stop the insert
+                    throw new \Exception("Can not create the image directory $uploadDir");
+                }
+            }
+            //check that the file name does not exist
+            while (@file_exists("$uploadDir/$img.$extension")) {
+                //try to find a new unique name
+                $img = uniqid();
+            }
+            //check if we have an old image
+            if ($this->image) {
+                //store the old name to delete the image on the upadate
+                $this->temp = $this->image;
+            }
+            //set the image new name
+            $this->image = "$img.$extension";
+            //set the flag to indecate that the image has been handled
+            $this->imageHandeled = TRUE;
         }
-        //check if we have an old image
-        if ($this->image) {
-            //store the old name to delete the image on the upadate
-            $this->temp = $this->image;
-        }
-        //set the image new name
-        $this->image = "$img.$extension";
-        //set the flag to indecate that the image is uploaded
-        $this->uploaded = TRUE;
     }
 
     /**
