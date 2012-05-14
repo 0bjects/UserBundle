@@ -1,7 +1,3 @@
-{% extends '::base.html.twig' %}
-{% block title %}{% trans %}Sign up{% endtrans %}{% endblock %}
-
-{% block body %}
 {% if form_errors(form) %}
     <div>{{ form_errors(form) }}</div>
 {% endif %}
@@ -29,4 +25,3 @@
     <input type="submit" name="signup" value="{% trans %}Sign up{% endtrans %}" />
 </form>
 <a target="_blank" title="{% trans %}Twitter Sign up{% endtrans %}" href="{{ url('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Sign up{% endtrans %}</a>
-{% endblock %}

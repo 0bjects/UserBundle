@@ -11,5 +11,25 @@ use Doctrine\ORM\EntityRepository;
  * repository methods below.
  */
 class UserRepository extends EntityRepository {
-    
+
+    /**
+     * this function will try to return a user login name that does not exist in our database
+     * @author Alshimaa edited by Mahmoud
+     * @param string $loginName
+     * @return string a valid unique login name
+     */
+    public function getValidLoginName($loginName) {
+        $query = $this->getEntityManager()
+                ->createQuery('
+                     SELECT max(SUBSTRING(u.loginName, :start)) as offset
+                     FROM Objects\UserBundle\Entity\User u
+                     WHERE u.loginName like :loginName
+                    ');
+        $query->setParameter('start', strlen($loginName) + 1);
+        $query->setParameter('loginName', $loginName . '%');
+        $result = $query->getResult();
+        $offset = $result[0]['offset'] + 1;
+        return $loginName . $offset;
+    }
+
 }

@@ -106,6 +106,30 @@
                 <source>Sign up</source>
                 <target>Sign up</target>
             </trans-unit>
+            <trans-unit id="27">
+                <source>warning this action can not be undone are you sure</source>
+                <target>warning this action can not be undone are you sure</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>delete your account</source>
+                <target>delete your account</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>You have to enable javascript in order to use this feature</source>
+                <target>You have to enable javascript in order to use this feature</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>Twitter Sign up</source>
+                <target>Twitter Sign up</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>you can login to our site with</source>
+                <target>you can login to our site with</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>Twitter Login</source>
+                <target>Twitter Login</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

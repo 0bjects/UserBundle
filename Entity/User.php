@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Objects\UserBundle\Entity\User
  * 
  * @UniqueEntity(fields={"loginName"}, groups={"signup"})
- * @UniqueEntity(fields={"email"}, groups={"signup"})
+ * @UniqueEntity(fields={"email"}, groups={"signup", "email"})
  * @ORM\Table(indexes={@ORM\Index(name="search_user_name", columns={"loginName"})})
  * @ORM\Entity(repositoryClass="Objects\UserBundle\Entity\UserRepository")
  * @ORM\HasLifecycleCallbacks
@@ -32,7 +32,7 @@ class User implements AdvancedUserInterface {
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\SocialAccounts", mappedBy="user", fetch="EAGER",cascade={"remove","update","persist"})
+     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\SocialAccounts", mappedBy="user", fetch="EAGER",cascade={"remove", "persist"})
      */
     private $socialAccounts;
 
@@ -47,12 +47,12 @@ class User implements AdvancedUserInterface {
     protected $userRoles;
 
     /**
-     * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Report", mappedBy="user",cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Report", mappedBy="user",cascade={"persist", "remove"})
      */
     private $reportedUsers;
 
     /**
-     * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Report", mappedBy="reportedUser",cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Report", mappedBy="reportedUser",cascade={"persist", "remove"})
      */
     private $reoprtedMe;
 
@@ -78,8 +78,8 @@ class User implements AdvancedUserInterface {
      * @var string $email
      *
      * @ORM\Column(name="email", type="string", length=255, unique=true, nullable=true)
-     * @Assert\NotNull(groups={"signup"})
-     * @Assert\Email(groups={"signup"})
+     * @Assert\NotNull(groups={"signup", "email"})
+     * @Assert\Email(groups={"signup", "email"})
      */
     private $email;
 
@@ -310,7 +310,7 @@ class User implements AdvancedUserInterface {
     /**
      * @return string the path of image starting of root
      */
-    private function getAbsolutePath() {
+    public function getAbsolutePath() {
         return $this->getUploadRootDir() . '/' . $this->image;
     }
 
@@ -324,7 +324,7 @@ class User implements AdvancedUserInterface {
     /**
      * @return string the path of upload directory starting of root
      */
-    private function getUploadRootDir() {
+    public function getUploadRootDir() {
         // the absolute directory path where uploaded documents should be saved
         return __DIR__ . '/../../../../web/' . $this->getUploadDir();
     }

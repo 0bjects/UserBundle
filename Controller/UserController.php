@@ -8,6 +8,8 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\HttpFoundation\Response;
+use Objects\APIBundle\Controller\TwitterController;
+use Objects\UserBundle\Entity\SocialAccounts;
 use Objects\UserBundle\Entity\User;
 use Objects\UserBundle\Form\UserSignUp;
 use Objects\UserBundle\Form\UserSignUpPopUp;
@@ -146,6 +148,130 @@ class UserController extends Controller {
     }
 
     /**
+     * this function is used to signup or login the user from twitter
+     * @author Mahmoud 
+     */
+    public function twitterEnterAction() {
+        //check that a logged in user can not access this action
+        if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
+            //go to the home page
+            return $this->redirect('/');
+        }
+        //get the request object
+        $request = $this->getRequest();
+        //get the session object
+        $session = $request->getSession();
+        //get the oauth token from the session
+        $oauth_token = $session->get('oauth_token', FALSE);
+        //get the oauth token secret from the session
+        $oauth_token_secret = $session->get('oauth_token_secret', FALSE);
+        //get the twtiter id from the session
+        $twitterId = $session->get('twitterId', FALSE);
+        //get the screen name from the session
+        $screen_name = $session->get('screen_name', FALSE);
+        //check if we got twitter data
+        if ($oauth_token && $oauth_token_secret && $twitterId && $screen_name) {
+            //get the entity manager
+            $em = $this->getDoctrine()->getEntityManager();
+            //check if the user twitter id is in our database
+            $socialAccounts = $em->getRepository('ObjectsUserBundle:SocialAccounts')->findOneBy(array('twitterId' => $twitterId));
+            //check if we found the user
+            if ($socialAccounts) {
+                //user found check if the access tokens have changed
+                if ($socialAccounts->getOauthToken() != $oauth_token) {
+                    //tokens changed update the tokens
+                    $socialAccounts->setOauthToken($oauth_token);
+                    $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                    //save the new access tokens
+                    $em->flush();
+                }
+                //get the user object
+                $user = $socialAccounts->getUser();
+                //try to login the user
+                try {
+                    // create the authentication token
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    // give it to the security context
+                    $this->container->get('security.context')->setToken($token);
+                    //update the login time
+                    return $this->updateLoginTimeAction();
+                } catch (\Exception $e) {
+                    //failed to login the user go to the login page
+                    return $this->redirect($this->generateUrl('login', array(), TRUE));
+                }
+            }
+            //create a new user object
+            $user = new User();
+            //create a password form
+            $form = $this->createFormBuilder($user, array(
+                        'validation_groups' => array('email')
+                    ))
+                    ->add('email', 'repeated', array(
+                        'type' => 'email',
+                        'first_name' => 'Email',
+                        'second_name' => 'ReEmail',
+                        'invalid_message' => "The emails don't match",
+                    ))
+                    ->getForm();
+            //check if this is the user posted his data
+            if ($request->getMethod() == 'POST') {
+                //fill the form data from the request
+                $form->bindRequest($request);
+                //check if the form values are correct
+                if ($form->isValid()) {
+                    //get the container object
+                    $container = $this->container;
+                    //get the user object from the form
+                    $user = $form->getData();
+                    //request additional user data from twitter
+                    $content = TwitterController::getCredentials($container->getParameter('consumer_key'), $container->getParameter('consumer_secret'), $oauth_token, $oauth_token_secret);
+                    //check if we got the user data
+                    if ($content) {
+                        //get the name parts
+                        $name = explode(' ', $content->name);
+                        if (!empty($name[0])) {
+                            $user->setFirstName($name[0]);
+                        }
+                        if (!empty($name[1])) {
+                            $user->setLastName($name[1]);
+                        }
+                        //set the additional data
+                        $user->setUrl($content->url);
+                        //set the about text
+                        $user->setAbout($content->description);
+                        //try to download the user image from twitter
+                        $image = TwitterController::downloadTwitterImage($content->profile_image_url, $user->getUploadRootDir());
+                        //check if we got an image
+                        if ($image) {
+                            //add the image to the user
+                            $user->setImage($image);
+                        }
+                    }
+                    //create social accounts object
+                    $socialAccounts = new SocialAccounts();
+                    $socialAccounts->setOauthToken($oauth_token);
+                    $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                    $socialAccounts->setTwitterId($twitterId);
+                    $socialAccounts->setScreenName($screen_name);
+                    $socialAccounts->setUser($user);
+                    //set the user twitter info
+                    $user->setSocialAccounts($socialAccounts);
+                    //set a valid login name
+                    $user->setLoginName($this->suggestLoginName($screen_name));
+                    //user data are valid finish the signup process
+                    return $this->finishSignUp($user);
+                }
+            }
+            return $this->render('ObjectsUserBundle:User:twitter_signup.html.twig', array(
+                        'form' => $form->createView()
+                    ));
+        } else {
+            //twitter data not found go to the signup page
+            return $this->redirect($this->generateUrl('signup', array(), TRUE));
+        }
+    }
+
+    /**
      * this function is used to save the user data in the database and then send him a welcome message
      * and then try to login the user and redirect him to homepage or login page on fail
      * @author Mahmoud
@@ -164,12 +290,12 @@ class UserController extends Controller {
             $roleName = 'ROLE_NOTACTIVE';
         }
         //prepare the body of the email
-        $body = $this->renderView('ObjectsUserBundle:User:Emails\welcome_to_site.html.twig', array(
+        $body = $this->renderView('ObjectsUserBundle:User:Emails\welcome_to_site.txt.twig', array(
             'user' => $user,
             'password' => $user->getPassword(),
             'active' => $active
                 ));
-        //save the user data in the database
+        //get the entity manager
         $em = $this->getDoctrine()->getEntityManager();
         //get a user role object
         $role = $em->getRepository('ObjectsUserBundle:Role')->findOneByName($roleName);
@@ -177,8 +303,9 @@ class UserController extends Controller {
         $user->addRole($role);
         //hash the password before storing in the database
         $user->hashPassword();
-        //store the object in the database
+        //add the new user to the entity manager
         $em->persist($user);
+        //store the object in the database
         $em->flush();
         //prepare the message object
         $message = \Swift_Message::newInstance()
@@ -302,7 +429,7 @@ class UserController extends Controller {
                     //save the new user token into database
                     $this->getDoctrine()->getEntityManager()->flush();
                     //prepare the body of the email
-                    $body = $this->renderView('ObjectsUserBundle:User:Emails\forgot_your_password.html.twig', array('user' => $user));
+                    $body = $this->renderView('ObjectsUserBundle:User:Emails\forgot_your_password.txt.twig', array('user' => $user));
                     //prepare the message object
                     $message = \Swift_Message::newInstance()
                             ->setSubject($this->get('translator')->trans('forgot your password'))
@@ -425,6 +552,52 @@ class UserController extends Controller {
                     'loginSuccess' => $loginSuccess,
                     'user' => $user
                 ));
+    }
+
+    /**
+     * this action will give the user the ability to delete his account
+     * it will not actually delete the account it will simply disable it
+     * @author Mahmoud
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteAccountAction() {
+        //get the request object
+        $request = $this->getRequest();
+        //check if form is posted
+        if ($request->getMethod() == 'POST') {
+            //get the user object from the firewall
+            $user = $this->get('security.context')->getToken()->getUser();
+            //set the delete flag
+            $user->setEnabled(FALSE);
+            //save the delete flag
+            $this->getDoctrine()->getEntityManager()->flush();
+            //go to home page
+            return $this->redirect($this->generateUrl('logout', array(), TRUE));
+        }
+        return $this->render('ObjectsUserBundle:User:delete_account.html.twig');
+    }
+
+    /**
+     * this function will check the login name againest the database if the name
+     * does not exist the function will return the name otherwise it will try to return
+     * a valid login Name
+     * @author Alshimaa edited by Mahmoud
+     * @param string $loginName
+     * @return string a valid login name to use
+     */
+    private function suggestLoginName($loginName) {
+        //get the entity manager
+        $em = $this->getDoctrine()->getEntityManager();
+        //get the user repo
+        $userRepository = $em->getRepository('ObjectsUserBundle:User');
+        //try to check if the given name does not exist
+        $user = $userRepository->findOneByLoginName($loginName);
+        if (!$user) {
+            //valid login name
+            return $loginName;
+        }
+        //get a valid one from the database
+        return $userRepository->getValidLoginName($loginName);
     }
 
 }

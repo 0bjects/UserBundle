@@ -1,4 +1,9 @@
-# routes that requires login from the fire wall
+# routes that requires a login from the login page
+user_delete:
+    pattern: /auth/fully/delete
+    defaults: { _controller: ObjectsUserBundle:User:deleteAccount }
+
+# routes that requires logged in user
 update_login_time:
     pattern: /auth/update/logintime
     defaults: { _controller: ObjectsUserBundle:User:updateLoginTime }
@@ -11,6 +16,10 @@ user_active:
 signup:
     pattern: /signup
     defaults: { _controller: ObjectsUserBundle:User:signUp }
+
+twitter_enter:
+    pattern: /twitter/enter
+    defaults: { _controller: ObjectsUserBundle:User:TwitterEnter }
 
 forgot_password:
     pattern: /forgot/password
