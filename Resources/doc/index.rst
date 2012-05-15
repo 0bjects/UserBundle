@@ -52,6 +52,8 @@ framework:
     esi:             ~
     translator:      { fallback: %locale% }
 
+copy the security.yml file into your app/config folder
+
 configure the parameters in Resources/config/config.yml file in the bundles
 
 IMPORTANT NOTE:
