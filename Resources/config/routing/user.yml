@@ -20,6 +20,10 @@ signup:
 twitter_enter:
     pattern: /twitter/enter
     defaults: { _controller: ObjectsUserBundle:User:TwitterEnter }
+    
+facebook_logging:
+    pattern: /facebooklogging
+    defaults: { _controller: ObjectsUserBundle:User:facebook }
 
 forgot_password:
     pattern: /forgot/password

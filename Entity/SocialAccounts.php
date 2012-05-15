@@ -76,6 +76,12 @@ class SocialAccounts {
      * @ORM\Column(name="access_token", type="string", length=255, nullable=true)
      */
     private $access_token;
+    /**
+     * @var string $confirmationCode
+     *
+     * @ORM\Column(name="fb_tkn_expire_date", type="date")
+     */
+    private $fbTokenExpireDate;
 
     /**
      * @var boolean $postToFB
@@ -255,4 +261,24 @@ class SocialAccounts {
         return $this->user;
     }
 
+
+    /**
+     * Set fbTokenExpireDate
+     *
+     * @param date $fbTokenExpireDate
+     */
+    public function setFbTokenExpireDate($fbTokenExpireDate)
+    {
+        $this->fbTokenExpireDate = $fbTokenExpireDate;
+    }
+
+    /**
+     * Get fbTokenExpireDate
+     *
+     * @return date 
+     */
+    public function getFbTokenExpireDate()
+    {
+        return $this->fbTokenExpireDate;
+    }
 }

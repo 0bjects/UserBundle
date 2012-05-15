@@ -37,52 +37,12 @@ class LoadUserData implements FixtureInterface {
 
         // create admin user
         $user1 = new User();
-        $user1->setLoginName('mahmoud');
-        $user1->setPassword('123');
-        $user1->setEmail('mahmoud@objects.ws');
+        $user1->setLoginName('Objects');
+        $user1->setPassword('0bjects123');
+        $user1->setEmail('objects@objects.ws');
         $user1->hashPassword();
         $user1->getUserRoles()->add($roleAdmin);
         $manager->persist($user1);
-
-        // create active user
-        $user2 = new User();
-        $user2->setLoginName('Ahmed');
-        $user2->setPassword('123');
-        $user2->setEmail('ahmed@objects.ws');
-        $user2->hashPassword();
-        $user2->getUserRoles()->add($roleUser);
-        $manager->persist($user2);
-
-
-        //create a user
-        $user3 = new User();
-        $user3->setLoginName('mirehan');
-        $user3->setPassword('123');
-        $user3->setEmail('mirehan@objects.ws');
-        $user3->hashPassword();
-        $user3->getUserRoles()->add($roleUser);
-
-        $manager->persist($user3);
-
-        //create a user that can update username
-        $user4 = new User();
-        $user4->setLoginName('sammer');
-        $user4->setPassword('123');
-        $user4->setEmail('sammer@objects.ws');
-        $user4->hashPassword();
-        $user4->getUserRoles()->add($roleUser);
-        $user4->getUserRoles()->add($roleUserName);
-        $manager->persist($user4);
-
-        //create a NotActivated user
-        $user5 = new User();
-        $user5->setLoginName('notactive');
-        $user5->setPassword('123');
-        $user5->setEmail('notactive@objects.ws');
-        $user5->hashPassword();
-        $user5->getUserRoles()->add($roleNotActive);
-        $manager->persist($user5);
-        $manager->flush();
     }
 
 }

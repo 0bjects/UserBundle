@@ -8,12 +8,13 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Objects\APIBundle\Controller\TwitterController;
 use Objects\UserBundle\Entity\SocialAccounts;
 use Objects\UserBundle\Entity\User;
 use Objects\UserBundle\Form\UserSignUp;
 use Objects\UserBundle\Form\UserSignUpPopUp;
-
+use Objects\APIBundle\Controller\FacebookController;
 class UserController extends Controller {
 
     /**
@@ -272,15 +273,184 @@ class UserController extends Controller {
     }
 
     /**
+     * action handle login/linking/signup via facebook
+     * this action is called when facebook dialaog redirect to it
+     * @author Mirehan
+     *
+     */
+    public function facebookAction(Request $request) {
+        //check that a logged in user can not access this action
+        if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
+            //go to the home page
+            return $this->redirect('/');
+        }
+        
+        $session = $request->getSession();
+        //get page url that the facebook button in
+        $returnURL = $session->get('currentURL',FALSE);
+        if(!$returnURL){
+            $returnURL  = '/';
+        }
+        //user access Token
+        $shortLive_access_token = $session->get('facebook_short_live_access_token',FALSE);
+        //facebook User Object
+        $faceUser = $session->get('facebook_user',FALSE);
+        // something went wrong
+        $facebookError = $session->get('facebook_error',FALSE);
+
+        if ($facebookError || !$faceUser || !$shortLive_access_token) {
+            return $this->redirect('/');
+        }
+
+        //generate long-live facebook access token access token and expiration date
+        $longLive_accessToken = FacebookController::getLongLiveFaceboockAccessToken($this->container->getParameter('fb_app_id'),$this->container->getParameter('fb_app_secret'),$shortLive_access_token);
+        
+        $em = $this->getDoctrine()->getEntityManager();
+        
+        //check if the user facebook id is in our database
+        $socialAccounts = $em->getRepository('ObjectsUserBundle:SocialAccounts')->findOneBy(array('facebookId' => $faceUser->id));
+        
+        
+
+        if ($socialAccounts) {
+            //update long-live facebook access token
+            $socialAccounts->setAccessToken($longLive_accessToken['access_token']);
+            $socialAccounts->setFbTokenExpireDate(new \DateTime(date('Y-m-d', time()+$longLive_accessToken['expires'])));
+           
+            $em->flush();
+            //get the user object
+            $user = $socialAccounts->getUser();
+            //try to login the user
+            try {
+                // create the authentication token
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                // give it to the security context
+                $this->container->get('security.context')->setToken($token);
+                //update the login time
+                return $this->updateLoginTimeAction();
+            } catch (\Exception $e) {
+                //failed to login the user go to the login page
+                return $this->redirect($this->generateUrl('login', array(), TRUE));
+            }
+            
+        } else {
+            /**
+             *
+             * the account of the same email as facebook account maybe exist but not linked so we will link it 
+             * and directly logging the user
+             * if the account is not active we automatically activate it
+             * else will create the account ,sign up the user
+             * 
+             * */
+            $userRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:User');
+            $roleRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:Role');
+            $user = $userRepository->findOneByEmail($faceUser->email);
+            //if user exist only add facebook account to social accounts record if user have one
+            //if not create new record
+            if ($user) {
+                $socialAccounts = $user->getSocialAccounts();
+                if(empty($socialAccounts)){
+                    $socialAccounts = new SocialAccounts();
+                    $socialAccounts->setUser($user);
+                }
+                $socialAccounts->setFacebookId($faceUser->id);
+                $socialAccounts->setAccessToken($longLive_accessToken['access_token']);
+                $socialAccounts->setFbTokenExpireDate(new \DateTime(date('Y-m-d', time()+$longLive_accessToken['expires'])));                
+                $user->setSocialAccounts($socialAccounts);
+                
+                //activate user if is not activated
+                //get object of notactive Role
+                $notActiveRole = $roleRepository->findOneByName('ROLE_NOTACTIVE');
+                if ($user->getUserRoles()->contains($notActiveRole)) {
+                    //get a user role object
+                    $userRole = $roleRepository->findOneByName('ROLE_USER');
+                    //remove notactive Role from user in exist
+                    $user->getUserRoles()->removeElement($notActiveRole);
+
+                    $user->getUserRoles()->add($userRole);
+                    
+                    $fbLinkeDAndActivatedmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account!Your account was successfully activated!');
+                    //set flash message to tell user that him/her account has been successfully activated
+                    $session->setFlash('notice', $fbLinkeDAndActivatedmessage);
+                    
+                } else {
+                    $fbLinkeDmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account!');
+                    //set flash message to tell user that him/her account has been successfully linked
+                    $session->setFlash('notice', $fbLinkeDmessage);
+                    
+                }
+                $em->persist($user);
+                $em->flush();
+
+                //try to login the user
+                try {
+                    // create the authentication token
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    // give it to the security context
+                    $this->container->get('security.context')->setToken($token);
+                    //update the login time
+                    return $this->updateLoginTimeAction();
+                } catch (\Exception $e) {
+                    //failed to login the user go to the login page
+                    return $this->redirect($this->generateUrl('login', array(), TRUE));
+                }
+            } else {
+                
+                //user sign up
+                $user = new User();
+                $user->setEmail($faceUser->email);
+                //set a valid login name
+                $user->setLoginName($this->suggestLoginName(strtolower($faceUser->name)));
+                $user->setFirstName($faceUser->first_name);
+                $user->setLastName($faceUser->last_name);
+                if ($faceUser->gender == 'female') {
+                    $user->setGender(0);
+                } else {
+                    $user->setGender(1);
+                }
+                //try to download the user image from facebook
+                $image = FacebookController::downloadAccountImage($faceUser->id, $user->getUploadRootDir());
+                //check if we got an image
+                if ($image) {
+                    //add the image to the user
+                    $user->setImage($image);
+                }
+
+                //get a update userName role object
+                $role = $roleRepository->findOneByName('ROLE_UPDATABLE_USERNAME');
+                //set update role
+                $user->getUserRoles()->add($role);
+                //create $socialAccounts object and set facebook account
+                $socialAccounts = new SocialAccounts();
+                $socialAccounts->setFacebookId($faceUser->id);
+                $socialAccounts->setAccessToken($longLive_accessToken['access_token']);
+                $socialAccounts->setFbTokenExpireDate(new \DateTime(date('Y-m-d', time()+$longLive_accessToken['expires'])));                
+                $socialAccounts->setUser($user);
+                $user->setSocialAccounts($socialAccounts);
+                $translator = $this->get('translator');
+                //send feed to user profile with sign up
+                $message = $translator->trans('I have new account on this cool site');
+                FacebookController::postOnUserWallAndFeedAction($faceUser->id,$longLive_accessToken['access_token'], $message,$translator->trans('PROJECT_NAME'),$translator->trans('SITE_DESCRIPTION'),'PROJECT_ORIGINAL_URL','SITE_PICTURE');
+                
+                //set flash message to tell user that him/her account has been successfully activated
+                $session->setFlash('notice', $translator->trans('Your account was successfully activated!'));
+                //user data are valid finish the signup process
+                return $this->finishSignUp($user,TRUE);
+            }
+        }
+    }
+    /**
      * this function is used to save the user data in the database and then send him a welcome message
      * and then try to login the user and redirect him to homepage or login page on fail
      * @author Mahmoud
      * @param \Objects\UserBundle\Entity\User $user
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function finishSignUp($user) {
-        //get the activation configurations
-        $active = $this->container->getParameter('auto_active');
+    public function finishSignUp($user , $active = FALSE) {
+        if(!$active)
+            //get the activation configurations
+            $active = $this->container->getParameter('auto_active');
+        
         //check if the user should be active by email or auto activated
         if ($active) {
             //auto active user

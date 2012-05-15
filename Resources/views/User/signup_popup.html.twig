@@ -24,4 +24,5 @@
 
     <input type="submit" name="signup" value="{% trans %}Sign up{% endtrans %}" />
 </form>
+{% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_logging','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'facebook'} %}<br />
 <a target="_blank" title="{% trans %}Twitter Sign up{% endtrans %}" href="{{ url('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Sign up{% endtrans %}</a>

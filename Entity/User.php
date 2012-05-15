@@ -44,7 +44,7 @@ class User implements AdvancedUserInterface {
      * )
      * @var \Doctrine\Common\Collections\ArrayCollection $userRoles
      */
-    protected $userRoles;
+    private $userRoles;
 
     /**
      * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Report", mappedBy="user",cascade={"persist", "remove"})
@@ -77,7 +77,7 @@ class User implements AdvancedUserInterface {
     /**
      * @var string $email
      *
-     * @ORM\Column(name="email", type="string", length=255, unique=true, nullable=true)
+     * @ORM\Column(name="email", type="string", length=255, unique=true)
      * @Assert\NotNull(groups={"signup", "email"})
      * @Assert\Email(groups={"signup", "email"})
      */
@@ -187,7 +187,7 @@ class User implements AdvancedUserInterface {
      *
      * @var string salt
      */
-    protected $salt;
+    private $salt;
 
     /**
      * @var string $image
