@@ -52,21 +52,6 @@ class User implements AdvancedUserInterface {
     private $reportedUsers;
 
     /**
-     * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Report", mappedBy="reportedUser",cascade={"persist", "remove"})
-     */
-    private $reoprtedMe;
-
-    /**
-     * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Blocked", mappedBy="user")
-     */
-    private $blockedUsers;
-
-    /**
-     * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Blocked", mappedBy="blockedUser")
-     */
-    private $blockedMe;
-
-    /**
      * @var string $loginName
      *
      * @ORM\Column(name="loginName", type="string", length=255, nullable=true, unique=true)
@@ -253,7 +238,7 @@ class User implements AdvancedUserInterface {
                 //reset the umask
                 umask($oldumask);
                 //check if we created the folder
-                if(!$success){
+                if (!$success) {
                     //could not create the folder throw an exception to stop the insert
                     throw new \Exception("Can not create the image directory $uploadDir");
                 }
@@ -356,10 +341,6 @@ class User implements AdvancedUserInterface {
         $this->salt = md5(time());
         $this->password = rand();
         $this->userRoles = new ArrayCollection();
-        $this->blockedUsers = new ArrayCollection();
-        $this->blockedMe = new ArrayCollection();
-        $this->reportedUsers = new ArrayCollection();
-        $this->reoprtedMe = new ArrayCollection();
     }
 
     /**
@@ -475,7 +456,7 @@ class User implements AdvancedUserInterface {
      * @return boolean
      */
     public function isAccountNonLocked() {
-        return !$this->locked;
+        return!$this->locked;
     }
 
     /**
@@ -775,33 +756,6 @@ class User implements AdvancedUserInterface {
     }
 
     /**
-     * Add reportedUser
-     *
-     * @param Objects\UserBundle\Entity\Report $reportedUser
-     */
-    public function addReportedUser(\Objects\UserBundle\Entity\Report $reportedUser) {
-        $this->reportedUsers[] = $reportedUser;
-    }
-
-    /**
-     * Get reportedUsers
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getReportedUsers() {
-        return $this->reportedUsers;
-    }
-
-    /**
-     * Get reoprtedMe
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getReoprtedMe() {
-        return $this->reoprtedMe;
-    }
-
-    /**
      * Add userRoles
      *
      * @param Objects\UserBundle\Entity\Role $userRoles
@@ -835,33 +789,6 @@ class User implements AdvancedUserInterface {
      */
     public function getSocialAccounts() {
         return $this->socialAccounts;
-    }
-
-    /**
-     * Add blockedUser
-     *
-     * @param Objects\UserBundle\Entity\Blocked $blockedUser
-     */
-    public function addBlockedUser(\Objects\UserBundle\Entity\Blocked $blockedUser) {
-        $this->blockedUsers[] = $blockedUser;
-    }
-
-    /**
-     * Get blockedUsers
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getBlockedUsers() {
-        return $this->blockedUsers;
-    }
-
-    /**
-     * Get blockedMe
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getBlockedMe() {
-        return $this->blockedMe;
     }
 
 }
