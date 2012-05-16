@@ -130,6 +130,14 @@
                 <source>Twitter Login</source>
                 <target>Twitter Login</target>
             </trans-unit>
+            <trans-unit id="33">
+                <source>Your Facebook account was successfully Linked to your account</source>
+                <target>Your Facebook account was successfully Linked to your account</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>I have new account on this cool site</source>
+                <target>I have new account on this cool site</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

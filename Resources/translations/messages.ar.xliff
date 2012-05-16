@@ -130,6 +130,14 @@
                 <source>Twitter Login</source>
                 <target>الدخول بأستخدام تويتر</target>
             </trans-unit>
+            <trans-unit id="33">
+                <source>Your Facebook account was successfully Linked to your account</source>
+                <target>لقد تم ربط حسابك الشخصى مع حساب الفيس بوك بنجاح</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>I have new account on this cool site</source>
+                <target>أنا الأن لدى حساب شخصى على هذا الموقع</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
