@@ -47,11 +47,6 @@ class User implements AdvancedUserInterface {
     private $userRoles;
 
     /**
-     * @ORM\OneToMany(targetEntity="\Objects\UserBundle\Entity\Report", mappedBy="user",cascade={"persist", "remove"})
-     */
-    private $reportedUsers;
-
-    /**
      * @var string $loginName
      *
      * @ORM\Column(name="loginName", type="string", length=255, nullable=true, unique=true)
