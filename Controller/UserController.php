@@ -471,7 +471,7 @@ class UserController extends Controller {
         $roleUpdateUserName = $roleRepository->findOneByName('ROLE_UPDATABLE_USERNAME');
         //set user roles
         $user->addRole($role);
-        $user->addRole($$roleUpdateUserName);
+        $user->addRole($roleUpdateUserName);
         //hash the password before storing in the database
         $user->hashPassword();
         //add the new user to the entity manager

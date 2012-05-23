@@ -54,6 +54,12 @@ framework:
 
 copy the security.yml file into your app/config folder
 
+update the database
+app/console doctrine:schema:update --force
+
+load the fixture files
+app/console doctrine:fixtures:load --append
+
 configure the parameters in Resources/config/config.yml file in the bundles
 
 IMPORTANT NOTE:
