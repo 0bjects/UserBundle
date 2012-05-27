@@ -87,9 +87,9 @@ class User implements AdvancedUserInterface {
     private $createdAt;
 
     /**
-     * @var datetime $lastLoginDate
+     * @var datetime $lastLoginDateTime
      *
-     * @ORM\Column(name="lastLoginDate", type="datetime")
+     * @ORM\Column(name="lastLoginDateTime", type="datetime")
      */
     private $lastLoginDateTime;
 

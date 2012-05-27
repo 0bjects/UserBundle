@@ -84,5 +84,26 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
         $offset = $result[0]['offset'] + 1;
         return $loginName . $offset;
     }
+    
+    /**
+     * this function will get the count of the logged users
+     * @author Mahmoud
+     * @return integer the count of the logged in users 
+     */
+    public function getLoggedUsersCount(){
+        $query = '
+            SELECT count(u.id)
+            FROM ObjectsUserBundle:User u
+            WHERE u.lastLoginDateTime > :time
+            '
+        ;
+        $query = $this->getEntityManager()
+                ->createQuery($query);
+        $dateTime = new \DateTime();
+        $dateTime->modify('-5 minute');
+        $query->setParameter('time', $dateTime);
+        $result = $query->getResult();
+        return $result[0][1];
+    }
 
 }
