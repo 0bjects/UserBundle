@@ -34,11 +34,10 @@ security:
                 target: /
 
             remember_me:
-                key:      remembermekey
-                # the next lifetime is in seconds
+                key:      "%secret%"
+                # the next lifetime is in seconds (7days)
                 lifetime: 604800
-                path:     /user/auth/update/logintime
-                secure: true
+                path:     /
 
     access_control:
          - { path: ^/admin, roles: ROLE_ADMIN }
