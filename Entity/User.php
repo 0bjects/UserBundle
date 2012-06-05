@@ -87,11 +87,11 @@ class User implements AdvancedUserInterface {
     private $createdAt;
 
     /**
-     * @var datetime $lastLoginDateTime
+     * @var datetime $lastSeen
      *
-     * @ORM\Column(name="lastLoginDateTime", type="datetime")
+     * @ORM\Column(name="lastSeen", type="datetime")
      */
-    private $lastLoginDateTime;
+    private $lastSeen;
 
     /**
      * @var string $firstName
@@ -331,7 +331,7 @@ class User implements AdvancedUserInterface {
      */
     public function __construct() {
         $this->createdAt = new \DateTime();
-        $this->lastLoginDateTime = new \DateTime();
+        $this->lastSeen = new \DateTime();
         $this->confirmationCode = md5(uniqid(rand()));
         $this->salt = md5(time());
         $this->password = rand();
@@ -451,7 +451,7 @@ class User implements AdvancedUserInterface {
      * @return boolean
      */
     public function isAccountNonLocked() {
-        return!$this->locked;
+        return !$this->locked;
     }
 
     /**
@@ -541,24 +541,6 @@ class User implements AdvancedUserInterface {
      */
     public function getCreatedAt() {
         return $this->createdAt;
-    }
-
-    /**
-     * Set lastLoginDateTime
-     *
-     * @param datetime $lastLoginDateTime
-     */
-    public function setLastLoginDateTime($lastLoginDateTime) {
-        $this->lastLoginDateTime = $lastLoginDateTime;
-    }
-
-    /**
-     * Get lastLoginDateTime
-     *
-     * @return datetime 
-     */
-    public function getLastLoginDateTime() {
-        return $this->lastLoginDateTime;
     }
 
     /**
@@ -784,6 +766,24 @@ class User implements AdvancedUserInterface {
      */
     public function getSocialAccounts() {
         return $this->socialAccounts;
+    }
+
+    /**
+     * Set lastSeen
+     *
+     * @param datetime $lastSeen
+     */
+    public function setLastSeen($lastSeen) {
+        $this->lastSeen = $lastSeen;
+    }
+
+    /**
+     * Get lastSeen
+     *
+     * @return datetime 
+     */
+    public function getLastSeen() {
+        return $this->lastSeen;
     }
 
 }

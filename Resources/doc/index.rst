@@ -13,8 +13,9 @@ add this lines to your deps file:
     git=http://github.com/doctrine/data-fixtures.git
 
 [DoctrineFixturesBundle]
-    git=http://github.com/symfony/DoctrineFixturesBundle.git
+    git=http://github.com/doctrine/DoctrineFixturesBundle.git
     target=bundles/Symfony/Bundle/DoctrineFixturesBundle
+    version=origin/2.0
 
 [UserBundle]
     git=repo@184.107.198.186:/home/repos/UserBundle.git

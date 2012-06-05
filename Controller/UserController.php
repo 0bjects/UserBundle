@@ -70,22 +70,13 @@ class UserController extends Controller {
     }
 
     /**
-     * this funcion sets the user login time to the current time
-     * and redirect the user to previous requested page or home page
+     * this funcion redirects the user to specific url
      * @author Mahmoud
-     * @return \Symfony\Component\HttpFoundation\Response a redirect to the site home page
+     * @return \Symfony\Component\HttpFoundation\Response a redirect to a url
      */
-    public function updateLoginTimeAction() {
-        //get the request object
-        $request = $this->getRequest();
+    public function redirectUserAction() {
         //get the session object
-        $session = $request->getSession();
-        //get the user object
-        $user = $this->get('security.context')->getToken()->getUser();
-        //update the login time
-        $user->setLastLoginDateTime(new \DateTime());
-        //save the new login time in the database
-        $this->getDoctrine()->getEntityManager()->flush();
+        $session = $this->getRequest()->getSession();
         //check if we have a url to redirect to
         $rediretUrl = $session->get('redirectUrl', FALSE);
         if (!$rediretUrl) {
@@ -195,8 +186,8 @@ class UserController extends Controller {
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     // give it to the security context
                     $this->container->get('security.context')->setToken($token);
-                    //update the login time
-                    return $this->updateLoginTimeAction();
+                    //redirect the user
+                    return $this->redirectUserAction();
                 } catch (\Exception $e) {
                     //failed to login the user go to the login page
                     return $this->redirect($this->generateUrl('login', array(), TRUE));
@@ -325,8 +316,8 @@ class UserController extends Controller {
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 // give it to the security context
                 $this->container->get('security.context')->setToken($token);
-                //update the login time
-                return $this->updateLoginTimeAction();
+                //redirect the user
+                return $this->redirectUserAction();
             } catch (\Exception $e) {
                 //failed to login the user go to the login page
                 return $this->redirect($this->generateUrl('login', array(), TRUE));
@@ -384,8 +375,8 @@ class UserController extends Controller {
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     // give it to the security context
                     $this->container->get('security.context')->setToken($token);
-                    //update the login time
-                    return $this->updateLoginTimeAction();
+                    //redirect the user
+                    return $this->redirectUserAction();
                 } catch (\Exception $e) {
                     //failed to login the user go to the login page
                     return $this->redirect($this->generateUrl('login', array(), TRUE));

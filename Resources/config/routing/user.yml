@@ -4,9 +4,9 @@ user_delete:
     defaults: { _controller: ObjectsUserBundle:User:deleteAccount }
 
 # routes that requires logged in user
-update_login_time:
-    pattern: /auth/update/logintime
-    defaults: { _controller: ObjectsUserBundle:User:updateLoginTime }
+redirect_user:
+    pattern: /auth/redirect/user
+    defaults: { _controller: ObjectsUserBundle:User:redirectUser }
 
 user_active:
     pattern: /auth/active/{confirmationCode}

@@ -27,7 +27,7 @@ security:
                 login_path: /login
                 always_use_default_target_path: true
                 use_forward: true
-                default_target_path: /user/auth/update/logintime
+                default_target_path: /user/auth/redirect/user
 
             logout:
                 path:   /logout
