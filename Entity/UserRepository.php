@@ -86,7 +86,8 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
     }
     
     /**
-     * this function will get the count of the logged users
+     * this function will get the count of the logged in users
+     * the UpdateUserLastSeenListener service must be active to return valid number
      * @author Mahmoud
      * @return integer the count of the logged in users 
      */
@@ -94,9 +95,8 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
         $query = '
             SELECT count(u.id)
             FROM ObjectsUserBundle:User u
-            WHERE u.lastLoginDateTime > :time
-            '
-        ;
+            WHERE u.lastSeen > :time
+            ';
         $query = $this->getEntityManager()
                 ->createQuery($query);
         $dateTime = new \DateTime();
