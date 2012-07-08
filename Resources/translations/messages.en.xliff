@@ -138,6 +138,18 @@
                 <source>I have new account on this cool site</source>
                 <target>I have new account on this cool site</target>
             </trans-unit>
+            <trans-unit id="35">
+                <source>unknown</source>
+                <target>unknown</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>female</source>
+                <target>female</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>male</source>
+                <target>male</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

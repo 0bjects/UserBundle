@@ -17,12 +17,12 @@
     <label>{% trans %}ReEmail{% endtrans %}:</label>
     {{ form_widget(form.email.ReEmail) }}<br />
 
-    {{ form_errors(form.password) }}<br />
+    {{ form_errors(form.userPassword) }}<br />
     <label>{% trans %}Password{% endtrans %}:</label>
-    {{ form_widget(form.password.Password) }}<br />
+    {{ form_widget(form.userPassword.Password) }}<br />
 
     <label>{% trans %}RePassword{% endtrans %}:</label>
-    {{ form_widget(form.password.RePassword) }}<br />
+    {{ form_widget(form.userPassword.RePassword) }}<br />
 
     {{ form_rest(form) }}
 

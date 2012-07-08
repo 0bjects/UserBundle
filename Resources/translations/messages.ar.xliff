@@ -138,6 +138,18 @@
                 <source>I have new account on this cool site</source>
                 <target>أنا الأن لدى حساب شخصى على هذا الموقع</target>
             </trans-unit>
+            <trans-unit id="35">
+                <source>unknown</source>
+                <target>غير معروف</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>female</source>
+                <target>أنثى</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>male</source>
+                <target>ذكر</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

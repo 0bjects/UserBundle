@@ -16,7 +16,7 @@ class UserSignUp extends AbstractType {
                     'second_name' => 'ReEmail',
                     'invalid_message' => "The emails don't match",
                 ))
-                ->add('password', 'repeated', array(
+                ->add('userPassword', 'repeated', array(
                     'type' => 'password',
                     'first_name' => 'Password',
                     'second_name' => 'RePassword',

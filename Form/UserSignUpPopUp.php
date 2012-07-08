@@ -11,7 +11,7 @@ class UserSignUpPopUp extends AbstractType {
         $builder
                 ->add('loginName')
                 ->add('email')
-                ->add('password')
+                ->add('userPassword')
         ;
     }
 

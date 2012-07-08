@@ -8,7 +8,6 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Objects\APIBundle\Controller\TwitterController;
 use Objects\APIBundle\Controller\FacebookController;
 use Objects\UserBundle\Entity\SocialAccounts;
@@ -109,8 +108,6 @@ class UserController extends Controller {
         $request = $this->getRequest();
         //create an emtpy user object
         $user = new User();
-        //clear the default random password
-        $user->setPassword('');
         //check if this is an ajax request
         if ($request->isXmlHttpRequest()) {
             //create a popup form
@@ -195,7 +192,7 @@ class UserController extends Controller {
             }
             //create a new user object
             $user = new User();
-            //create a password form
+            //create an email form
             $form = $this->createFormBuilder($user, array(
                         'validation_groups' => array('email')
                     ))
@@ -438,6 +435,16 @@ class UserController extends Controller {
             //get the activation configurations
             $active = $this->container->getParameter('auto_active');
         }
+        //get the entity manager
+        $em = $this->getDoctrine()->getEntityManager();
+        //add the new user to the entity manager
+        $em->persist($user);
+        //prepare the body of the email
+        $body = $this->renderView('ObjectsUserBundle:User:Emails\welcome_to_site.txt.twig', array(
+            'user' => $user,
+            'password' => $user->getUserPassword(),
+            'active' => $active
+                ));
         //check if the user should be active by email or auto activated
         if ($active) {
             //auto active user
@@ -446,14 +453,6 @@ class UserController extends Controller {
             //user need to activate from email
             $roleName = 'ROLE_NOTACTIVE';
         }
-        //prepare the body of the email
-        $body = $this->renderView('ObjectsUserBundle:User:Emails\welcome_to_site.txt.twig', array(
-            'user' => $user,
-            'password' => $user->getPassword(),
-            'active' => $active
-                ));
-        //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
         //get the role repo
         $roleRepository = $em->getRepository('ObjectsUserBundle:Role');
         //get a user role object
@@ -463,10 +462,6 @@ class UserController extends Controller {
         //set user roles
         $user->addRole($role);
         $user->addRole($roleUpdateUserName);
-        //hash the password before storing in the database
-        $user->hashPassword();
-        //add the new user to the entity manager
-        $em->persist($user);
         //store the object in the database
         $em->flush();
         //prepare the message object
@@ -646,8 +641,6 @@ class UserController extends Controller {
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     // give it to the security context
                     $this->container->get('security.context')->setToken($token);
-                    //update the login time
-                    $user->setLastLoginDateTime(new \DateTime());
                     //save the new login time
                     $em->flush();
                     //check if the user is active
@@ -686,7 +679,7 @@ class UserController extends Controller {
         $form = $this->createFormBuilder($user, array(
                     'validation_groups' => array('password')
                 ))
-                ->add('password', 'repeated', array(
+                ->add('userPassword', 'repeated', array(
                     'type' => 'password',
                     'first_name' => "Password",
                     'second_name' => "RePassword",
@@ -699,8 +692,8 @@ class UserController extends Controller {
             $form->bindRequest($request);
             //check if form is valid
             if ($form->isValid()) {
-                //encrypt the password
-                $user->hashPassword();
+                //set the password for the user
+                $user->setValidPassword();
                 //save the new hashed password
                 $em->flush();
                 //set the success flag

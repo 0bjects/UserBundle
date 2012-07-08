@@ -7,6 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Locale\Locale;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -51,6 +52,7 @@ class User implements AdvancedUserInterface {
      *
      * @ORM\Column(name="loginName", type="string", length=255, nullable=true, unique=true)
      * @Assert\NotNull(groups={"signup"})
+     * @Assert\Regex(pattern="/^\w+$/u", groups={"signup"}, message="Allowed characters are (a..z, _, 0..9)")
      */
     private $loginName;
 
@@ -67,10 +69,20 @@ class User implements AdvancedUserInterface {
      * @var string $password
      *
      * @ORM\Column(name="password", type="string", length=255)
-     * @Assert\NotNull(groups={"signup", "password"})
-     * @Assert\MinLength(limit=6, groups={"signup", "password"})
      */
     private $password;
+
+    /**
+     * @var string $userPassword
+     * @Assert\MinLength(limit=6, groups={"signup", "edit", "password"})
+     * @Assert\NotNull(groups={"signup", "password"})
+     */
+    private $userPassword;
+
+    /**
+     * @var string $oldPassword
+     */
+    private $oldPassword;
 
     /**
      * @var string $confirmationCode
@@ -310,7 +322,6 @@ class User implements AdvancedUserInterface {
     }
 
     /**
-     * @author Mahmoud
      * @param $width the desired image width
      * @param $height the desired image height
      * @return string the htaccess file url pattern which map to timthumb url
@@ -334,7 +345,6 @@ class User implements AdvancedUserInterface {
         $this->lastSeen = new \DateTime();
         $this->confirmationCode = md5(uniqid(rand()));
         $this->salt = md5(time());
-        $this->password = rand();
         $this->userRoles = new ArrayCollection();
     }
 
@@ -366,13 +376,89 @@ class User implements AdvancedUserInterface {
     }
 
     /**
-     * be sure to call this method when you set the password from the user and before storing to database
-     * the encoding has to be the same as the one in the project security.yml file
+     * this function will set a valid random password for the user 
      */
-    public function hashPassword() {
-        // encode and set the password for the user
+    public function setRandomPassword() {
+        $this->setUserPassword(rand());
+    }
+
+    /**
+     * this function will set the valid password for the user
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function setValidPassword() {
+        //check if we have a password
+        if ($this->getUserPassword()) {
+            //hash the password
+            $this->setPassword($this->hashPassword($this->getUserPassword()));
+        } else {
+            //check if the object is new
+            if ($this->getId() === NULL) {
+                //new object set a random password
+                $this->setRandomPassword();
+                //hash the password
+                $this->setPassword($this->hashPassword($this->getUserPassword()));
+            }
+        }
+    }
+
+    /**
+     * this function will hash a password and return the hashed value
+     * the encoding has to be the same as the one in the project security.yml file
+     * @param string $password the password to return it is hash
+     */
+    private function hashPassword($password) {
+        //create an encoder object
         $encoder = new MessageDigestPasswordEncoder('sha512', true, 10);
-        $this->setPassword($encoder->encodePassword($this->getPassword(), $this->getSalt()));
+        //return the hashed password
+        return $encoder->encodePassword($password, $this->getSalt());
+    }
+
+    /**
+     * this function will check if the user entered a valid old password
+     * @Assert\True(message = "the old password is wrong", groups={"oldPassword"})
+     */
+    public function isOldPasswordCorrect() {
+        if ($this->hashPassword($this->getOldPassword()) == $this->getPassword()) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    /**
+     * Set oldPassword
+     *
+     * @param string $oldPassword
+     */
+    public function setOldPassword($oldPassword) {
+        $this->oldPassword = $oldPassword;
+    }
+
+    /**
+     * Get oldPassword
+     *
+     * @return string 
+     */
+    public function getOldPassword() {
+        return $this->oldPassword;
+    }
+
+    /**
+     * Set userPassword
+     *
+     * @param string $password
+     */
+    public function setUserPassword($password) {
+        $this->userPassword = $password;
+    }
+
+    /**
+     * @return string the user password
+     */
+    public function getUserPassword() {
+        return $this->userPassword;
     }
 
     /**
@@ -388,7 +474,9 @@ class User implements AdvancedUserInterface {
      * Implementation of eraseCredentials for the UserInterface.
      */
     public function eraseCredentials() {
-        
+        //remove the user password
+        $this->setUserPassword(NULL);
+        $this->setOldPassword(NULL);
     }
 
     /**
@@ -613,6 +701,35 @@ class User implements AdvancedUserInterface {
      */
     public function getGender() {
         return $this->gender;
+    }
+
+    /**
+     * this function will return the string representing the user gender
+     * @return string gender type
+     */
+    public function getGenderString() {
+        if ($this->gender === NULL) {
+            return 'unknown';
+        }
+        if ($this->gender === 0) {
+            return 'female';
+        }
+        if ($this->gender === 1) {
+            return 'male';
+        }
+    }
+
+    /**
+     * this function will return the user country name
+     * @return NULL|string the country name
+     */
+    public function getCountryName() {
+        //check if we have a country code
+        if ($this->countryCode) {
+            //return the country name
+            return Locale::getDisplayRegion($this->suggestedLanguage . '_' . $this->countryCode);
+        }
+        return NULL;
     }
 
     /**
