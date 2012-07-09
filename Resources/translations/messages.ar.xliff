@@ -143,11 +143,11 @@
                 <target>غير معروف</target>
             </trans-unit>
             <trans-unit id="36">
-                <source>female</source>
+                <source>Female</source>
                 <target>أنثى</target>
             </trans-unit>
             <trans-unit id="37">
-                <source>male</source>
+                <source>Male</source>
                 <target>ذكر</target>
             </trans-unit>
             <trans-unit id="38">

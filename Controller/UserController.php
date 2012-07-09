@@ -172,6 +172,8 @@ class UserController extends Controller {
             //not the same user as the logged in
             throw new AccessDeniedHttpException();
         }
+        //get the translator object
+        $translator = $this->get('translator');
         //get the user social accounts object
         $socialAccounts = $loggedInUser->getSocialAccounts();
         //initialize the success message
@@ -220,8 +222,10 @@ class UserController extends Controller {
                     'required' => false
                 ))
                 ->add('gender', 'choice', array(
-                    'choices' => array('1' => 'Male', '0' => 'Female'),
-                    'required' => false
+                    'choices' => array('1' => $translator->trans('Male'), '0' => $translator->trans('Female')),
+                    'required' => false,
+                    'expanded' => true,
+                    'multiple' => false
                 ))
                 ->add('dateOfBirth')
                 ->add('firstName')
@@ -272,7 +276,7 @@ class UserController extends Controller {
                     $body = $this->renderView('ObjectsUserBundle:User:Emails\activate_email.txt.twig', array('user' => $user));
                     //prepare the message object
                     $message = \Swift_Message::newInstance()
-                            ->setSubject($this->get('translator')->trans('activate your account'))
+                            ->setSubject($translator->trans('activate your account'))
                             ->setFrom($this->container->getParameter('mailer_user'))
                             ->setTo($user->getEmail())
                             ->setBody($body)
@@ -316,7 +320,7 @@ class UserController extends Controller {
                         
                     }
                     //set the success flash
-                    $session->setFlash('success', $this->get('translator')->trans('Done'));
+                    $session->setFlash('success', $translator->trans('Done'));
                     //redirect the user
                     return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
                 }

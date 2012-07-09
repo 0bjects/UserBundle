@@ -143,12 +143,12 @@
                 <target>unknown</target>
             </trans-unit>
             <trans-unit id="36">
-                <source>female</source>
-                <target>female</target>
+                <source>Female</source>
+                <target>Female</target>
             </trans-unit>
             <trans-unit id="37">
-                <source>male</source>
-                <target>male</target>
+                <source>Male</source>
+                <target>Male</target>
             </trans-unit>
             <trans-unit id="38">
                 <source>this email was sent to you because you changed your email and your account is now not active</source>

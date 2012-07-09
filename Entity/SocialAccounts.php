@@ -80,7 +80,7 @@ class SocialAccounts {
     /**
      * @var string $confirmationCode
      *
-     * @ORM\Column(name="fb_tkn_expire_date", type="date")
+     * @ORM\Column(name="fb_tkn_expire_date", type="date", nullable=true)
      */
     private $fbTokenExpireDate;
 
