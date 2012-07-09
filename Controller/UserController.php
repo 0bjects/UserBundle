@@ -3,6 +3,7 @@
 namespace Objects\UserBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Validator\Constraints\Collection;
@@ -135,6 +136,249 @@ class UserController extends Controller {
         return $this->render($view, array(
                     'form' => $form->createView()
                 ));
+    }
+
+    /**
+     * the edit action
+     * @author Mahmoud
+     * @param string $loginName the user login name to edit his profile
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function editAction($loginName) {
+        //get the request object
+        $request = $this->getRequest();
+        //get the session object
+        $session = $request->getSession();
+        //check that a logged in user can not access this action
+        if (FALSE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
+            //set the redirect route for the user
+            $session->set('redirectUrl', $this->generateUrl('user_edit', array('loginName' => $loginName)));
+            //forward to login
+            return $this->forward('ObjectsUserBundle:User:login');
+        }
+        //get the entity manager
+        $em = $this->getDoctrine()->getEntityManager();
+        try {
+            //try to find the requested user object
+            $requestedUser = $em->getRepository('ObjectsUserBundle:User')->getUserData($loginName);
+        } catch (\Exception $e) {
+            //the user not found return 404 response
+            throw $this->createNotFoundException('user not found');
+        }
+        //get the user object from the firewall
+        $loggedInUser = $this->get('security.context')->getToken()->getUser();
+        //check if the logged in user is the same as the requested one
+        if ($loggedInUser->getId() != $requestedUser->getId()) {
+            //not the same user as the logged in
+            throw new AccessDeniedHttpException();
+        }
+        //get the user social accounts object
+        $socialAccounts = $loggedInUser->getSocialAccounts();
+        //initialize the success message
+        $message = FALSE;
+        //initialize the redirect flag
+        $redirect = FALSE;
+        //initialize the form validation groups array
+        $formValidationGroups = array('edit');
+        //initialize the old password to not required
+        $oldPassword = FALSE;
+        //initialize the change user name to false
+        $changeUserName = FALSE;
+        //check if the user is logged in from the login form
+        if (FALSE === $this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            //mark the old password as required
+            $oldPassword = TRUE;
+        }
+        //check if the user is logged in from the login form
+        if (TRUE === $this->get('security.context')->isGranted('ROLE_UPDATABLE_USERNAME')) {
+            //make the user able to change his user name
+            $changeUserName = TRUE;
+        }
+        //check if the old password is required
+        if ($oldPassword) {
+            //add the old password group to the form validation array
+            $formValidationGroups [] = 'oldPassword';
+        }
+        //check if the user can change his user name
+        if ($changeUserName) {
+            //add the login name group to the form validation array
+            $formValidationGroups [] = 'loginName';
+        }
+        //get the old user email
+        $oldEmail = $loggedInUser->getEmail();
+        //get the old user name
+        $oldLoginName = $loggedInUser->getLoginName();
+        //create a password form
+        $formBuilder = $this->createFormBuilder($loggedInUser, array(
+                    'validation_groups' => $formValidationGroups
+                ))
+                ->add('userPassword', 'repeated', array(
+                    'type' => 'password',
+                    'first_name' => "Password",
+                    'second_name' => "RePassword",
+                    'invalid_message' => "The passwords don't match",
+                    'required' => false
+                ))
+                ->add('gender', 'choice', array(
+                    'choices' => array('1' => 'Male', '0' => 'Female'),
+                    'required' => false
+                ))
+                ->add('dateOfBirth')
+                ->add('firstName')
+                ->add('lastName')
+                ->add('countryCode', 'country', array('required' => false))
+                ->add('email')
+        ;
+        //check if the old password is required
+        if ($oldPassword) {
+            //add the old password field
+            $formBuilder->add('oldPassword', 'password');
+        }
+        //check if the user can change his user name
+        if ($changeUserName) {
+            //add the login name field
+            $formBuilder->add('loginName');
+        }
+        //create the form
+        $form = $formBuilder->getForm();
+        //check if this is the user posted his data
+        if ($request->getMethod() == 'POST') {
+            //fill the form data from the request
+            $form->bindRequest($request);
+            //check if the form values are correct
+            if ($form->isValid()) {
+                //get the user object from the form
+                $user = $form->getData();
+                //check if we need to change the user to not active
+                if ($user->getEmail() != $oldEmail && !$this->container->getParameter('auto_active')) {
+                    //remove the role user
+                    foreach ($user->getUserRoles() as $key => $roleObject) {
+                        //check if this is the wanted role
+                        if ($roleObject->getName() == 'ROLE_USER') {
+                            //remove the role from the user
+                            $user->getUserRoles()->remove($key);
+                            //stop the search
+                            break;
+                        }
+                    }
+                    //get the not active role object
+                    $role = $em->getRepository('ObjectsUserBundle:Role')->findOneByName('ROLE_NOTACTIVE');
+                    //check if the user already has the role
+                    if (!$user->getUserRoles()->contains($role)) {
+                        //add the role to the user
+                        $user->addRole($role);
+                    }
+                    //prepare the body of the email
+                    $body = $this->renderView('ObjectsUserBundle:User:Emails\activate_email.txt.twig', array('user' => $user));
+                    //prepare the message object
+                    $message = \Swift_Message::newInstance()
+                            ->setSubject($this->get('translator')->trans('activate your account'))
+                            ->setFrom($this->container->getParameter('mailer_user'))
+                            ->setTo($user->getEmail())
+                            ->setBody($body)
+                    ;
+                    //send the activation mail to the user
+                    $this->get('mailer')->send($message);
+                }
+                //check if the user changed his login name
+                if ($changeUserName && $oldLoginName != $user->getLoginName()) {
+                    //remove the update user name role
+                    foreach ($user->getUserRoles() as $key => $roleObject) {
+                        //check if this is the wanted role
+                        if ($roleObject->getName() == 'ROLE_UPDATABLE_USERNAME') {
+                            //remove the role from the user
+                            $user->getUserRoles()->remove($key);
+                            //stop the search
+                            break;
+                        }
+                    }
+                    //redirect the user to remove the login name from the form and to correct the url and refresh his roles
+                    $redirect = TRUE;
+                }
+                //set the password for the user if changed
+                $user->setValidPassword();
+                //save the data
+                $em->flush();
+                //check if the user set a valid old password
+                if ($oldPassword) {
+                    //redirect the user to remove the old password from the form
+                    $redirect = TRUE;
+                }
+                //check if we need to redirect the user
+                if ($redirect) {
+                    //make the user fully authenticated and refresh his roles
+                    try {
+                        // create the authentication token
+                        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                        // give it to the security context
+                        $this->container->get('security.context')->setToken($token);
+                    } catch (\Exception $e) {
+                        
+                    }
+                    //set the success flash
+                    $session->setFlash('success', $this->get('translator')->trans('Done'));
+                    //redirect the user
+                    return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
+                }
+                //set the success message
+                $message = 'Done';
+            }
+        }
+        return $this->render('ObjectsUserBundle:User:edit.html.twig', array(
+                    'form' => $form->createView(),
+                    'loginName' => $loggedInUser->getLoginName(),
+                    'oldPassword' => $oldPassword,
+                    'changeUserName' => $changeUserName,
+                    'message' => $message,
+                    'socialAccounts' => $socialAccounts
+                ));
+    }
+
+    /**
+     * this action will link the user account to his twitter account
+     * @author Mahmoud
+     */
+    public function twitterLinkAction() {
+        //get the user object from the firewall
+        $user = $this->get('security.context')->getToken()->getUser();
+        //get the request object
+        $request = $this->getRequest();
+        //get the session object
+        $session = $request->getSession();
+        //get the oauth token from the session
+        $oauth_token = $session->get('oauth_token', FALSE);
+        //get the oauth token secret from the session
+        $oauth_token_secret = $session->get('oauth_token_secret', FALSE);
+        //get the twtiter id from the session
+        $twitterId = $session->get('twitterId', FALSE);
+        //get the screen name from the session
+        $screen_name = $session->get('screen_name', FALSE);
+        //check if we got twitter data
+        if ($oauth_token && $oauth_token_secret && $twitterId && $screen_name) {
+            //get the entity manager
+            $em = $this->getDoctrine()->getEntityManager();
+            //get the user social account object
+            $socialAccounts = $user->getSocialAccounts();
+            //check if the user does not have a social account object
+            if (!$socialAccounts) {
+                //create new social account for the user
+                $socialAccounts = new SocialAccounts();
+                $socialAccounts->setUser($user);
+                $user->setSocialAccounts($socialAccounts);
+                $em->persist($socialAccounts);
+            }
+            //set the user twitter data
+            $socialAccounts->setTwitterId($twitterId);
+            $socialAccounts->setOauthToken($oauth_token);
+            $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+            $socialAccounts->setScreenName($screen_name);
+            //save the data for the user
+            $em->flush();
+            //set the success flag in the session
+            $session->setFlash('success', $this->get('translator')->trans('Done'));
+        }
+        //twitter data not found go to the signup page
+        return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
     }
 
     /**
@@ -419,6 +663,101 @@ class UserController extends Controller {
                 return $this->finishSignUp($user, TRUE);
             }
         }
+    }
+
+    /**
+     * this action will link the user account to the facebook account
+     * @author Mirehan & Mahmoud
+     */
+    public function facebookLinkAction() {
+        //get the request object
+        $request = $this->getRequest();
+        //get the session object
+        $session = $request->getSession();
+        //user access Token
+        $shortLive_access_token = $session->get('facebook_short_live_access_token', FALSE);
+        //facebook User Object
+        $faceUser = $session->get('facebook_user', FALSE);
+        // something went wrong
+        $facebookError = $session->get('facebook_error', FALSE);
+        //check if we have no errors
+        if ($facebookError || !$faceUser || !$shortLive_access_token) {
+            return $this->redirect('/');
+        }
+
+        //generate long-live facebook access token access token and expiration date
+        $longLive_accessToken = FacebookController::getLongLiveFaceboockAccessToken($this->container->getParameter('fb_app_id'), $this->container->getParameter('fb_app_secret'), $shortLive_access_token);
+
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $roleRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:Role');
+        $user = $this->get('security.context')->getToken()->getUser();
+        $socialAccounts = $user->getSocialAccounts();
+        if (empty($socialAccounts)) {
+            $socialAccounts = new SocialAccounts();
+            $socialAccounts->setUser($user);
+            $em->persist($socialAccounts);
+        }
+        $socialAccounts->setFacebookId($faceUser->id);
+        $socialAccounts->setAccessToken($longLive_accessToken['access_token']);
+        $socialAccounts->setFbTokenExpireDate(new \DateTime(date('Y-m-d', time() + $longLive_accessToken['expires'])));
+        $user->setSocialAccounts($socialAccounts);
+
+        //activate user if is not activated
+        //get object of notactive Role
+        $notActiveRole = $roleRepository->findOneByName('ROLE_NOTACTIVE');
+        if ($user->getUserRoles()->contains($notActiveRole) && $user->getEmail() == $faceUser->email) {
+            //get a user role object
+            $userRole = $roleRepository->findOneByName('ROLE_USER');
+            //remove notactive Role from user in exist
+            $user->getUserRoles()->removeElement($notActiveRole);
+
+            $user->getUserRoles()->add($userRole);
+
+            $fbLinkeDAndActivatedmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account') . ' ' . $this->get('translator')->trans('your account is now active');
+            //set flash message to tell user that him/her account has been successfully activated
+            $session->setFlash('notice', $fbLinkeDAndActivatedmessage);
+        } else {
+            $fbLinkeDmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account');
+            //set flash message to tell user that him/her account has been successfully linked
+            $session->setFlash('notice', $fbLinkeDmessage);
+        }
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
+    }
+
+    /**
+     * this action will unlink the user social data data
+     * @author Mahmoud
+     * @param string $social twitter | facebook
+     */
+    public function socialUnlinkAction($social) {
+        //get the logged in user object
+        $user = $this->get('security.context')->getToken()->getUser();
+        //get the entity manager
+        $em = $this->getDoctrine()->getEntityManager();
+        //get the user social account object
+        $socialAccounts = $user->getSocialAccounts();
+        if ($social == 'facebook') {
+            //unlink the facebook account data
+            $socialAccounts->unlinkFacebook();
+        }
+        if ($social == 'twitter') {
+            //unlink the facebook account data
+            $socialAccounts->unlinkTwitter();
+        }
+        //check if we still need the object
+        if(!$socialAccounts->isNeeded()){
+            //remove the object
+            $em->remove($socialAccounts);
+        }
+        //save the changes
+        $em->flush();
+        //set a success flag in the session
+        $this->getRequest()->getSession()->setFlash('success', $this->get('translator')->trans('Done'));
+        //redirect the user to the edit page
+        return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
     }
 
     /**

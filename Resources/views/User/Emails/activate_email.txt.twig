@@ -1,0 +1,2 @@
+{% trans %}this email was sent to you because you changed your email and your account is now not active{% endtrans %} 
+{% trans %}press on the next link to activate your account{% endtrans %} {{ url('user_active', {'confirmationCode': user.confirmationCode}) }}

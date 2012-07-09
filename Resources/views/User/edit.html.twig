@@ -1,0 +1,102 @@
+{% extends '::base.html.twig' %}
+{% block title %}{% trans %}Edit My Account{% endtrans %}{% endblock %}
+
+{% block body %}
+
+{% if app.session.hasFlash('notice') %}
+<div class="alert-message fail">
+    <p>{{ app.session.flash('notice') | raw }}</p>
+</div>
+{% endif %}
+{% if app.session.hasFlash('success') %}
+<div class="alert-message success">
+    <p>{{ app.session.flash('success') | raw }}</p>
+</div>
+{% endif %}
+{% if app.session.hasFlash('error') %}
+<div class="alert-message error">
+    <p>{{ app.session.flash('error') | raw }}</p>
+</div>
+{% endif %}
+
+{% if message %}
+    <div>{{ message | trans }}</div>
+{% endif %}
+
+{% if form_errors(form) %}
+    <div>{{ form_errors(form) }}</div>
+{% endif %}
+
+<form action="{{ url('user_edit', {'loginName': loginName}) }}" method="post" {{ form_enctype(form) }}>
+
+    {% if oldPassword %}
+        {{ form_errors(form.oldPassword) }}<br />
+        <label>{% trans %}Old Password{% endtrans %}:</label>
+        {{ form_widget(form.oldPassword) }}<br />
+    {% endif %}
+
+    {{ form_errors(form.userPassword) }}<br />
+    <label>{% trans %}New Password{% endtrans %}:</label>
+    {{ form_widget(form.userPassword.Password, {'attr': {'autocomplete': 'off'} }) }}<br />
+
+    <label>{% trans %}Retype New Password{% endtrans %}:</label>
+    {{ form_widget(form.userPassword.RePassword, {'attr': {'autocomplete': 'off'} }) }}<br />
+
+    {% if changeUserName %}
+        {{ form_errors(form.loginName) }}<br />
+        <label>{% trans %}Login Name{% endtrans %}:</label>
+        {{ form_widget(form.loginName) }}<br />
+    {% endif %}
+
+    {{ form_errors(form.email) }}<br />
+    <label>{% trans %}Email{% endtrans %}:</label>
+    {{ form_widget(form.email) }}<br />
+
+    {{ form_errors(form.firstName) }}<br />
+    <label>{% trans %}First Name{% endtrans %}:</label>
+    {{ form_widget(form.firstName) }}<br />
+
+    {{ form_errors(form.lastName) }}<br />
+    <label>{% trans %}Last Name{% endtrans %}:</label>
+    {{ form_widget(form.lastName) }}<br />
+
+    {{ form_errors(form.gender) }}<br />
+    <label>{% trans %}Gender{% endtrans %}:</label>
+    {{ form_widget(form.gender) }}<br />
+
+    {{ form_errors(form.dateOfBirth) }}<br />
+    <label>{% trans %}Date Of Birth{% endtrans %}:</label>
+    {{ form_widget(form.dateOfBirth) }}<br />
+
+    {{ form_errors(form.countryCode) }}<br />
+    <label>{% trans %}Country{% endtrans %}:</label>
+    {{ form_widget(form.countryCode) }}<br />
+
+    {{ form_rest(form) }}
+
+    <input type="submit" name="Edit" value="{% trans %}Edit{% endtrans %}" />
+</form>
+
+<br />
+
+{% if socialAccounts and socialAccounts.isFacebookLinked() %}
+<a href="{{ path('social_unlink', {'social': 'facebook'}) }}" title="{% trans %}unlink facebook{% endtrans %}">{% trans %}unlink facebook{% endtrans %}</a><br /><br />
+{% else %}
+{% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_link','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'link facebook' | trans} %}<br /><br />
+{% endif %}
+
+{% if socialAccounts and socialAccounts.isTwitterLinked() %}
+<a href="{{ path('social_unlink', {'social': 'twitter'}) }}" title="{% trans %}unlink twitter{% endtrans %}">{% trans %}unlink twitter{% endtrans %}</a>
+{% else %}
+<a onclick="startTwitterLink();return false;" target="_blank" title="{% trans %}Twitter Link{% endtrans %}" href="{{ path('twitter_authentication', {'redirectRoute': 'twitter_link'}) }}">{% trans %}Twitter Link{% endtrans %}</a>
+{% endif %}
+
+<script>
+    function startTwitterLink(){
+        newwindow = window.open("{{ path('twitter_authentication', {'redirectRoute': 'twitter_link', 'popup': 'yes'}) }}", '', 'height=200,width=200');
+        if (window.focus) {
+            newwindow.focus();
+        }
+    }
+</script>
+{% endblock %}

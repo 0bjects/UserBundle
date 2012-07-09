@@ -280,4 +280,56 @@ class SocialAccounts {
         return $this->fbTokenExpireDate;
     }
 
+    /**
+     * this function will check if the twitter account is linked
+     * @return boolean true if the twitter account is linked
+     */
+    public function isTwitterLinked() {
+        if ($this->getTwitterId()) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    /**
+     * this function will check if the facebook account is linked
+     * @return boolean true if the facebook account is linked
+     */
+    public function isFacebookLinked() {
+        if ($this->getFacebookId()) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    /**
+     * this function will unlink the user twitter account data
+     */
+    public function unlinkTwitter() {
+        $this->setOauthToken(NULL);
+        $this->setOauthTokenSecret(NULL);
+        $this->setScreenName(NULL);
+        $this->setTwitterId(NULL);
+    }
+
+    /**
+     * this function will unlink the user facebook account data
+     */
+    public function unlinkFacebook() {
+        $this->setFacebookId(NULL);
+        $this->setFbTokenExpireDate(NULL);
+        $this->setAccessToken(NULL);
+    }
+
+    /**
+     * this function will check if we still need this object in the database
+     * @return boolean true if the object has any linked social accounts
+     */
+    public function isNeeded() {
+        if ($this->isFacebookLinked() || $this->isTwitterLinked()) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
 }

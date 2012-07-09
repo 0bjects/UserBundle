@@ -47,8 +47,8 @@
                 <target>أعد البريد الألكترونى</target>
             </trans-unit>
             <trans-unit id="12">
-                <source>RePassword</source>
-                <target>أعد كلمة المرور</target>
+                <source>Retype New Password</source>
+                <target>أعد كلمة المرور الجديده</target>
             </trans-unit>
             <trans-unit id="13">
                 <source>welcome</source>
@@ -149,6 +149,70 @@
             <trans-unit id="37">
                 <source>male</source>
                 <target>ذكر</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>this email was sent to you because you changed your email and your account is now not active</source>
+                <target>لقد تم أرسال هذا البريد الألكترونى لأنك قمت بتعديل عنوان بريدك الألكترونى و أصبح حسابك غير مفعل</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>activate your account</source>
+                <target>فعل حسابك</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>Edit My Account</source>
+                <target>تعديل الحساب الشخصى</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>Edit</source>
+                <target>عدل</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>Done</source>
+                <target>تم بنجاح</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>Twitter Link</source>
+                <target>أربط حسابك على تويتر</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>First Name</source>
+                <target>الأسم الأول</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>Last Name</source>
+                <target>الأسم الأخير</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>Gender</source>
+                <target>النوع</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>Date Of Birth</source>
+                <target>تاريخ الميلاد</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>Country</source>
+                <target>البلد</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>Old Password</source>
+                <target>كلمة المرور القديمه</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>New Password</source>
+                <target>كلمة المرور الجديده</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>unlink facebook</source>
+                <target>الغى اتصال الفيسبوك</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>unlink twitter</source>
+                <target>الغى اتصال تويتر</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>link facebook</source>
+                <target>اربط حسابك على فيسبوك</target>
             </trans-unit>
         </body>
     </file>

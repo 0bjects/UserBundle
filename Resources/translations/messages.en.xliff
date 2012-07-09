@@ -47,8 +47,8 @@
                 <target>ReEmail</target>
             </trans-unit>
             <trans-unit id="12">
-                <source>RePassword</source>
-                <target>RePassword</target>
+                <source>Retype New Password</source>
+                <target>Retype New Password</target>
             </trans-unit>
             <trans-unit id="13">
                 <source>welcome</source>
@@ -149,6 +149,70 @@
             <trans-unit id="37">
                 <source>male</source>
                 <target>male</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>this email was sent to you because you changed your email and your account is now not active</source>
+                <target>this email was sent to you because you changed your email and your account is now not active</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>activate your account</source>
+                <target>activate your account</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>Edit My Account</source>
+                <target>Edit My Account</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>Edit</source>
+                <target>Edit</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>Done</source>
+                <target>Done</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>Twitter Link</source>
+                <target>Twitter Link</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>First Name</source>
+                <target>First Name</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>Last Name</source>
+                <target>Last Name</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>Gender</source>
+                <target>Gender</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>Date Of Birth</source>
+                <target>Date Of Birth</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>Country</source>
+                <target>Country</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>Old Password</source>
+                <target>Old Password</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>New Password</source>
+                <target>New Password</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>unlink facebook</source>
+                <target>unlink facebook</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>unlink twitter</source>
+                <target>unlink twitter</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>link facebook</source>
+                <target>link facebook</target>
             </trans-unit>
         </body>
     </file>

@@ -12,6 +12,22 @@ user_active:
     pattern: /auth/active/{confirmationCode}
     defaults: { _controller: ObjectsUserBundle:User:activation }
 
+user_edit:
+    pattern: /auth/edit/{loginName}
+    defaults: { _controller: ObjectsUserBundle:User:edit }
+
+twitter_link:
+    pattern: /auth/twitter/link
+    defaults: { _controller: ObjectsUserBundle:User:twitterLink }
+
+facebook_link:
+    pattern: /auth/facebook/link
+    defaults: { _controller: ObjectsUserBundle:User:facebookLink }
+
+social_unlink:
+    pattern: /auth/unlink/{social}
+    defaults: { _controller: ObjectsUserBundle:User:socialUnlink }
+
 # routes visible for every one
 signup:
     pattern: /signup
