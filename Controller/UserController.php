@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\HttpFoundation\Response;
 use Objects\APIBundle\Controller\TwitterController;
+use Objects\APIBundle\Controller\LinkedinController;
 use Objects\APIBundle\Controller\FacebookController;
 use Objects\UserBundle\Entity\SocialAccounts;
 use Objects\UserBundle\Entity\User;
@@ -41,14 +42,14 @@ class UserController extends Controller {
                         // last username entered by the user
                         'last_username' => $session->get(SecurityContext::LAST_USERNAME),
                         'error' => $error,
-                            ));
+                    ));
         }
         //return the main page
         return $this->render('ObjectsUserBundle:User:login.html.twig', array(
                     // last username entered by the user
                     'last_username' => $session->get(SecurityContext::LAST_USERNAME),
                     'error' => $error,
-                        ));
+                ));
     }
 
     /**
@@ -648,11 +649,10 @@ class UserController extends Controller {
                 $socialAccounts->setUser($user);
                 $user->setSocialAccounts($socialAccounts);
                 $translator = $this->get('translator');
-                
+
                 //TODO use
                 //send feed to user profile with sign up
                 //FacebookController::postOnUserWallAndFeedAction($faceUser->id, $longLive_accessToken['access_token'], $translator->trans('I have new account on this cool site'), $translator->trans('PROJECT_NAME'), $translator->trans('SITE_DESCRIPTION'), 'PROJECT_ORIGINAL_URL', 'SITE_PICTURE');
-
                 //set flash message to tell user that him/her account has been successfully activated
                 $session->setFlash('notice', $translator->trans('your account is now active'));
                 //user data are valid finish the signup process
@@ -744,7 +744,7 @@ class UserController extends Controller {
             $socialAccounts->unlinkTwitter();
         }
         //check if we still need the object
-        if(!$socialAccounts->isNeeded()){
+        if (!$socialAccounts->isNeeded()) {
             //remove the object
             $em->remove($socialAccounts);
         }
@@ -1104,6 +1104,152 @@ class UserController extends Controller {
         }
         //get a valid one from the database
         return $userRepository->getValidLoginName($loginName);
+    }
+
+    /**
+     * this function will receive user data and ask user to enter his email in case new user
+     * or will signin the user in case linkedIn user
+     * @author Ahmed <a.ibrahim@objects.ws> 
+     */
+    public function linkedInUserDataAction() {
+        //check that a logged in user can not access this action
+        if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
+            //go to the home page
+            return $this->redirect('/');
+        }
+
+        //get the request object
+        $request = $this->getRequest();
+        //get the session object
+        $session = $request->getSession();
+        //get the translator object
+        $translator = $this->get('translator');
+        //get the oauth token from the session
+        $oauth_token = $session->get('oauth_token', FALSE);
+        //get the oauth token secret from the session
+        $oauth_token_secret = $session->get('oauth_token_secret', FALSE);
+        //get linkedIn oauth array from the session
+        $linkedIn_oauth = $session->get('oauth_linkedin', FALSE);
+        //check if we got linkedin data
+        if ($oauth_token && $oauth_token_secret) {
+            //get the user data
+            $userData = LinkedinController::getUserData($this->container->getParameter('linkedin_api_key'), $this->container->getParameter('linkedin_secret_key'), $linkedIn_oauth);
+            //check if we get the user data
+            if ($userData) {
+                $userData = $userData['linkedin'];
+                $userData = json_decode(json_encode((array) simplexml_load_string($userData)), 1);
+
+                //get the entity manager
+                $em = $this->getDoctrine()->getEntityManager();
+                //check if the user linkedId id is in our database
+                $socialAccounts = $em->getRepository('ObjectsUserBundle:SocialAccounts')->findOneBy(array('linkedInId' => $userData['id']));
+                //check if we found the user
+                if ($socialAccounts) {
+                    //user found check if the access tokens have changed
+                    if ($socialAccounts->getOauthToken() != $oauth_token) {
+                        //tokens changed update the tokens
+                        $socialAccounts->setOauthToken($oauth_token);
+                        $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                        //save the new access tokens
+                        $em->flush();
+                    }
+                    //get the user object
+                    $user = $socialAccounts->getUser();
+                    
+                    //try to login the user
+                    try {
+                        // create the authentication token
+                        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                        // give it to the security context
+                        $this->container->get('security.context')->setToken($token);
+                        //redirect the user
+                        return $this->redirectUserAction();
+                    } catch (\Exception $e) {
+                        //failed to login the user go to the login page
+                        return $this->redirect($this->generateUrl('login', array(), TRUE));
+                    }
+                }
+                //create a new user object
+                $user = new User();
+                //create an email form
+                $form = $this->createFormBuilder($user, array(
+                            'validation_groups' => array('email')
+                        ))
+                        ->add('email', 'repeated', array(
+                            'type' => 'email',
+                            'first_name' => 'Email',
+                            'second_name' => 'ReEmail',
+                            'invalid_message' => "The emails don't match",
+                        ))
+                        ->getForm();
+                //check if this is the user posted his data
+                if ($request->getMethod() == 'POST') {
+                    //fill the form data from the request
+                    $form->bindRequest($request);
+                    //check if the form values are correct
+                    if ($form->isValid()) {
+                        //get the container object
+                        $container = $this->container;
+                        //get the user object from the form
+                        $user = $form->getData();
+                        $newUserName = '';
+                        //set the name 
+                        if (isset($userData['first-name'])) {
+                            $user->setFirstName($userData['first-name']);
+                            $newUserName = $userData['first-name'];
+                        }
+                        if (isset($userData['last-name'])) {
+                            $user->setLastName($userData['last-name']);
+                            $newUserName .= '_' . $userData['last-name'];
+                        }
+                        //set a valid login name
+                        $user->setLoginName($this->suggestLoginName(strtolower($newUserName)));
+                        //set the profile url
+                        if (isset($userData['site-standard-profile-request']['url'])) {
+                            $user->setUrl($userData['site-standard-profile-request']['url']);
+                        }
+                        //set the about text
+                        if (isset($userData['summary'])) {
+                            $user->setAbout($userData['summary']);
+                        }
+                        //set user country code
+                        if (isset($userData['location']['country']['code'])) {
+                            $user->setCountryCode($userData['location']['country']['code']);
+                        }
+                        //try to download the user image from linkedIn if user has one
+                        if (isset($userData['picture-url'])) {
+                            $image = LinkedinController::downloadLinkedInImage($userData['picture-url'], $user->getUploadRootDir());
+                            //check if we got an image
+                            if ($image) {
+                                //add the image to the user
+                                $user->setImage($image);
+                            }
+                        }
+
+                        //create social accounts object
+                        $socialAccounts = new SocialAccounts();
+                        $socialAccounts->setOauthToken($oauth_token);
+                        $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                        $socialAccounts->setLinkedInId($userData['id']);
+                        $socialAccounts->setUser($user);
+                        //set the user linkedIn info
+                        $user->setSocialAccounts($socialAccounts);
+
+                        //user data are valid finish the signup process
+                        return $this->finishSignUp($user);
+                    }
+                }
+                return $this->render('ObjectsUserBundle:User:linkedIn_signup.html.twig', array(
+                            'form' => $form->createView()
+                        ));
+            } else {
+                //linkedIn data not found go to the login page
+                return $this->redirect($this->generateUrl('login', array(), TRUE));
+            }
+        } else {
+            //linkedIn data not found go to the login page
+            return $this->redirect($this->generateUrl('login', array(), TRUE));
+        }
     }
 
 }

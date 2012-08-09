@@ -49,3 +49,6 @@ change_password:
     pattern: /change/password/{confirmationCode}/{email}
     defaults: { _controller: ObjectsUserBundle:User:changePassword, confirmationCode: ~, email: ~ }
 
+linkedIn_user_data:
+    pattern:  /linkedIn
+    defaults: { _controller: ObjectsUserBundle:User:linkedInUserData } 

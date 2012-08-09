@@ -1,0 +1,21 @@
+{% extends '::base.html.twig' %}
+{% block title %}{% trans %}LinkedIn Sign up{% endtrans %}{% endblock %}
+
+{% block body %}
+{% if form_errors(form) %}
+    <div>{{ form_errors(form) }}</div>
+{% endif %}
+<form action="{{ url('linkedIn_user_data') }}" method="post" {{ form_enctype(form) }}>
+
+    {{ form_errors(form.email) }}<br />
+    <label>{% trans %}Email{% endtrans %}:</label>
+    {{ form_widget(form.email.Email) }}<br/>
+
+    <label>{% trans %}ReEmail{% endtrans %}:</label>
+    {{ form_widget(form.email.ReEmail) }}<br />
+
+    {{ form_rest(form) }}
+
+    <input type="submit" name="signup" value="{% trans %}Sign up{% endtrans %}" />
+</form>
+{% endblock %}

@@ -50,6 +50,20 @@ class SocialAccounts {
     private $twitterId;
 
     /**
+     * @var string $linkedInId
+     *
+     * @ORM\Column(name="linkedInId", type="string", length=255, nullable=true, unique=true)
+     */
+    private $linkedInId;
+    
+    /**
+     * @var boolean $postToLinkedIn
+     *
+     * @ORM\Column(name="postToLinkedIn", type="boolean")
+     */
+    private $postToLinkedIn = TRUE;
+    
+    /**
      * @var string $screenName
      *
      * @ORM\Column(name="screenName", type="string", length=255, nullable=true, unique=true)
@@ -332,4 +346,44 @@ class SocialAccounts {
         return FALSE;
     }
 
+
+    /**
+     * Set linkedInId
+     *
+     * @param string $linkedInId
+     */
+    public function setLinkedInId($linkedInId)
+    {
+        $this->linkedInId = $linkedInId;
+    }
+
+    /**
+     * Get linkedInId
+     *
+     * @return string 
+     */
+    public function getLinkedInId()
+    {
+        return $this->linkedInId;
+    }
+
+    /**
+     * Set postToLinkedIn
+     *
+     * @param boolean $postToLinkedIn
+     */
+    public function setPostToLinkedIn($postToLinkedIn)
+    {
+        $this->postToLinkedIn = $postToLinkedIn;
+    }
+
+    /**
+     * Get postToLinkedIn
+     *
+     * @return boolean 
+     */
+    public function getPostToLinkedIn()
+    {
+        return $this->postToLinkedIn;
+    }
 }
