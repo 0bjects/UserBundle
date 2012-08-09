@@ -52,7 +52,7 @@ class User implements AdvancedUserInterface {
      *
      * @ORM\Column(name="loginName", type="string", length=255, nullable=true, unique=true)
      * @Assert\NotNull(groups={"signup"})
-     * @Assert\Regex(pattern="/^\w+$/u", groups={"signup"}, message="Allowed characters are (a..z, _, 0..9)")
+     * @Assert\Regex(pattern="/^\w+$/u", groups={"signup"}, message="Only characters, numbers and _")
      */
     private $loginName;
 
@@ -201,7 +201,7 @@ class User implements AdvancedUserInterface {
     private $imageHandeled = FALSE;
 
     /**
-     * @Assert\Image
+     * @Assert\Image(groups={"image"})
      * @var \Symfony\Component\HttpFoundation\File\UploadedFile
      */
     public $file;
@@ -222,6 +222,19 @@ class User implements AdvancedUserInterface {
      */
     public function getImage() {
         return $this->image;
+    }
+
+    /**
+     * this function is used to delete the current image
+     */
+    public function removeImage() {
+        //check if we have an old image
+        if ($this->image) {
+            //store the old name to delete the image on the upadate
+            $this->temp = $this->image;
+            //delete the current image
+            $this->setImage(NULL);
+        }
     }
 
     /**
@@ -272,15 +285,14 @@ class User implements AdvancedUserInterface {
      * @ORM\PostUpdate()
      */
     public function upload() {
-        if (NULL === $this->file) {
-            return;
+        if (NULL !== $this->file) {
+            // you must throw an exception here if the file cannot be moved
+            // so that the entity is not persisted to the database
+            // which the UploadedFile move() method does
+            $this->file->move($this->getUploadRootDir(), $this->image);
+            //remove the file as you do not need it any more
+            $this->file = NULL;
         }
-        // you must throw an exception here if the file cannot be moved
-        // so that the entity is not persisted to the database
-        // which the UploadedFile move() method does
-        $this->file->move($this->getUploadRootDir(), $this->image);
-        //remove the file as you do not need it any more
-        $this->file = NULL;
         //check if we have an old image
         if ($this->temp) {
             //try to delete the old image
@@ -565,7 +577,7 @@ class User implements AdvancedUserInterface {
      * @param string $loginName
      */
     public function setLoginName($loginName) {
-        $this->loginName = $loginName;
+        $this->loginName = trim(preg_replace('/\W+/u', '_', $loginName));
     }
 
     /**

@@ -214,6 +214,10 @@
                 <source>link facebook</source>
                 <target>link facebook</target>
             </trans-unit>
+            <trans-unit id="54">
+                <source>No result was found for query although at least one row was expected.</source>
+                <target>Login name is not correct</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

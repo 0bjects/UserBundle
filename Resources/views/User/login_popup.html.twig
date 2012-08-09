@@ -15,6 +15,6 @@
     <input type="submit" name="login" value="{% trans %}Login{% endtrans %}" />
 </form>
 {% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_logging','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'facebook'} %}<br />
-<a target="_blank" title="{% trans %}Twitter Login{% endtrans %}" href="{{ url('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Login{% endtrans %}</a><br />
+<a onclick="newWindow = window.open('{{ url('twitter_authentication', {'redirectRoute': 'twitter_enter', 'popup': 'yes'}) }}', '{% trans %}Twitter Login{% endtrans %}', 'height=200, width=200');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}Twitter Login{% endtrans %}" href="{{ url('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Login{% endtrans %}</a><br />
 <a title="{% trans %}forgot your password{% endtrans %}" href="{{ url('forgot_password') }}">{% trans %}forgot your password{% endtrans %}?</a><br />
 {% trans %}new user{% endtrans %} <a title="{% trans %}Sign up{% endtrans %}" href="{{ url('signup') }}">{% trans %}Sign up{% endtrans %}?</a>

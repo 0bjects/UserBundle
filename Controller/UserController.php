@@ -28,29 +28,11 @@ class UserController extends Controller {
         $request = $this->getRequest();
         //get the session object
         $session = $request->getSession();
-        //create a new response for the user
-        $response = new Response();
         // get the login error if there is one
         if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
             $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
         } else {
             $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
-        }
-        //check if we have an error
-        if (!$error) {
-            //set the caching to every one
-            $response->setPublic();
-            //the caching will be different for each encoding
-            $response->setVary(array('Accept-Encoding', 'X-Requested-With'));
-            //set the response ETag
-            $response->setETag('login');
-            //set the time before we need to get this page again
-            $response->setSharedMaxAge(604800);
-            // Check that the Response is not modified for the given Request
-            if ($response->isNotModified($request)) {
-                // return the 304 Response immediately
-                return $response;
-            }
         }
         //check if it is an ajax request
         if ($request->isXmlHttpRequest()) {
@@ -59,14 +41,14 @@ class UserController extends Controller {
                         // last username entered by the user
                         'last_username' => $session->get(SecurityContext::LAST_USERNAME),
                         'error' => $error,
-                            ), $response);
+                            ));
         }
         //return the main page
         return $this->render('ObjectsUserBundle:User:login.html.twig', array(
                     // last username entered by the user
                     'last_username' => $session->get(SecurityContext::LAST_USERNAME),
                     'error' => $error,
-                        ), $response);
+                        ));
     }
 
     /**
@@ -149,18 +131,11 @@ class UserController extends Controller {
         $request = $this->getRequest();
         //get the session object
         $session = $request->getSession();
-        //check that a logged in user can not access this action
-        if (FALSE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
-            //set the redirect route for the user
-            $session->set('redirectUrl', $this->generateUrl('user_edit', array('loginName' => $loginName)));
-            //forward to login
-            return $this->forward('ObjectsUserBundle:User:login');
-        }
         //get the entity manager
         $em = $this->getDoctrine()->getEntityManager();
         try {
             //try to find the requested user object
-            $requestedUser = $em->getRepository('ObjectsUserBundle:User')->getUserData($loginName);
+            $requestedUser = $em->getRepository('ObjectsUserBundle:User')->findOneByLoginName($loginName);
         } catch (\Exception $e) {
             //the user not found return 404 response
             throw $this->createNotFoundException('user not found');
@@ -310,17 +285,22 @@ class UserController extends Controller {
                 }
                 //check if we need to redirect the user
                 if ($redirect) {
+                    //set the success flash
+                    $session->setFlash('success', $translator->trans('Done'));
                     //make the user fully authenticated and refresh his roles
                     try {
                         // create the authentication token
                         $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                         // give it to the security context
-                        $this->container->get('security.context')->setToken($token);
+                        $this->get('security.context')->setToken($token);
                     } catch (\Exception $e) {
-                        
+                        //can not reload the user object log out the user
+                        $this->get('security.context')->setToken(null);
+                        //invalidate the current user session
+                        $this->getRequest()->getSession()->invalidate();
+                        //redirect to the login page
+                        return $this->redirect($this->generateUrl('login', array(), TRUE));
                     }
-                    //set the success flash
-                    $session->setFlash('success', $translator->trans('Done'));
                     //redirect the user
                     return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
                 }
@@ -430,11 +410,15 @@ class UserController extends Controller {
                     // create the authentication token
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     // give it to the security context
-                    $this->container->get('security.context')->setToken($token);
+                    $this->get('security.context')->setToken($token);
                     //redirect the user
                     return $this->redirectUserAction();
                 } catch (\Exception $e) {
-                    //failed to login the user go to the login page
+                    //can not reload the user object log out the user
+                    $this->get('security.context')->setToken(null);
+                    //invalidate the current user session
+                    $this->getRequest()->getSession()->invalidate();
+                    //redirect to the login page
                     return $this->redirect($this->generateUrl('login', array(), TRUE));
                 }
             }
@@ -560,11 +544,15 @@ class UserController extends Controller {
                 // create the authentication token
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 // give it to the security context
-                $this->container->get('security.context')->setToken($token);
+                $this->get('security.context')->setToken($token);
                 //redirect the user
                 return $this->redirectUserAction();
             } catch (\Exception $e) {
-                //failed to login the user go to the login page
+                //can not reload the user object log out the user
+                $this->get('security.context')->setToken(null);
+                //invalidate the current user session
+                $this->getRequest()->getSession()->invalidate();
+                //redirect to the login page
                 return $this->redirect($this->generateUrl('login', array(), TRUE));
             }
         } else {
@@ -619,11 +607,15 @@ class UserController extends Controller {
                     // create the authentication token
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     // give it to the security context
-                    $this->container->get('security.context')->setToken($token);
+                    $this->get('security.context')->setToken($token);
                     //redirect the user
                     return $this->redirectUserAction();
                 } catch (\Exception $e) {
-                    //failed to login the user go to the login page
+                    //can not reload the user object log out the user
+                    $this->get('security.context')->setToken(null);
+                    //invalidate the current user session
+                    $this->getRequest()->getSession()->invalidate();
+                    //redirect to the login page
                     return $this->redirect($this->generateUrl('login', array(), TRUE));
                 }
             } else {
@@ -821,9 +813,13 @@ class UserController extends Controller {
             // create the authentication token
             $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
             // give it to the security context
-            $this->container->get('security.context')->setToken($token);
+            $this->get('security.context')->setToken($token);
         } catch (\Exception $e) {
-            //failed to login the user go to the login page
+            //can not reload the user object log out the user
+            $this->get('security.context')->setToken(null);
+            //invalidate the current user session
+            $this->getRequest()->getSession()->invalidate();
+            //redirect to the login page
             return $this->redirect($this->generateUrl('login', array(), TRUE));
         }
         //go to the home page
@@ -873,6 +869,20 @@ class UserController extends Controller {
                 $em->flush();
                 //set a success flag
                 $session->setFlash('success', $translator->trans('your account is now active'));
+                //try to refresh the user object roles in the firewall session
+                try {
+                    // create the authentication token
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    // give it to the security context
+                    $this->get('security.context')->setToken($token);
+                } catch (\Exception $e) {
+                    //can not reload the user object log out the user
+                    $this->get('security.context')->setToken(null);
+                    //invalidate the current user session
+                    $this->getRequest()->getSession()->invalidate();
+                    //redirect to the login page
+                    return $this->redirect($this->generateUrl('login', array(), TRUE));
+                }
             } else {
                 //set an error flag
                 $session->setFlash('error', $translator->trans('invalid confirmation code'));
@@ -975,7 +985,7 @@ class UserController extends Controller {
         //check if the user came from the email link
         if ($confirmationCode && $email) {
             //try to get the user from the database
-            $user = $this->getDoctrine()->getRepository('ObjectsUserBundle:User')->findoneBy(array('email' => $email, 'confirmationCode' => $confirmationCode));
+            $user = $em->getRepository('ObjectsUserBundle:User')->findoneBy(array('email' => $email, 'confirmationCode' => $confirmationCode));
             //check if we found the user
             if ($user) {
                 //try to login the user
@@ -983,9 +993,7 @@ class UserController extends Controller {
                     // create the authentication token
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     // give it to the security context
-                    $this->container->get('security.context')->setToken($token);
-                    //save the new login time
-                    $em->flush();
+                    $this->get('security.context')->setToken($token);
                     //check if the user is active
                     if (FALSE === $this->get('security.context')->isGranted('ROLE_USER')) {
                         //activate the user if not active

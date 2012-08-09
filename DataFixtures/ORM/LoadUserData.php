@@ -14,6 +14,7 @@ use Objects\UserBundle\Entity\Role;
 class LoadUserData implements FixtureInterface {
 
     public function load(ObjectManager $manager) {
+        // load the main required roles
 
         // create the ROLE_ADMIN role
         $roleAdmin = new Role();
@@ -38,27 +39,24 @@ class LoadUserData implements FixtureInterface {
         // create admin user
         $user = new User();
         $user->setLoginName('Objects');
-        $user->setPassword('0bjects123');
+        $user->setUserPassword('0bjects123');
         $user->setEmail('objects@objects.ws');
-        $user->hashPassword();
         $user->getUserRoles()->add($roleAdmin);
         $manager->persist($user);
 
         // create admin user
         $user1 = new User();
         $user1->setLoginName('mahmoud');
-        $user1->setPassword('123');
+        $user1->setUserPassword('123');
         $user1->setEmail('mahmoud@objects.ws');
-        $user1->hashPassword();
         $user1->getUserRoles()->add($roleAdmin);
         $manager->persist($user1);
 
         // create active user
         $user2 = new User();
         $user2->setLoginName('Ahmed');
-        $user2->setPassword('123');
+        $user2->setUserPassword('123');
         $user2->setEmail('ahmed@objects.ws');
-        $user2->hashPassword();
         $user2->getUserRoles()->add($roleUser);
         $manager->persist($user2);
 
@@ -66,9 +64,8 @@ class LoadUserData implements FixtureInterface {
         //create a user
         $user3 = new User();
         $user3->setLoginName('mirehan');
-        $user3->setPassword('123');
+        $user3->setUserPassword('123');
         $user3->setEmail('mirehan@objects.ws');
-        $user3->hashPassword();
         $user3->getUserRoles()->add($roleUser);
         $user3->getUserRoles()->add($roleUserName);
         $manager->persist($user3);
@@ -76,9 +73,8 @@ class LoadUserData implements FixtureInterface {
         //create a NotActivated user
         $user4 = new User();
         $user4->setLoginName('notactive');
-        $user4->setPassword('123');
+        $user4->setUserPassword('123');
         $user4->setEmail('notactive@objects.ws');
-        $user4->hashPassword();
         $user4->getUserRoles()->add($roleNotActive);
         $manager->persist($user4);
 

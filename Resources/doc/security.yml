@@ -35,7 +35,7 @@ security:
 
             remember_me:
                 key:      "%secret%"
-                # the next lifetime is in seconds (7days)
+                # the next lifetime is in seconds (7days) max 86391359
                 lifetime: 604800
                 path:     /
 

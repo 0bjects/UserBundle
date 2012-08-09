@@ -10,6 +10,10 @@
                 <source>The passwords don't match</source>
                 <target>كلمة المرور لا تشبه تكرارها</target>
             </trans-unit>
+            <trans-unit id="3">
+                <source>Only characters, numbers and _</source>
+                <target>فقط حروف و _ و أرقام</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

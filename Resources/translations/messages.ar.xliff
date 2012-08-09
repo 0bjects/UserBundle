@@ -214,6 +214,10 @@
                 <source>link facebook</source>
                 <target>اربط حسابك على فيسبوك</target>
             </trans-unit>
+            <trans-unit id="54">
+                <source>No result was found for query although at least one row was expected.</source>
+                <target>خطأ فى أسم الدخول</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
