@@ -84,26 +84,49 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
         $offset = $result[0]['offset'] + 1;
         return $loginName . $offset;
     }
-    
+
     /**
      * this function will get the count of the logged in users
      * the UpdateUserLastSeenListener service must be active to return valid number
      * @author Mahmoud
      * @return integer the count of the logged in users 
      */
-    public function getLoggedUsersCount(){
-        $query = '
+    public function getLoggedUsersCount() {
+        $queryString = '
             SELECT count(u.id)
             FROM ObjectsUserBundle:User u
             WHERE u.lastSeen > :time
             ';
         $query = $this->getEntityManager()
-                ->createQuery($query);
+                ->createQuery($queryString);
         $dateTime = new \DateTime();
         $dateTime->modify('-5 minute');
         $query->setParameter('time', $dateTime);
         $result = $query->getResult();
         return $result[0][1];
+    }
+
+    /**
+     * this function will return a user object and his social accounts object if found
+     * @author Mahmoud
+     * @param integer $userId the user id to get his object
+     * @return null|\Objects\UserBundle\Entity\User
+     */
+    public function getUserWithSocialAccounts($userId) {
+        $query = $this->getEntityManager()
+                ->createQuery('
+                     SELECT u, s
+                     FROM Objects\UserBundle\Entity\User u
+                     LEFT JOIN u.socialAccounts s
+                     WHERE u.id = :userId
+                    ');
+        $query->setParameter('userId', $userId);
+        try {
+            $user = $query->getSingleResult();
+        } catch (\Exception $e) {
+            $user = NULL;
+        }
+        return $user;
     }
 
 }

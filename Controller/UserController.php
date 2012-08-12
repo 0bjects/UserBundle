@@ -68,6 +68,13 @@ class UserController extends Controller {
             if (!$rediretUrl) {
                 //redirect to home page
                 $rediretUrl = '/';
+                //get the current enviroment
+                $enviroment = $this->container->getParameter('kernel.environment');
+                //check if this is the development enviroment
+                if ($enviroment == 'dev') {
+                    //add the development enviroment entry point
+                    $rediretUrl .= 'app_dev.php';
+                }
             }
         } else {
             //remove the redirect url from the session
@@ -80,6 +87,7 @@ class UserController extends Controller {
      * the signup action
      * the link to this page should not be visible for the logged in user
      * @author Mahmoud
+     * @todo add flash message or render another twig for the logged in users
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function signUpAction() {
@@ -324,10 +332,14 @@ class UserController extends Controller {
      * @author Mahmoud
      */
     public function twitterLinkAction() {
-        //get the user object from the firewall
-        $user = $this->get('security.context')->getToken()->getUser();
+        //get the entity manager
+        $em = $this->getDoctrine()->getEntityManager();
+        //reload the user object from the database
+        $user = $em->getRepository('ObjectsUserBundle:User')->getUserWithSocialAccounts($this->get('security.context')->getToken()->getUser()->getId());
         //get the request object
         $request = $this->getRequest();
+        //get the translator object
+        $translator = $this->get('translator');
         //get the session object
         $session = $request->getSession();
         //get the oauth token from the session
@@ -340,8 +352,6 @@ class UserController extends Controller {
         $screen_name = $session->get('screen_name', FALSE);
         //check if we got twitter data
         if ($oauth_token && $oauth_token_secret && $twitterId && $screen_name) {
-            //get the entity manager
-            $em = $this->getDoctrine()->getEntityManager();
             //get the user social account object
             $socialAccounts = $user->getSocialAccounts();
             //check if the user does not have a social account object
@@ -360,7 +370,12 @@ class UserController extends Controller {
             //save the data for the user
             $em->flush();
             //set the success flag in the session
-            $session->setFlash('success', $this->get('translator')->trans('Done'));
+            $session->setFlash('success', $translator->trans('Done'));
+        } else {
+            //something went wrong clear the session and set a flash to try again
+            $session->clear();
+            //set the error flag in the session
+            $session->setFlash('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_link'), TRUE) . '">' . $translator->trans('try again') . '</a>');
         }
         //twitter data not found go to the signup page
         return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
@@ -368,7 +383,8 @@ class UserController extends Controller {
 
     /**
      * this function is used to signup or login the user from twitter
-     * @author Mahmoud 
+     * @author Mahmoud
+     * @todo add flash message or render another twig for the logged in users
      */
     public function twitterEnterAction() {
         //check that a logged in user can not access this action
@@ -376,6 +392,8 @@ class UserController extends Controller {
             //go to the home page
             return $this->redirect('/');
         }
+        //get the translator object
+        $translator = $this->get('translator');
         //get the request object
         $request = $this->getRequest();
         //get the session object
@@ -393,9 +411,11 @@ class UserController extends Controller {
             //get the entity manager
             $em = $this->getDoctrine()->getEntityManager();
             //check if the user twitter id is in our database
-            $socialAccounts = $em->getRepository('ObjectsUserBundle:SocialAccounts')->findOneBy(array('twitterId' => $twitterId));
+            $user = $em->getRepository('ObjectsUserBundle:SocialAccounts')->getUserWithRoles($twitterId);
             //check if we found the user
-            if ($socialAccounts) {
+            if ($user) {
+                //get the social accounts object object
+                $socialAccounts = $user->getSocialAccounts();
                 //user found check if the access tokens have changed
                 if ($socialAccounts->getOauthToken() != $oauth_token) {
                     //tokens changed update the tokens
@@ -404,8 +424,8 @@ class UserController extends Controller {
                     //save the new access tokens
                     $em->flush();
                 }
-                //get the user object
-                $user = $socialAccounts->getUser();
+                //set the success flag in the session
+                $session->setFlash('success', $translator->trans('Done'));
                 //try to login the user
                 try {
                     // create the authentication token
@@ -418,7 +438,7 @@ class UserController extends Controller {
                     //can not reload the user object log out the user
                     $this->get('security.context')->setToken(null);
                     //invalidate the current user session
-                    $this->getRequest()->getSession()->invalidate();
+                    $session->invalidate();
                     //redirect to the login page
                     return $this->redirect($this->generateUrl('login', array(), TRUE));
                 }
@@ -489,8 +509,12 @@ class UserController extends Controller {
                         'form' => $form->createView()
                     ));
         } else {
-            //twitter data not found go to the signup page
-            return $this->redirect($this->generateUrl('signup', array(), TRUE));
+            //something went wrong clear the session and set a flash to try again
+            $session->clear();
+            //set the error flag in the session
+            $session->setFlash('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_enter'), TRUE) . '">' . $translator->trans('try again') . '</a>');
+            //twitter data not found go to the login page
+            return $this->redirect($this->generateUrl('login', array(), TRUE));
         }
     }
 
@@ -808,6 +832,8 @@ class UserController extends Controller {
         ;
         //send the email
         $this->get('mailer')->send($message);
+        //set the success flag in the session
+        $this->getRequest()->getSession()->setFlash('success', $this->get('translator')->trans('Done'));
         //try to login the user
         try {
             // create the authentication token
@@ -822,8 +848,17 @@ class UserController extends Controller {
             //redirect to the login page
             return $this->redirect($this->generateUrl('login', array(), TRUE));
         }
+        //redirect to home page
+        $rediretUrl = '/';
+        //get the current enviroment
+        $enviroment = $this->container->getParameter('kernel.environment');
+        //check if this is the development enviroment
+        if ($enviroment == 'dev') {
+            //add the development enviroment entry point
+            $rediretUrl .= 'app_dev.php';
+        }
         //go to the home page
-        return $this->redirect('/');
+        return $this->redirect($rediretUrl);
     }
 
     /**
@@ -888,8 +923,8 @@ class UserController extends Controller {
                 $session->setFlash('error', $translator->trans('invalid confirmation code'));
             }
         }
-        //go to the home page
-        return $this->redirect('/');
+        //go to the edit profile page
+        return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
     }
 
     /**
@@ -1071,14 +1106,22 @@ class UserController extends Controller {
         $request = $this->getRequest();
         //check if form is posted
         if ($request->getMethod() == 'POST') {
+            //get the session object
+            $session = $request->getSession();
             //get the user object from the firewall
             $user = $this->get('security.context')->getToken()->getUser();
             //set the delete flag
             $user->setEnabled(FALSE);
             //save the delete flag
             $this->getDoctrine()->getEntityManager()->flush();
-            //go to home page
-            return $this->redirect($this->generateUrl('logout', array(), TRUE));
+            //logout the user
+            $this->get('security.context')->setToken(null);
+            //invalidate the current user session
+            $session->invalidate();
+            //set the success flag
+            $session->setFlash('success', $this->get('translator')->trans('Done'));
+            //redirect to the login page
+            return $this->redirect($this->generateUrl('login', array(), TRUE));
         }
         return $this->render('ObjectsUserBundle:User:delete_account.html.twig');
     }
@@ -1155,7 +1198,7 @@ class UserController extends Controller {
                     }
                     //get the user object
                     $user = $socialAccounts->getUser();
-                    
+
                     //try to login the user
                     try {
                         // create the authentication token

@@ -12,4 +12,28 @@ use Doctrine\ORM\EntityRepository;
  */
 class SocialAccountsRepository extends EntityRepository {
 
+    /**
+     * this function will get the user object and his roles
+     * @author Mahmoud
+     * @param integer $twitterId the user social account twitter id
+     * @return null|\Objects\UserBundle\Entity\User
+     */
+    public function getUserWithRoles($twitterId) {
+        $query = $this->getEntityManager()
+                ->createQuery('
+                     SELECT u, s, r
+                     FROM Objects\UserBundle\Entity\User u
+                     JOIN u.socialAccounts s
+                     LEFT JOIN u.userRoles r
+                     WHERE s.twitterId = :twitterId
+                    ');
+        $query->setParameter('twitterId', $twitterId);
+        try {
+            $user = $query->getSingleResult();
+        } catch (\Exception $e) {
+            $user = NULL;
+        }
+        return $user;
+    }
+
 }
