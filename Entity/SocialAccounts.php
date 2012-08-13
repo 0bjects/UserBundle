@@ -23,7 +23,7 @@ class SocialAccounts {
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\User", inversedBy="socialAccounts", fetch="EAGER")
+     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\User", inversedBy="socialAccounts")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)
      */
     private $user;

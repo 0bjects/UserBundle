@@ -2,8 +2,27 @@
 {% block title %}{% trans %}Login{% endtrans %}{% endblock %}
 
 {% block body %}
+
+{% if app.session.hasFlash('notice') %}
+<div class="alert-message fail">
+    {{ app.session.flash('notice') | raw }}
+</div>
+{% endif %}
+{% if app.session.hasFlash('success') %}
+<div class="alert-message success">
+    {{ app.session.flash('success') | raw }}
+</div>
+{% endif %}
+{% if app.session.hasFlash('error') %}
+<div class="alert-message error">
+    {{ app.session.flash('error') | raw }}
+</div>
+{% endif %}
+
 {% if error %}
-    <div>{{ error.message|trans }}</div>
+<div class="alert-message error">
+    {{ error.message | trans }}
+</div>
 {% endif %}
 
 <form action="{{ url('login_check') }}" method="post">

@@ -33,7 +33,7 @@ class User implements AdvancedUserInterface {
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\SocialAccounts", mappedBy="user", fetch="EAGER",cascade={"remove", "persist"})
+     * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\SocialAccounts", mappedBy="user",cascade={"remove", "persist"})
      */
     private $socialAccounts;
 
@@ -377,6 +377,20 @@ class User implements AdvancedUserInterface {
                 return $this->email;
             }
         }
+    }
+    
+    /**
+     * this function is used by php to know which attributes to serialize
+     * the returned array must not contain any one to one or one to many relation object
+     * @return array
+     */
+    public function __sleep() {
+        return array(
+            'id', 'loginName', 'email', 'password', 'confirmationCode',
+            'createdAt', 'lastSeen', 'firstName', 'lastName', 'about',
+            'gender', 'dateOfBirth', 'url', 'countryCode', 'suggestedLanguage',
+            'locked', 'enabled', 'salt', 'image'
+        );
     }
 
     /**
