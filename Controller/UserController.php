@@ -197,7 +197,7 @@ class UserController extends Controller {
                     'expanded' => true,
                     'multiple' => false
                 ))
-                ->add('dateOfBirth')
+                ->add('dateOfBirth', 'date', array('years' => range(1960, date('Y')), 'required' => FALSE))
                 ->add('firstName')
                 ->add('lastName')
                 ->add('countryCode', 'country', array('required' => false))
