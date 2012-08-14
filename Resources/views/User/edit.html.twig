@@ -5,29 +5,33 @@
 
 {% if app.session.hasFlash('notice') %}
 <div class="alert-message fail">
-    <p>{{ app.session.flash('notice') | raw }}</p>
+{{ app.session.flash('notice') | raw }}
 </div>
 {% endif %}
 {% if app.session.hasFlash('success') %}
 <div class="alert-message success">
-    <p>{{ app.session.flash('success') | raw }}</p>
+{{ app.session.flash('success') | raw }}
 </div>
 {% endif %}
 {% if app.session.hasFlash('error') %}
 <div class="alert-message error">
-    <p>{{ app.session.flash('error') | raw }}</p>
+{{ app.session.flash('error') | raw }}
 </div>
 {% endif %}
 
 {% if message %}
-    <div>{{ message | trans }}</div>
+<div class="alert-message success">
+{{ message | trans }}
+</div>
 {% endif %}
 
 {% if form_errors(form) %}
-    <div>{{ form_errors(form) }}</div>
+<div class="alert-message error">
+{{ form_errors(form) }}
+</div>
 {% endif %}
 
-<form action="{{ url('user_edit', {'loginName': loginName}) }}" method="post" {{ form_enctype(form) }}>
+<form action="{{ path('user_edit') }}" method="post" {{ form_enctype(form) }}>
 
     {% if oldPassword %}
         {{ form_errors(form.oldPassword) }}<br />
@@ -74,7 +78,7 @@
 
     {{ form_rest(form) }}
 
-    <input type="submit" name="Edit" value="{% trans %}Edit{% endtrans %}" />
+    <input type="submit" name="Edit" value="{% trans %}Edit{% endtrans %}" title="{% trans %}Edit{% endtrans %}" />
 </form>
 
 <br />
@@ -88,7 +92,7 @@
 {% if socialAccounts and socialAccounts.isTwitterLinked() %}
 <a href="{{ path('social_unlink', {'social': 'twitter'}) }}" title="{% trans %}unlink twitter{% endtrans %}">{% trans %}unlink twitter{% endtrans %}</a>
 {% else %}
-<a onclick="startTwitterLink();return false;" target="_blank" title="{% trans %}Twitter Link{% endtrans %}" href="{{ path('twitter_authentication', {'redirectRoute': 'twitter_link'}) }}">{% trans %}Twitter Link{% endtrans %}</a>
+<a onclick="javascript:startTwitterLink();return false;" target="_blank" title="{% trans %}Twitter Link{% endtrans %}" href="{{ path('twitter_authentication', {'redirectRoute': 'twitter_link'}) }}">{% trans %}Twitter Link{% endtrans %}</a>
 {% endif %}
 
 <script>

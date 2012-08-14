@@ -3,7 +3,6 @@
 namespace Objects\UserBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Validator\Constraints\Collection;
@@ -132,32 +131,19 @@ class UserController extends Controller {
     /**
      * the edit action
      * @author Mahmoud
-     * @param string $loginName the user login name to edit his profile
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editAction($loginName) {
+    public function editAction() {
         //get the request object
         $request = $this->getRequest();
         //get the session object
         $session = $request->getSession();
         //get the entity manager
         $em = $this->getDoctrine()->getEntityManager();
-        try {
-            //try to find the requested user object
-            $requestedUser = $em->getRepository('ObjectsUserBundle:User')->findOneByLoginName($loginName);
-        } catch (\Exception $e) {
-            //the user not found return 404 response
-            throw $this->createNotFoundException('user not found');
-        }
-        //get the user object from the firewall
-        $loggedInUser = $this->get('security.context')->getToken()->getUser();
-        //check if the logged in user is the same as the requested one
-        if ($loggedInUser->getId() != $requestedUser->getId()) {
-            //not the same user as the logged in
-            throw new AccessDeniedHttpException();
-        }
         //get the translator object
         $translator = $this->get('translator');
+        //get the user object from the firewall
+        $loggedInUser = $this->get('security.context')->getToken()->getUser();
         //get the user social accounts object
         $socialAccounts = $loggedInUser->getSocialAccounts();
         //initialize the success message
@@ -280,7 +266,7 @@ class UserController extends Controller {
                             break;
                         }
                     }
-                    //redirect the user to remove the login name from the form and to correct the url and refresh his roles
+                    //redirect the user to remove the login name from the form and refresh his roles
                     $redirect = TRUE;
                 }
                 //set the password for the user if changed
@@ -311,7 +297,7 @@ class UserController extends Controller {
                         return $this->redirect($this->generateUrl('login', array(), TRUE));
                     }
                     //redirect the user
-                    return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
+                    return $this->redirect($this->generateUrl('user_edit', array(), TRUE));
                 }
                 //set the success message
                 $message = 'Done';
@@ -319,7 +305,6 @@ class UserController extends Controller {
         }
         return $this->render('ObjectsUserBundle:User:edit.html.twig', array(
                     'form' => $form->createView(),
-                    'loginName' => $loggedInUser->getLoginName(),
                     'oldPassword' => $oldPassword,
                     'changeUserName' => $changeUserName,
                     'message' => $message,

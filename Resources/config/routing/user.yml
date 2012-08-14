@@ -13,7 +13,7 @@ user_active:
     defaults: { _controller: ObjectsUserBundle:User:activation }
 
 user_edit:
-    pattern: /auth/edit/{loginName}
+    pattern: /auth/edit
     defaults: { _controller: ObjectsUserBundle:User:edit }
 
 twitter_link:
