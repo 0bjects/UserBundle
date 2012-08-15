@@ -242,6 +242,30 @@
                 <source>warning</source>
                 <target>warning</target>
             </trans-unit>
+            <trans-unit id="61">
+                <source>you will be logged out and logged in as the new user</source>
+                <target>you will be logged out and logged in as the new user</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>Your account is now linked to twitter</source>
+                <target>Your account is now linked to twitter</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>Unlinked successfully</source>
+                <target>Unlinked successfully</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>to our site</source>
+                <target>to our site</target>
+            </trans-unit>
+            <trans-unit id="65">
+                <source>check your email for your activation link</source>
+                <target>check your email for your activation link</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>Your account has been deleted</source>
+                <target>Your account has been deleted</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,6 +1,29 @@
-{% if form_errors(form) %}
-    <div>{{ form_errors(form) }}</div>
+{% if app.session.hasFlash('notice') %}
+<div class="alert-message fail">
+    {{ app.session.flash('notice') | raw }}
+</div>
 {% endif %}
+{% if app.session.hasFlash('success') %}
+<div class="alert-message success">
+    {{ app.session.flash('success') | raw }}
+</div>
+{% endif %}
+{% if app.session.hasFlash('error') %}
+<div class="alert-message error">
+    {{ app.session.flash('error') | raw }}
+</div>
+{% endif %}
+{% if message %}
+<div class="alert-message fail">
+    {{ message | raw }}
+</div>
+{% endif %}
+{% if form_errors(form) %}
+<div class="alert-message error">
+    {{ form_errors(form) }}
+</div>
+{% endif %}
+
 <form action="{{ path('signup') }}" method="post" {{ form_enctype(form) }}>
     {% if loginNameRequired %}
     {{ form_errors(form.loginName) }}<br>
@@ -24,7 +47,7 @@
 
     {{ form_rest(form) }}
 
-    <input type="submit" name="signup" value="{% trans %}Sign up{% endtrans %}" />
+    <input type="submit" title="{% trans %}Sign up{% endtrans %}" value="{% trans %}Sign up{% endtrans %}" />
 </form>
 {% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_logging','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'facebook'} %}<br>
 <a onclick="newWindow = window.open('{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter', 'popup': 'yes'}) }}', '{% trans %}Twitter Sign up{% endtrans %}', 'height=200, width=200');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}Twitter Sign up{% endtrans %}" href="{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Sign up{% endtrans %}</a><br>

@@ -52,7 +52,7 @@
             </trans-unit>
             <trans-unit id="13">
                 <source>welcome</source>
-                <target>اهلا</target>
+                <target>اهلا بك</target>
             </trans-unit>
             <trans-unit id="14">
                 <source>your password is</source>
@@ -241,6 +241,30 @@
             <trans-unit id="60">
                 <source>warning</source>
                 <target>تحذير</target>
+            </trans-unit>
+            <trans-unit id="61">
+                <source>you will be logged out and logged in as the new user</source>
+                <target>سيتم تحويلك للمستخدم الجديد تلقائيا</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>Your account is now linked to twitter</source>
+                <target>تم الأتصال بحسابك الشخصى على تويتر</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>Unlinked successfully</source>
+                <target>تم الفصل بنجاح</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>to our site</source>
+                <target>فى موقعنا</target>
+            </trans-unit>
+            <trans-unit id="65">
+                <source>check your email for your activation link</source>
+                <target>تم أرسال رساله إلى بريدك الألكترونى لتفعل حسابك</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>Your account has been deleted</source>
+                <target>تم مسح حسابك بنجاح</target>
             </trans-unit>
         </body>
     </file>

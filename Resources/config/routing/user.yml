@@ -29,9 +29,6 @@ social_unlink:
     defaults: { _controller: ObjectsUserBundle:User:socialUnlink }
 
 # routes visible for every one
-signup:
-    pattern: /signup
-    defaults: { _controller: ObjectsUserBundle:User:signUp }
 
 twitter_enter:
     pattern: /twitter/enter
@@ -47,7 +44,7 @@ forgot_password:
 
 change_password:
     pattern: /change/password/{confirmationCode}/{email}
-    defaults: { _controller: ObjectsUserBundle:User:changePassword, confirmationCode: ~, email: ~ }
+    defaults: { _controller: ObjectsUserBundle:User:changePassword }
 
 linkedIn_user_data:
     pattern:  /linkedIn

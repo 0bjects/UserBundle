@@ -22,6 +22,13 @@ class UserController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function loginAction() {
+        //initialize an emtpy message string
+        $message = '';
+        //check if we have a logged in user
+        if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
+            //set a hint message for the user
+            $message = $this->get('translator')->trans('you will be logged out and logged in as the new user');
+        }
         //get the request object
         $request = $this->getRequest();
         //get the session object
@@ -39,6 +46,7 @@ class UserController extends Controller {
                         // last username entered by the user
                         'last_username' => $session->get(SecurityContext::LAST_USERNAME),
                         'error' => $error,
+                        'message' => $message
                     ));
         }
         //return the main page
@@ -46,6 +54,7 @@ class UserController extends Controller {
                     // last username entered by the user
                     'last_username' => $session->get(SecurityContext::LAST_USERNAME),
                     'error' => $error,
+                    'message' => $message
                 ));
     }
 
@@ -70,7 +79,7 @@ class UserController extends Controller {
                 //check if this is the development enviroment
                 if ($enviroment == 'dev') {
                     //add the development enviroment entry point
-                    $rediretUrl .= 'app_dev.php';
+                    $rediretUrl .= 'app_dev.php/';
                 }
             }
         } else {
@@ -84,14 +93,15 @@ class UserController extends Controller {
      * the signup action
      * the link to this page should not be visible for the logged in user
      * @author Mahmoud
-     * @todo add flash message or render another twig for the logged in users
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function signUpAction() {
-        //check that a logged in user can not access this action
+        //initialize an emtpy message string
+        $message = '';
+        //check if we have a logged in user
         if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
-            //go to the home page
-            return $this->redirect('/');
+            //set a hint message for the user
+            $message = $this->get('translator')->trans('you will be logged out and logged in as the new user');
         }
         //initialize the form validation groups array
         $formValidationGroups = array('signup');
@@ -162,7 +172,8 @@ class UserController extends Controller {
         }
         return $this->render($view, array(
                     'form' => $form->createView(),
-                    'loginNameRequired' => $loginNameRequired
+                    'loginNameRequired' => $loginNameRequired,
+                    'message' => $message
                 ));
     }
 
@@ -342,7 +353,7 @@ class UserController extends Controller {
                     return $this->redirect($this->generateUrl('user_edit', array(), TRUE));
                 }
                 //set the success message
-                $message = 'Done';
+                $message = $translator->trans('Done');
             }
         }
         return $this->render('ObjectsUserBundle:User:edit.html.twig', array(
@@ -397,7 +408,7 @@ class UserController extends Controller {
             //save the data for the user
             $em->flush();
             //set the success flag in the session
-            $session->setFlash('success', $translator->trans('Done'));
+            $session->setFlash('success', $translator->trans('Your account is now linked to twitter'));
         } else {
             //something went wrong clear the session and set a flash to try again
             $session->clear();
@@ -411,14 +422,8 @@ class UserController extends Controller {
     /**
      * this function is used to signup or login the user from twitter
      * @author Mahmoud
-     * @todo add flash message or render another twig for the logged in users
      */
     public function twitterEnterAction() {
-        //check that a logged in user can not access this action
-        if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
-            //go to the home page
-            return $this->redirect('/');
-        }
         //get the translator object
         $translator = $this->get('translator');
         //get the request object
@@ -451,8 +456,6 @@ class UserController extends Controller {
                     //save the new access tokens
                     $em->flush();
                 }
-                //set the success flag in the session
-                $session->setFlash('success', $translator->trans('Done'));
                 //try to login the user
                 try {
                     // create the authentication token
@@ -462,12 +465,14 @@ class UserController extends Controller {
                     //redirect the user
                     return $this->redirectUserAction();
                 } catch (\Exception $e) {
+                    //set the error flag in the session
+                    $session->setFlash('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_enter')) . '">' . $translator->trans('try again') . '</a>');
                     //can not reload the user object log out the user
                     $this->get('security.context')->setToken(null);
                     //invalidate the current user session
                     $session->invalidate();
                     //redirect to the login page
-                    return $this->redirect($this->generateUrl('login', array(), TRUE));
+                    return $this->redirect($this->generateUrl('login'));
                 }
             }
             //create a new user object
@@ -542,7 +547,7 @@ class UserController extends Controller {
             //something went wrong clear the session and set a flash to try again
             $session->clear();
             //set the error flag in the session
-            $session->setFlash('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_enter'), TRUE) . '">' . $translator->trans('try again') . '</a>');
+            $session->setFlash('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_enter')) . '">' . $translator->trans('try again') . '</a>');
             //twitter data not found go to the login page
             return $this->redirect($this->generateUrl('login', array(), TRUE));
         }
@@ -774,7 +779,7 @@ class UserController extends Controller {
         }
         $em->flush();
 
-        return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
+        return $this->redirect($this->generateUrl('user_edit'));
     }
 
     /**
@@ -805,9 +810,9 @@ class UserController extends Controller {
         //save the changes
         $em->flush();
         //set a success flag in the session
-        $this->getRequest()->getSession()->setFlash('success', $this->get('translator')->trans('Done'));
+        $this->getRequest()->getSession()->setFlash('success', $this->get('translator')->trans('Unlinked successfully'));
         //redirect the user to the edit page
-        return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
+        return $this->redirect($this->generateUrl('user_edit'));
     }
 
     /**
@@ -862,8 +867,16 @@ class UserController extends Controller {
         ;
         //send the email
         $this->get('mailer')->send($message);
+        //get the translator object
+        $translator = $this->get('translator');
+        //initialize a welcome flash message
+        $welcomeMessage = $translator->trans('welcome') . ' ' . $user->__toString() . ' ' . $translator->trans('to our site');
+        //check if the user need to activate his account
+        if (!$active) {
+            $welcomeMessage .= ' ' . $this->get('translator')->trans('check your email for your activation link');
+        }
         //set the success flag in the session
-        $this->getRequest()->getSession()->setFlash('success', $this->get('translator')->trans('Done'));
+        $this->getRequest()->getSession()->setFlash('success', $welcomeMessage);
         //try to login the user
         try {
             // create the authentication token
@@ -885,7 +898,7 @@ class UserController extends Controller {
         //check if this is the development enviroment
         if ($enviroment == 'dev') {
             //add the development enviroment entry point
-            $rediretUrl .= 'app_dev.php';
+            $rediretUrl .= 'app_dev.php/';
         }
         //go to the home page
         return $this->redirect($rediretUrl);
@@ -946,7 +959,7 @@ class UserController extends Controller {
                     //invalidate the current user session
                     $this->getRequest()->getSession()->invalidate();
                     //redirect to the login page
-                    return $this->redirect($this->generateUrl('login', array(), TRUE));
+                    return $this->redirect($this->generateUrl('login'));
                 }
             } else {
                 //set an error flag
@@ -954,7 +967,7 @@ class UserController extends Controller {
             }
         }
         //go to the edit profile page
-        return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
+        return $this->redirect($this->generateUrl('user_edit'));
     }
 
     /**
@@ -964,10 +977,6 @@ class UserController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function forgotPasswordAction() {
-        //check that a logged in user can not access this action
-        if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
-            return $this->redirect('/');
-        }
         //get the request object
         $request = $this->getRequest();
         //prepare the form validation constrains
@@ -1032,11 +1041,11 @@ class UserController extends Controller {
     /**
      * the change of password page
      * @author mahmoud
-     * @param string|NULL $confirmationCode the token sent to the user email
-     * @param string|NULL $email the user email
+     * @param string $confirmationCode the token sent to the user email
+     * @param string $email the user email
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function changePasswordAction($confirmationCode = NULL, $email = NULL) {
+    public function changePasswordAction($confirmationCode, $email) {
         //get the request object
         $request = $this->getRequest();
         //get the session object
@@ -1045,51 +1054,14 @@ class UserController extends Controller {
         $translator = $this->get('translator');
         //get the entity manager
         $em = $this->getDoctrine()->getEntityManager();
-        //the success of login flag used to generate corrcet submit route for the form
-        $loginSuccess = FALSE;
-        //check if the user came from the email link
-        if ($confirmationCode && $email) {
-            //try to get the user from the database
-            $user = $em->getRepository('ObjectsUserBundle:User')->findoneBy(array('email' => $email, 'confirmationCode' => $confirmationCode));
-            //check if we found the user
-            if ($user) {
-                //try to login the user
-                try {
-                    // create the authentication token
-                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                    // give it to the security context
-                    $this->get('security.context')->setToken($token);
-                    //check if the user is active
-                    if (FALSE === $this->get('security.context')->isGranted('ROLE_USER')) {
-                        //activate the user if not active
-                        $this->activationAction($confirmationCode);
-                        //clear the flashes set by the activation action
-                        $session->clearFlashes();
-                    }
-                    //set the login success flag
-                    $loginSuccess = TRUE;
-                } catch (\Exception $e) {
-                    
-                }
-            } else {
-                //set an error flag
-                $session->setFlash('error', $translator->trans('invalid email or confirmation code'));
-                //go to home page
-                return $this->redirect('/');
-            }
-        } else {
-            //check if the user is logged in from the login form
-            if (FALSE === $this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
-                //set the redirect url to the login action
-                $session->set('redirectUrl', $this->generateUrl('change_password', array(), TRUE));
-                //require the login from the user
-                return $this->redirect($this->generateUrl('login', array(), TRUE));
-            } else {
-                //get the user object from the firewall
-                $user = $this->get('security.context')->getToken()->getUser();
-                //set the login success flag
-                $loginSuccess = TRUE;
-            }
+        //try to get the user from the database
+        $user = $em->getRepository('ObjectsUserBundle:User')->findoneBy(array('email' => $email, 'confirmationCode' => $confirmationCode));
+        //check if we found the user
+        if (!$user) {
+            //set an error flag
+            $session->setFlash('error', $translator->trans('invalid email or confirmation code'));
+            //go to the login page
+            return $this->redirect($this->generateUrl('login'));
         }
         //create a password form
         $form = $this->createFormBuilder($user, array(
@@ -1114,13 +1086,33 @@ class UserController extends Controller {
                 $em->flush();
                 //set the success flag
                 $session->setFlash('success', $translator->trans('password changed'));
-                //go to home page
-                return $this->redirect('/');
+                //try to login the user
+                try {
+                    // create the authentication token
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    // give it to the security context
+                    $this->get('security.context')->setToken($token);
+                    //check if the user is active
+                    if (FALSE === $this->get('security.context')->isGranted('ROLE_USER')) {
+                        //activate the user if not active
+                        $this->activationAction($confirmationCode);
+                        //clear the flashes set by the activation action
+                        $session->clearFlashes();
+                        //go to the edit profile page
+                        return $this->redirect($this->generateUrl('user_edit'));
+                    }
+                } catch (\Exception $e) {
+                    //can not reload the user object log out the user
+                    $this->get('security.context')->setToken(null);
+                    //invalidate the current user session
+                    $request->getSession()->invalidate();
+                    //redirect to the login page
+                    return $this->redirect($this->generateUrl('login'));
+                }
             }
         }
         return $this->render('ObjectsUserBundle:User:change_password.html.twig', array(
                     'form' => $form->createView(),
-                    'loginSuccess' => $loginSuccess,
                     'user' => $user
                 ));
     }
@@ -1149,9 +1141,9 @@ class UserController extends Controller {
             //invalidate the current user session
             $session->invalidate();
             //set the success flag
-            $session->setFlash('success', $this->get('translator')->trans('Done'));
+            $session->setFlash('success', $this->get('translator')->trans('Your account has been deleted'));
             //redirect to the login page
-            return $this->redirect($this->generateUrl('login', array(), TRUE));
+            return $this->redirect($this->generateUrl('login'));
         }
         return $this->render('ObjectsUserBundle:User:delete_account.html.twig');
     }

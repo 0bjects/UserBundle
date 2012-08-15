@@ -13,7 +13,11 @@
     {{ app.session.flash('error') | raw }}
 </div>
 {% endif %}
-
+{% if message %}
+<div class="alert-message fail">
+    {{ message | raw }}
+</div>
+{% endif %}
 {% if error %}
 <div class="alert-message error">
     {{ error.message | trans }}
@@ -30,7 +34,7 @@
     <label for="remember_me">{% trans %}Remember me{% endtrans %}:</label>
     <input type="checkbox" id="remember_me" name="_remember_me" checked /><br>
 
-    <input type="submit" name="login" value="{% trans %}Login{% endtrans %}" />
+    <input type="submit" title="{% trans %}Login{% endtrans %}" value="{% trans %}Login{% endtrans %}" />
 </form>
 {% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_logging','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'facebook'} %}<br>
 <a onclick="newWindow = window.open('{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter', 'popup': 'yes'}) }}', '{% trans %}Twitter Login{% endtrans %}', 'height=200, width=200');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}Twitter Login{% endtrans %}" href="{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Login{% endtrans %}</a><br>
