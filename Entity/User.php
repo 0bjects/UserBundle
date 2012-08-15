@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Objects\UserBundle\Entity\User
  * 
- * @UniqueEntity(fields={"loginName"}, groups={"signup"})
+ * @UniqueEntity(fields={"loginName"}, groups={"loginName"})
  * @UniqueEntity(fields={"email"}, groups={"signup", "email"})
  * @ORM\Table(indexes={@ORM\Index(name="search_user_name", columns={"loginName"})})
  * @ORM\Entity(repositoryClass="Objects\UserBundle\Entity\UserRepository")
@@ -51,8 +51,8 @@ class User implements AdvancedUserInterface {
      * @var string $loginName
      *
      * @ORM\Column(name="loginName", type="string", length=255, nullable=true, unique=true)
-     * @Assert\NotNull(groups={"signup"})
-     * @Assert\Regex(pattern="/^\w+$/u", groups={"signup"}, message="Only characters, numbers and _")
+     * @Assert\NotNull(groups={"loginName"})
+     * @Assert\Regex(pattern="/^\w+$/u", groups={"loginName"}, message="Only characters, numbers and _")
      */
     private $loginName;
 

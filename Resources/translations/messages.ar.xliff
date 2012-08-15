@@ -107,8 +107,8 @@
                 <target>أشترك معنا</target>
             </trans-unit>
             <trans-unit id="27">
-                <source>warning this action can not be undone are you sure</source>
-                <target>تحذير فى حالة قيامك بهذه الخطوه لن يمكنك التراجع عنها</target>
+                <source>you can not undo this action are you sure you want to continue</source>
+                <target>فى حالة قيامك بهذه الخطوه لن يمكنك التراجع عنها هل أنت متأكد من رغبتك فى المتابعه</target>
             </trans-unit>
             <trans-unit id="28">
                 <source>delete your account</source>
@@ -217,6 +217,30 @@
             <trans-unit id="54">
                 <source>No result was found for query although at least one row was expected.</source>
                 <target>خطأ فى أسم الدخول</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>You can change your login name only once</source>
+                <target>يمكنك تغيير أسم الدخول مره واحده فقط</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>LinkedIn Sign up</source>
+                <target>التسجيل بأستخدام LinkedIn</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>LinkedIn Login</source>
+                <target>الدخول بأستخدام LinkedIn</target>
+            </trans-unit>
+            <trans-unit id="58">
+                <source>About You</source>
+                <target>نبذه عنك</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>Url</source>
+                <target>موقعك الألكترونى</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>warning</source>
+                <target>تحذير</target>
             </trans-unit>
         </body>
     </file>

@@ -107,8 +107,8 @@
                 <target>Sign up</target>
             </trans-unit>
             <trans-unit id="27">
-                <source>warning this action can not be undone are you sure</source>
-                <target>warning this action can not be undone are you sure</target>
+                <source>you can not undo this action are you sure you want to continue</source>
+                <target>you can not undo this action are you sure you want to continue</target>
             </trans-unit>
             <trans-unit id="28">
                 <source>delete your account</source>
@@ -217,6 +217,30 @@
             <trans-unit id="54">
                 <source>No result was found for query although at least one row was expected.</source>
                 <target>Login name is not correct</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>You can change your login name only once</source>
+                <target>You can change your login name only once</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>LinkedIn Sign up</source>
+                <target>LinkedIn Sign up</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>LinkedIn Login</source>
+                <target>LinkedIn Login</target>
+            </trans-unit>
+            <trans-unit id="58">
+                <source>About You</source>
+                <target>About You</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>Url</source>
+                <target>Url</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>warning</source>
+                <target>warning</target>
             </trans-unit>
         </body>
     </file>

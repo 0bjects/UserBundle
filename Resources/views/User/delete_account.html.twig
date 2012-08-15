@@ -1,7 +1,7 @@
-<form name="user_delete_form" action="{{ url('user_delete') }}" method="post"></form>
+<form name="user_delete_form" action="{{ path('user_delete') }}" method="post"></form>
 <script type="text/javascript">
 function confirmUserDelete(){
-    var response = confirm("{% trans %}warning this action can not be undone are you sure{% endtrans %}?");
+    var response = confirm("{% trans %}warning{% endtrans %} {% trans %}you can not undo this action are you sure you want to continue{% endtrans %}?");
     //check if the user pressed ok
     if (response == true){
         //delete the account
@@ -9,5 +9,5 @@ function confirmUserDelete(){
     }
 }
 </script>
-<a title="{% trans %}delete your account{% endtrans %}" href="javascript: confirmUserDelete()">{% trans %}delete your account{% endtrans %}</a><br />
+<a title="{% trans %}delete your account{% endtrans %}" href="javascript:confirmUserDelete()">{% trans %}delete your account{% endtrans %}</a><br>
 <noscript>{% trans %}You have to enable javascript in order to use this feature{% endtrans %}</noscript>

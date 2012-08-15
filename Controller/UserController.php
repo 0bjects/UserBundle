@@ -13,8 +13,6 @@ use Objects\APIBundle\Controller\LinkedinController;
 use Objects\APIBundle\Controller\FacebookController;
 use Objects\UserBundle\Entity\SocialAccounts;
 use Objects\UserBundle\Entity\User;
-use Objects\UserBundle\Form\UserSignUp;
-use Objects\UserBundle\Form\UserSignUpPopUp;
 
 class UserController extends Controller {
 
@@ -95,22 +93,61 @@ class UserController extends Controller {
             //go to the home page
             return $this->redirect('/');
         }
+        //initialize the form validation groups array
+        $formValidationGroups = array('signup');
+        //get the login name configuration
+        $loginNameRequired = $this->container->getParameter('login_name_required');
+        //check if the login name is required
+        if ($loginNameRequired) {
+            //add the login name group to the form validation array
+            $formValidationGroups [] = 'loginName';
+        }
         //get the request object
         $request = $this->getRequest();
         //create an emtpy user object
         $user = new User();
         //check if this is an ajax request
         if ($request->isXmlHttpRequest()) {
-            //create a popup form
-            $form = $this->createForm(new UserSignUpPopUp(), $user);
+            //create a signup form
+            $formBuilder = $this->createFormBuilder($user, array(
+                        'validation_groups' => $formValidationGroups
+                    ))
+                    ->add('email')
+                    ->add('userPassword');
+            //check if the login name is required
+            if ($loginNameRequired) {
+                //add the login name field
+                $formBuilder->add('loginName');
+            }
             //use the popup twig
             $view = 'ObjectsUserBundle:User:signup_popup.html.twig';
         } else {
             //create a signup form
-            $form = $this->createForm(new UserSignUp(), $user);
+            $formBuilder = $this->createFormBuilder($user, array(
+                        'validation_groups' => $formValidationGroups
+                    ))
+                    ->add('email', 'repeated', array(
+                        'type' => 'email',
+                        'first_name' => 'Email',
+                        'second_name' => 'ReEmail',
+                        'invalid_message' => "The emails don't match",
+                    ))
+                    ->add('userPassword', 'repeated', array(
+                'type' => 'password',
+                'first_name' => 'Password',
+                'second_name' => 'RePassword',
+                'invalid_message' => "The passwords don't match",
+                    ));
+            //check if the login name is required
+            if ($loginNameRequired) {
+                //add the login name field
+                $formBuilder->add('loginName');
+            }
             //use the signup page
             $view = 'ObjectsUserBundle:User:signup.html.twig';
         }
+        //create the form
+        $form = $formBuilder->getForm();
         //check if this is the user posted his data
         if ($request->getMethod() == 'POST') {
             //fill the form data from the request
@@ -124,7 +161,8 @@ class UserController extends Controller {
             }
         }
         return $this->render($view, array(
-                    'form' => $form->createView()
+                    'form' => $form->createView(),
+                    'loginNameRequired' => $loginNameRequired
                 ));
     }
 
@@ -140,6 +178,8 @@ class UserController extends Controller {
         $session = $request->getSession();
         //get the entity manager
         $em = $this->getDoctrine()->getEntityManager();
+        //get the container object
+        $container = $this->container;
         //get the translator object
         $translator = $this->get('translator');
         //get the user object from the firewall
@@ -161,8 +201,8 @@ class UserController extends Controller {
             //mark the old password as required
             $oldPassword = TRUE;
         }
-        //check if the user is logged in from the login form
-        if (TRUE === $this->get('security.context')->isGranted('ROLE_UPDATABLE_USERNAME')) {
+        //check if the user can change the login name
+        if ($container->getParameter('login_name_required') && TRUE === $this->get('security.context')->isGranted('ROLE_UPDATABLE_USERNAME')) {
             //make the user able to change his user name
             $changeUserName = TRUE;
         }
@@ -200,6 +240,8 @@ class UserController extends Controller {
                 ->add('dateOfBirth', 'date', array('years' => range(1960, date('Y')), 'required' => FALSE))
                 ->add('firstName')
                 ->add('lastName')
+                ->add('about')
+                ->add('url', 'url', array('required' => false))
                 ->add('countryCode', 'country', array('required' => false))
                 ->add('email')
         ;
@@ -224,7 +266,7 @@ class UserController extends Controller {
                 //get the user object from the form
                 $user = $form->getData();
                 //check if we need to change the user to not active
-                if ($user->getEmail() != $oldEmail && !$this->container->getParameter('auto_active')) {
+                if ($user->getEmail() != $oldEmail && !$container->getParameter('auto_active')) {
                     //remove the role user
                     foreach ($user->getUserRoles() as $key => $roleObject) {
                         //check if this is the wanted role
@@ -247,7 +289,7 @@ class UserController extends Controller {
                     //prepare the message object
                     $message = \Swift_Message::newInstance()
                             ->setSubject($translator->trans('activate your account'))
-                            ->setFrom($this->container->getParameter('mailer_user'))
+                            ->setFrom($container->getParameter('mailer_user'))
                             ->setTo($user->getEmail())
                             ->setBody($body)
                     ;
@@ -484,8 +526,11 @@ class UserController extends Controller {
                     $socialAccounts->setUser($user);
                     //set the user twitter info
                     $user->setSocialAccounts($socialAccounts);
-                    //set a valid login name
-                    $user->setLoginName($this->suggestLoginName($screen_name));
+                    //check if we need to set a login name
+                    if ($container->getParameter('login_name_required')) {
+                        //set a valid login name
+                        $user->setLoginName($this->suggestLoginName($screen_name));
+                    }
                     //user data are valid finish the signup process
                     return $this->finishSignUp($user);
                 }

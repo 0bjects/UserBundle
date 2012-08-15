@@ -1,2 +1,3 @@
 parameters:
     auto_active: false
+    login_name_required: true

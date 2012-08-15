@@ -34,59 +34,68 @@
 <form action="{{ path('user_edit') }}" method="post" {{ form_enctype(form) }}>
 
     {% if oldPassword %}
-        {{ form_errors(form.oldPassword) }}<br />
+        {{ form_errors(form.oldPassword) }}<br>
         <label>{% trans %}Old Password{% endtrans %}:</label>
-        {{ form_widget(form.oldPassword) }}<br />
+        {{ form_widget(form.oldPassword) }}<br>
     {% endif %}
 
-    {{ form_errors(form.userPassword) }}<br />
+    {{ form_errors(form.userPassword) }}<br>
     <label>{% trans %}New Password{% endtrans %}:</label>
-    {{ form_widget(form.userPassword.Password, {'attr': {'autocomplete': 'off'} }) }}<br />
+    {{ form_widget(form.userPassword.Password, {'attr': {'autocomplete': 'off'} }) }}<br>
 
     <label>{% trans %}Retype New Password{% endtrans %}:</label>
-    {{ form_widget(form.userPassword.RePassword, {'attr': {'autocomplete': 'off'} }) }}<br />
+    {{ form_widget(form.userPassword.RePassword, {'attr': {'autocomplete': 'off'} }) }}<br>
 
     {% if changeUserName %}
-        {{ form_errors(form.loginName) }}<br />
+        {{ form_errors(form.loginName) }}<br>
         <label>{% trans %}Login Name{% endtrans %}:</label>
-        {{ form_widget(form.loginName) }}<br />
+        {{ form_widget(form.loginName) }}<br>
+        <span>{% trans %}You can change your login name only once{% endtrans %}</span><br>
     {% endif %}
 
-    {{ form_errors(form.email) }}<br />
+    {{ form_errors(form.email) }}<br>
     <label>{% trans %}Email{% endtrans %}:</label>
-    {{ form_widget(form.email) }}<br />
+    {{ form_widget(form.email) }}<br>
 
-    {{ form_errors(form.firstName) }}<br />
+    {{ form_errors(form.firstName) }}<br>
     <label>{% trans %}First Name{% endtrans %}:</label>
-    {{ form_widget(form.firstName) }}<br />
+    {{ form_widget(form.firstName) }}<br>
 
-    {{ form_errors(form.lastName) }}<br />
+    {{ form_errors(form.lastName) }}<br>
     <label>{% trans %}Last Name{% endtrans %}:</label>
-    {{ form_widget(form.lastName) }}<br />
+    {{ form_widget(form.lastName) }}<br>
 
-    {{ form_errors(form.gender) }}<br />
+    {{ form_errors(form.gender) }}<br>
     <label>{% trans %}Gender{% endtrans %}:</label>
-    {{ form_widget(form.gender) }}<br />
+    {{ form_widget(form.gender) }}<br>
 
-    {{ form_errors(form.dateOfBirth) }}<br />
+    {{ form_errors(form.dateOfBirth) }}<br>
     <label>{% trans %}Date Of Birth{% endtrans %}:</label>
-    {{ form_widget(form.dateOfBirth) }}<br />
+    {{ form_widget(form.dateOfBirth) }}<br>
 
-    {{ form_errors(form.countryCode) }}<br />
+    {{ form_errors(form.countryCode) }}<br>
     <label>{% trans %}Country{% endtrans %}:</label>
-    {{ form_widget(form.countryCode) }}<br />
+    {{ form_widget(form.countryCode) }}<br>
+
+    {{ form_errors(form.url) }}<br>
+    <label>{% trans %}Url{% endtrans %}:</label>
+    {{ form_widget(form.url) }}<br>
+
+    {{ form_errors(form.about) }}<br>
+    <label>{% trans %}About You{% endtrans %}:</label>
+    {{ form_widget(form.about) }}<br>
 
     {{ form_rest(form) }}
 
     <input type="submit" name="Edit" value="{% trans %}Edit{% endtrans %}" title="{% trans %}Edit{% endtrans %}" />
 </form>
 
-<br />
+<br>
 
 {% if socialAccounts and socialAccounts.isFacebookLinked() %}
-<a href="{{ path('social_unlink', {'social': 'facebook'}) }}" title="{% trans %}unlink facebook{% endtrans %}">{% trans %}unlink facebook{% endtrans %}</a><br /><br />
+<a href="{{ path('social_unlink', {'social': 'facebook'}) }}" title="{% trans %}unlink facebook{% endtrans %}">{% trans %}unlink facebook{% endtrans %}</a><br><br>
 {% else %}
-{% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_link','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'link facebook' | trans} %}<br /><br />
+{% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_link','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'link facebook' | trans} %}<br><br>
 {% endif %}
 
 {% if socialAccounts and socialAccounts.isTwitterLinked() %}

@@ -5,29 +5,32 @@
 {% if form_errors(form) %}
     <div>{{ form_errors(form) }}</div>
 {% endif %}
-<form action="{{ url('signup') }}" method="post" {{ form_enctype(form) }}>
-    {{ form_errors(form.loginName) }}<br />
+<form action="{{ path('signup') }}" method="post" {{ form_enctype(form) }}>
+    {% if loginNameRequired %}
+    {{ form_errors(form.loginName) }}<br>
     <label>{% trans %}Login Name{% endtrans %}:</label>
-    {{ form_widget(form.loginName) }}<br />
+    {{ form_widget(form.loginName) }}<br>
+    {% endif %}
 
-    {{ form_errors(form.email) }}<br />
+    {{ form_errors(form.email) }}<br>
     <label>{% trans %}Email{% endtrans %}:</label>
-    {{ form_widget(form.email.Email) }}<br />
+    {{ form_widget(form.email.Email) }}<br>
 
     <label>{% trans %}ReEmail{% endtrans %}:</label>
-    {{ form_widget(form.email.ReEmail) }}<br />
+    {{ form_widget(form.email.ReEmail) }}<br>
 
-    {{ form_errors(form.userPassword) }}<br />
+    {{ form_errors(form.userPassword) }}<br>
     <label>{% trans %}Password{% endtrans %}:</label>
-    {{ form_widget(form.userPassword.Password) }}<br />
+    {{ form_widget(form.userPassword.Password) }}<br>
 
     <label>{% trans %}RePassword{% endtrans %}:</label>
-    {{ form_widget(form.userPassword.RePassword) }}<br />
+    {{ form_widget(form.userPassword.RePassword) }}<br>
 
     {{ form_rest(form) }}
 
     <input type="submit" name="signup" value="{% trans %}Sign up{% endtrans %}" />
 </form>
-{% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_logging','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'facebook'} %}<br />
-<a target="_blank" title="{% trans %}Twitter Sign up{% endtrans %}" href="{{ url('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Sign up{% endtrans %}</a>
+{% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_logging','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'facebook'} %}<br>
+<a onclick="newWindow = window.open('{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter', 'popup': 'yes'}) }}', '{% trans %}Twitter Sign up{% endtrans %}', 'height=200, width=200');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}Twitter Sign up{% endtrans %}" href="{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Sign up{% endtrans %}</a><br>
+<a onclick="newWindow = window.open('{{ path('linkedInButton', {'callbackUrl': 'linkedInCallBack','popup' : 'yes'}) }}', '{% trans %}LinkedIn Sign up{% endtrans %}', 'height=400, width=600');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}LinkedIn Sign up{% endtrans %}" href="{{ path('linkedInButton', {'callbackUrl': 'linkedInCallBack'}) }}">{% trans %}LinkedIn Sign up{% endtrans %}</a>
 {% endblock %}
