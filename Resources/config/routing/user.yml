@@ -24,6 +24,10 @@ facebook_link:
     pattern: /auth/facebook/link
     defaults: { _controller: ObjectsUserBundle:User:facebookLink }
 
+linkedin_link:
+    pattern: /auth/linkedin/link
+    defaults: { _controller: ObjectsUserBundle:User:linkedinLink }
+    
 social_unlink:
     pattern: /auth/unlink/{social}
     defaults: { _controller: ObjectsUserBundle:User:socialUnlink }

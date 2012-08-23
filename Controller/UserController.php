@@ -350,7 +350,7 @@ class UserController extends Controller {
                         return $this->redirect($this->generateUrl('login', array(), TRUE));
                     }
                     //redirect the user
-                    return $this->redirect($this->generateUrl('user_edit', array(), TRUE));
+                    return $this->redirect($this->generateUrl('user_edit'));
                 }
                 //set the success message
                 $message = $translator->trans('Done');
@@ -415,8 +415,8 @@ class UserController extends Controller {
             //set the error flag in the session
             $session->setFlash('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_link'), TRUE) . '">' . $translator->trans('try again') . '</a>');
         }
-        //twitter data not found go to the signup page
-        return $this->redirect($this->generateUrl('user_edit', array('loginName' => $user->getLoginName())));
+        //twitter data not found go to the edit page
+        return $this->redirect($this->generateUrl('user_edit'));
     }
 
     /**
@@ -802,6 +802,10 @@ class UserController extends Controller {
             //unlink the facebook account data
             $socialAccounts->unlinkTwitter();
         }
+        if ($social == 'linkedin') {
+            //unlink the linkedin account data
+            $socialAccounts->unlinkLinkedIn();
+        }
         //check if we still need the object
         if (!$socialAccounts->isNeeded()) {
             //remove the object
@@ -1169,6 +1173,70 @@ class UserController extends Controller {
         }
         //get a valid one from the database
         return $userRepository->getValidLoginName($loginName);
+    }
+
+    /**
+     * this action will link the user account to his linkedin account
+     * @author Ahmed
+     */
+    public function linkedinLinkAction() {
+        //get the entity manager
+        $em = $this->getDoctrine()->getEntityManager();
+        //reload the user object from the database
+        $user = $em->getRepository('ObjectsUserBundle:User')->getUserWithSocialAccounts($this->get('security.context')->getToken()->getUser()->getId());
+        //get the request object
+        $request = $this->getRequest();
+        //get the translator object
+        $translator = $this->get('translator');
+        //get the session object
+        $session = $request->getSession();
+        //get the oauth token from the session
+        $oauth_token = $session->get('oauth_token', FALSE);
+        //get the oauth token secret from the session
+        $oauth_token_secret = $session->get('oauth_token_secret', FALSE);
+        //get linkedIn oauth array from the session
+        $linkedIn_oauth = $session->get('oauth_linkedin', FALSE);
+        //check if we got linkedin data
+        if ($oauth_token && $oauth_token_secret) {
+            //get the user data
+            $userData = LinkedinController::getUserData($this->container->getParameter('linkedin_api_key'), $this->container->getParameter('linkedin_secret_key'), $linkedIn_oauth);
+            //check if we get the user data
+            if ($userData) {
+                $userData = $userData['linkedin'];
+                $userData = json_decode(json_encode((array) simplexml_load_string($userData)), 1);
+
+                //get the user social account object
+                $socialAccounts = $user->getSocialAccounts();
+                //check if the user does not have a social account object
+                if (!$socialAccounts) {
+                    //create new social account for the user
+                    $socialAccounts = new SocialAccounts();
+                    $socialAccounts->setUser($user);
+                    $user->setSocialAccounts($socialAccounts);
+                    $em->persist($socialAccounts);
+                }
+
+                $socialAccounts->setOauthToken($oauth_token);
+                $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                $socialAccounts->setLinkedInId($userData['id']);
+
+
+                //save the data for the user
+                $em->flush();
+                //set the success flag in the session
+                $session->setFlash('success', $translator->trans('Your account is now linked to linkedin'));
+            } else {
+                //linkedIn data not found go to the edit page
+                return $this->redirect($this->generateUrl('user_edit'));
+            }
+        } else {
+            //something went wrong clear the session and set a flash to try again
+            $session->clear();
+            //set the error flag in the session
+            $session->setFlash('error', $translator->trans('linkedin connection error') . ' <a href="' . $this->generateUrl('linkedInButton', array('redirectRoute' => 'linkedin_link'), TRUE) . '">' . $translator->trans('try again') . '</a>');
+        }
+        //linkedIn data not found go to the edit page
+        return $this->redirect($this->generateUrl('user_edit'));
     }
 
     /**

@@ -317,6 +317,17 @@ class SocialAccounts {
     }
 
     /**
+     * this function will check if the linkedin account is linked
+     * @return boolean true if the linkedin account is linked
+     */
+    public function isLinkedInLinked() {
+        if ($this->getLinkedInId()) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    
+    /**
      * this function will unlink the user twitter account data
      */
     public function unlinkTwitter() {
@@ -336,11 +347,20 @@ class SocialAccounts {
     }
 
     /**
+     * this function will unlink the user linkedin account data
+     */
+    public function unlinkLinkedIn() {
+        $this->setOauthToken(NULL);
+        $this->setOauthTokenSecret(NULL);
+        $this->setLinkedInId(NULL);
+    }
+    
+    /**
      * this function will check if we still need this object in the database
      * @return boolean true if the object has any linked social accounts
      */
     public function isNeeded() {
-        if ($this->isFacebookLinked() || $this->isTwitterLinked()) {
+        if ($this->isFacebookLinked() || $this->isTwitterLinked() || $this->isLinkedInLinked()) {
             return TRUE;
         }
         return FALSE;
