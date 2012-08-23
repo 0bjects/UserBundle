@@ -266,6 +266,22 @@
                 <source>Your account has been deleted</source>
                 <target>تم مسح حسابك بنجاح</target>
             </trans-unit>
+            <trans-unit id="67">
+                <source>Only characters, numbers and _ is valid</source>
+                <target>فقط الأحرف والأرقام و _ صالحة</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>valid</source>
+                <target>متاح</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>This value is already used</source>
+                <target>هذه القيمة مستخدمة</target>
+            </trans-unit>
+            <trans-unit id="70">
+                <source>Did you mean</source>
+                <target>هل تقصد</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

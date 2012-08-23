@@ -28,27 +28,38 @@
     {% if loginNameRequired %}
     {{ form_errors(form.loginName) }}<br>
     <label>{% trans %}Login Name{% endtrans %}:</label>
-    {{ form_widget(form.loginName) }}<br>
+    {{ form_widget(form.loginName) }}
+    <span id="loginName-error"></span>
+    <br>
     {% endif %}
 
     {{ form_errors(form.email) }}<br>
     <label>{% trans %}Email{% endtrans %}:</label>
+    {% if not popupFlag %}
     {{ form_widget(form.email.Email) }}<br>
-
+    <span id="mailcheck-message"></span>
     <label>{% trans %}ReEmail{% endtrans %}:</label>
     {{ form_widget(form.email.ReEmail) }}<br>
-
+    {% else %}
+    {{ form_widget(form.email) }}<br>
+    <span id="mailcheck-message"></span>
+    {% endif %}
+    
+    
     {{ form_errors(form.userPassword) }}<br>
     <label>{% trans %}Password{% endtrans %}:</label>
+    {% if not popupFlag %}
     {{ form_widget(form.userPassword.Password) }}<br>
-
     <label>{% trans %}RePassword{% endtrans %}:</label>
     {{ form_widget(form.userPassword.RePassword) }}<br>
-
+    {% else %}
+    {{ form_widget(form.userPassword) }}<br>
+    {% endif %}
+    
     {{ form_rest(form) }}
 
-    <input type="submit" title="{% trans %}Sign up{% endtrans %}" value="{% trans %}Sign up{% endtrans %}" />
+    <input type="submit" title="{% trans %}Sign up{% endtrans %}" value="{% trans %}Sign up{% endtrans %}" id="user-signup"/>
 </form>
 {% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_logging','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'facebook'} %}<br>
 <a onclick="newWindow = window.open('{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter', 'popup': 'yes'}) }}', '{% trans %}Twitter Sign up{% endtrans %}', 'height=200, width=200');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}Twitter Sign up{% endtrans %}" href="{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Sign up{% endtrans %}</a><br>
-<a onclick="newWindow = window.open('{{ path('linkedInButton', {'callbackUrl': 'linkedInCallBack','popup' : 'yes'}) }}', '{% trans %}LinkedIn Sign up{% endtrans %}', 'height=400, width=600');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}LinkedIn Sign up{% endtrans %}" href="{{ path('linkedInButton', {'callbackUrl': 'linkedInCallBack'}) }}">{% trans %}LinkedIn Sign up{% endtrans %}</a>
+<a onclick="newWindow = window.open('{{ path('linkedInButton', {'callbackUrl': 'linkedIn_user_data','popup' : 'yes'}) }}', '{% trans %}LinkedIn Sign up{% endtrans %}', 'height=400, width=600');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}LinkedIn Sign up{% endtrans %}" href="{{ path('linkedInButton', {'callbackUrl': 'linkedIn_user_data'}) }}">{% trans %}LinkedIn Sign up{% endtrans %}</a>

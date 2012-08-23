@@ -116,6 +116,7 @@ class UserController extends Controller {
         $request = $this->getRequest();
         //create an emtpy user object
         $user = new User();
+        $popupFlag = FALSE;
         //check if this is an ajax request
         if ($request->isXmlHttpRequest()) {
             //create a signup form
@@ -131,6 +132,8 @@ class UserController extends Controller {
             }
             //use the popup twig
             $view = 'ObjectsUserBundle:User:signup_popup.html.twig';
+
+            $popupFlag = TRUE;
         } else {
             //create a signup form
             $formBuilder = $this->createFormBuilder($user, array(
@@ -173,7 +176,8 @@ class UserController extends Controller {
         return $this->render($view, array(
                     'form' => $form->createView(),
                     'loginNameRequired' => $loginNameRequired,
-                    'message' => $message
+                    'message' => $message,
+                    'popupFlag' => $popupFlag
                 ));
     }
 
@@ -1382,6 +1386,25 @@ class UserController extends Controller {
         } else {
             //linkedIn data not found go to the login page
             return $this->redirect($this->generateUrl('login', array(), TRUE));
+        }
+    }
+
+    /**
+     * this function will used to check if loginName is exist
+     * @author Ahmed
+     * @param string $loginName
+     */
+    public function loginNameCheckAction($loginName) {
+        //get the entity manager
+        $em = $this->getDoctrine()->getEntityManager();
+        //reload the user object from the database
+        $user = $em->getRepository('ObjectsUserBundle:User');
+        
+        $userObject = $user->findOneBy(array('loginName' => $loginName));
+        if($userObject){
+            return new Response('exist');
+        }else{
+            return new Response('not-exist');
         }
     }
 
