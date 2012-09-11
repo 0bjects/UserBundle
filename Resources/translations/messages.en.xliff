@@ -266,6 +266,38 @@
                 <source>Your account has been deleted</source>
                 <target>Your account has been deleted</target>
             </trans-unit>
+            <trans-unit id="67">
+                <source>Only characters, numbers and _ is valid</source>
+                <target>Only characters, numbers and _ is valid</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>valid</source>
+                <target>valid</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>This value is already used</source>
+                <target>This value is already used</target>
+            </trans-unit>
+            <trans-unit id="70">
+                <source>Did you mean</source>
+                <target>Did you mean</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>RePassword</source>
+                <target>RePassword</target>
+            </trans-unit>
+            <trans-unit id="72">
+                <source>Are you sure you want to</source>
+                <target>Are you sure you want to</target>
+            </trans-unit>
+            <trans-unit id="73">
+                <source>Yes</source>
+                <target>Yes</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>No</source>
+                <target>No</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1087,31 +1087,33 @@ class UserController extends Controller {
                 $user->setValidPassword();
                 //save the new hashed password
                 $em->flush();
-                //set the success flag
-                $session->setFlash('success', $translator->trans('password changed'));
                 //try to login the user
                 try {
                     // create the authentication token
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     // give it to the security context
                     $this->get('security.context')->setToken($token);
-                    //check if the user is active
-                    if (FALSE === $this->get('security.context')->isGranted('ROLE_USER')) {
-                        //activate the user if not active
-                        $this->activationAction($confirmationCode);
-                        //clear the flashes set by the activation action
-                        $session->clearFlashes();
-                        //go to the edit profile page
-                        return $this->redirect($this->generateUrl('user_edit'));
-                    }
                 } catch (\Exception $e) {
                     //can not reload the user object log out the user
                     $this->get('security.context')->setToken(null);
                     //invalidate the current user session
-                    $request->getSession()->invalidate();
+                    $session->invalidate();
+                    //set the success flag
+                    $session->setFlash('success', $translator->trans('password changed'));
                     //redirect to the login page
                     return $this->redirect($this->generateUrl('login'));
                 }
+                //check if the user is active
+                if (FALSE === $this->get('security.context')->isGranted('ROLE_USER')) {
+                    //activate the user if not active
+                    $this->activationAction($confirmationCode);
+                    //clear the flashes set by the activation action
+                    $session->clearFlashes();
+                }
+                //set the success flag
+                $session->setFlash('success', $translator->trans('password changed'));
+                //go to the edit profile page
+                return $this->redirect($this->generateUrl('user_edit'));
             }
         }
         return $this->render('ObjectsUserBundle:User:change_password.html.twig', array(
@@ -1137,8 +1139,16 @@ class UserController extends Controller {
             $user = $this->get('security.context')->getToken()->getUser();
             //set the delete flag
             $user->setEnabled(FALSE);
-            //save the delete flag
-            $this->getDoctrine()->getEntityManager()->flush();
+            //get the entity manager
+            $em = $this->getDoctrine()->getEntityManager();
+            //get the social accounts object
+            $socialAccounts = $user->getSocialAccounts();
+            //remove the social accounts object if exist
+            if ($socialAccounts) {
+                $em->remove($socialAccounts);
+            }
+            //save the changes
+            $em->flush();
             //logout the user
             $this->get('security.context')->setToken(null);
             //invalidate the current user session

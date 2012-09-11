@@ -282,6 +282,22 @@
                 <source>Did you mean</source>
                 <target>هل تقصد</target>
             </trans-unit>
+            <trans-unit id="71">
+                <source>RePassword</source>
+                <target>أعد كلمة المرور</target>
+            </trans-unit>
+            <trans-unit id="72">
+                <source>Are you sure you want to</source>
+                <target>هل أنت متأكد أنك تريد</target>
+            </trans-unit>
+            <trans-unit id="73">
+                <source>Yes</source>
+                <target>نعم</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>No</source>
+                <target>لا</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
