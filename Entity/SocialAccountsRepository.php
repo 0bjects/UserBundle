@@ -13,12 +13,12 @@ use Doctrine\ORM\EntityRepository;
 class SocialAccountsRepository extends EntityRepository {
 
     /**
-     * this function will get the user object and his roles
+     * this function will get the user object and his roles by the twitter id
      * @author Mahmoud
      * @param integer $twitterId the user social account twitter id
      * @return null|\Objects\UserBundle\Entity\User
      */
-    public function getUserWithRoles($twitterId) {
+    public function getUserWithRolesByTwitterId($twitterId) {
         $query = $this->getEntityManager()
                 ->createQuery('
                      SELECT u, s, r
@@ -34,6 +34,30 @@ class SocialAccountsRepository extends EntityRepository {
             $user = NULL;
         }
         return $user;
+    }
+
+    /**
+     * this function will get the social accounts with the user object and his roles by the facebook id
+     * @author Mahmoud
+     * @param integer $facebookId the user social account facebook id
+     * @return null|\Objects\UserBundle\Entity\SocialAccounts
+     */
+    public function getUserWithRolesByFaceBookId($facebookId) {
+        $query = $this->getEntityManager()
+                ->createQuery('
+                     SELECT u, s, r
+                     FROM Objects\UserBundle\Entity\SocialAccounts s
+                     JOIN u.socialAccounts s
+                     LEFT JOIN u.userRoles r
+                     WHERE s.facebookId = :facebookId
+                    ');
+        $query->setParameter('facebookId', $facebookId);
+        try {
+            $socialAccounts = $query->getSingleResult();
+        } catch (\Exception $e) {
+            $socialAccounts = NULL;
+        }
+        return $socialAccounts;
     }
 
 }

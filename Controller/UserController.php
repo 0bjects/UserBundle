@@ -116,6 +116,7 @@ class UserController extends Controller {
         $request = $this->getRequest();
         //create an emtpy user object
         $user = new User();
+        //this flag is used in the view to correctly render the widgets
         $popupFlag = FALSE;
         //check if this is an ajax request
         if ($request->isXmlHttpRequest()) {
@@ -125,14 +126,8 @@ class UserController extends Controller {
                     ))
                     ->add('email')
                     ->add('userPassword');
-            //check if the login name is required
-            if ($loginNameRequired) {
-                //add the login name field
-                $formBuilder->add('loginName');
-            }
             //use the popup twig
             $view = 'ObjectsUserBundle:User:signup_popup.html.twig';
-
             $popupFlag = TRUE;
         } else {
             //create a signup form
@@ -151,13 +146,13 @@ class UserController extends Controller {
                 'second_name' => 'RePassword',
                 'invalid_message' => "The passwords don't match",
                     ));
-            //check if the login name is required
-            if ($loginNameRequired) {
-                //add the login name field
-                $formBuilder->add('loginName');
-            }
             //use the signup page
             $view = 'ObjectsUserBundle:User:signup.html.twig';
+        }
+        //check if the login name is required
+        if ($loginNameRequired) {
+            //add the login name field
+            $formBuilder->add('loginName');
         }
         //create the form
         $form = $formBuilder->getForm();
@@ -447,7 +442,7 @@ class UserController extends Controller {
             //get the entity manager
             $em = $this->getDoctrine()->getEntityManager();
             //check if the user twitter id is in our database
-            $user = $em->getRepository('ObjectsUserBundle:SocialAccounts')->getUserWithRoles($twitterId);
+            $user = $em->getRepository('ObjectsUserBundle:SocialAccounts')->getUserWithRolesByTwitterId($twitterId);
             //check if we found the user
             if ($user) {
                 //get the social accounts object object
@@ -593,7 +588,7 @@ class UserController extends Controller {
         $em = $this->getDoctrine()->getEntityManager();
 
         //check if the user facebook id is in our database
-        $socialAccounts = $em->getRepository('ObjectsUserBundle:SocialAccounts')->findOneBy(array('facebookId' => $faceUser->id));
+        $socialAccounts = $em->getRepository('ObjectsUserBundle:SocialAccounts')->getUserWithRolesByFaceBookId($faceUser->id);
 
         if ($socialAccounts) {
             //update long-live facebook access token
@@ -1399,11 +1394,11 @@ class UserController extends Controller {
         $em = $this->getDoctrine()->getEntityManager();
         //reload the user object from the database
         $user = $em->getRepository('ObjectsUserBundle:User');
-        
+
         $userObject = $user->findOneBy(array('loginName' => $loginName));
-        if($userObject){
+        if ($userObject) {
             return new Response('exist');
-        }else{
+        } else {
             return new Response('not-exist');
         }
     }
