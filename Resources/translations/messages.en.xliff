@@ -298,6 +298,10 @@
                 <source>No</source>
                 <target>No</target>
             </trans-unit>
+            <trans-unit id="75">
+                <source>Your LinkedIN account was successfully Linked to your account</source>
+                <target>Your LinkedIN account was successfully Linked to your account</target>
+            </trans-unit>    
         </body>
     </file>
 </xliff>
