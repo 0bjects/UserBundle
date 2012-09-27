@@ -87,7 +87,7 @@
 
     {{ form_rest(form) }}
 
-    <input type="submit" value="{% trans %}Edit{% endtrans %}" title="{% trans %}Edit{% endtrans %}" />
+    <input type="submit" value="{% trans %}Edit{% endtrans %}" title="{% trans %}Edit{% endtrans %}">
 </form>
 
 <br>
@@ -118,4 +118,8 @@
         }
     }
 </script>
+
+<br>
+<br>
+<a title="{% trans %}delete your account{% endtrans %}" href="{{ path('user_delete') }}">{% trans %}delete your account{% endtrans %}</a>
 {% endblock %}

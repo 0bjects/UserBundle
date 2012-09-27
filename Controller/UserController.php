@@ -116,6 +116,7 @@ class UserController extends Controller {
         $request = $this->getRequest();
         //create an emtpy user object
         $user = new User();
+        //this flag is used in the view to correctly render the widgets
         $popupFlag = FALSE;
         //check if this is an ajax request
         if ($request->isXmlHttpRequest()) {
@@ -125,14 +126,8 @@ class UserController extends Controller {
                     ))
                     ->add('email')
                     ->add('userPassword');
-            //check if the login name is required
-            if ($loginNameRequired) {
-                //add the login name field
-                $formBuilder->add('loginName');
-            }
             //use the popup twig
             $view = 'ObjectsUserBundle:User:signup_popup.html.twig';
-
             $popupFlag = TRUE;
         } else {
             //create a signup form
@@ -151,13 +146,13 @@ class UserController extends Controller {
                 'second_name' => 'RePassword',
                 'invalid_message' => "The passwords don't match",
                     ));
-            //check if the login name is required
-            if ($loginNameRequired) {
-                //add the login name field
-                $formBuilder->add('loginName');
-            }
             //use the signup page
             $view = 'ObjectsUserBundle:User:signup.html.twig';
+        }
+        //check if the login name is required
+        if ($loginNameRequired) {
+            //add the login name field
+            $formBuilder->add('loginName');
         }
         //create the form
         $form = $formBuilder->getForm();
@@ -447,7 +442,7 @@ class UserController extends Controller {
             //get the entity manager
             $em = $this->getDoctrine()->getEntityManager();
             //check if the user twitter id is in our database
-            $user = $em->getRepository('ObjectsUserBundle:SocialAccounts')->getUserWithRoles($twitterId);
+            $user = $em->getRepository('ObjectsUserBundle:SocialAccounts')->getUserWithRolesByTwitterId($twitterId);
             //check if we found the user
             if ($user) {
                 //get the social accounts object object
@@ -593,7 +588,7 @@ class UserController extends Controller {
         $em = $this->getDoctrine()->getEntityManager();
 
         //check if the user facebook id is in our database
-        $socialAccounts = $em->getRepository('ObjectsUserBundle:SocialAccounts')->findOneBy(array('facebookId' => $faceUser->id));
+        $socialAccounts = $em->getRepository('ObjectsUserBundle:SocialAccounts')->getUserWithRolesByFaceBookId($faceUser->id);
 
         if ($socialAccounts) {
             //update long-live facebook access token
@@ -1101,31 +1096,33 @@ class UserController extends Controller {
                 $user->setValidPassword();
                 //save the new hashed password
                 $em->flush();
-                //set the success flag
-                $session->setFlash('success', $translator->trans('password changed'));
                 //try to login the user
                 try {
                     // create the authentication token
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     // give it to the security context
                     $this->get('security.context')->setToken($token);
-                    //check if the user is active
-                    if (FALSE === $this->get('security.context')->isGranted('ROLE_USER')) {
-                        //activate the user if not active
-                        $this->activationAction($confirmationCode);
-                        //clear the flashes set by the activation action
-                        $session->clearFlashes();
-                        //go to the edit profile page
-                        return $this->redirect($this->generateUrl('user_edit'));
-                    }
                 } catch (\Exception $e) {
                     //can not reload the user object log out the user
                     $this->get('security.context')->setToken(null);
                     //invalidate the current user session
-                    $request->getSession()->invalidate();
+                    $session->invalidate();
+                    //set the success flag
+                    $session->setFlash('success', $translator->trans('password changed'));
                     //redirect to the login page
                     return $this->redirect($this->generateUrl('login'));
                 }
+                //check if the user is active
+                if (FALSE === $this->get('security.context')->isGranted('ROLE_USER')) {
+                    //activate the user if not active
+                    $this->activationAction($confirmationCode);
+                    //clear the flashes set by the activation action
+                    $session->clearFlashes();
+                }
+                //set the success flag
+                $session->setFlash('success', $translator->trans('password changed'));
+                //go to the edit profile page
+                return $this->redirect($this->generateUrl('user_edit'));
             }
         }
         return $this->render('ObjectsUserBundle:User:change_password.html.twig', array(
@@ -1151,8 +1148,16 @@ class UserController extends Controller {
             $user = $this->get('security.context')->getToken()->getUser();
             //set the delete flag
             $user->setEnabled(FALSE);
-            //save the delete flag
-            $this->getDoctrine()->getEntityManager()->flush();
+            //get the entity manager
+            $em = $this->getDoctrine()->getEntityManager();
+            //get the social accounts object
+            $socialAccounts = $user->getSocialAccounts();
+            //remove the social accounts object if exist
+            if ($socialAccounts) {
+                $em->remove($socialAccounts);
+            }
+            //save the changes
+            $em->flush();
             //logout the user
             $this->get('security.context')->setToken(null);
             //invalidate the current user session

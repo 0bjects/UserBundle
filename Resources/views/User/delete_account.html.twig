@@ -9,5 +9,7 @@ function confirmUserDelete(){
     }
 }
 </script>
-<a title="{% trans %}delete your account{% endtrans %}" href="javascript:confirmUserDelete()">{% trans %}delete your account{% endtrans %}</a><br>
+{% trans %}Are you sure you want to{% endtrans %} {% trans %}delete your account{% endtrans %} ?<br><br>
+<a href="javascript:confirmUserDelete()">{% trans %}Yes{% endtrans %}</a><br><br>
+<a href="{{ path('user_edit') }}">{% trans %}No{% endtrans %}</a><br><br>
 <noscript>{% trans %}You have to enable javascript in order to use this feature{% endtrans %}</noscript>

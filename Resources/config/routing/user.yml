@@ -32,10 +32,7 @@ social_unlink:
     pattern: /auth/unlink/{social}
     defaults: { _controller: ObjectsUserBundle:User:socialUnlink }
 
-
-    
 # routes visible for every one
-
 twitter_enter:
     pattern: /twitter/enter
     defaults: { _controller: ObjectsUserBundle:User:TwitterEnter }
@@ -54,8 +51,8 @@ change_password:
 
 linkedIn_user_data:
     pattern:  /linkedIn
-    defaults: { _controller: ObjectsUserBundle:User:linkedInUserData } 
-    
+    defaults: { _controller: ObjectsUserBundle:User:linkedInUserData }
+
 login_name_check:
     pattern: /login_name_check/{loginName}
-    defaults: { _controller: ObjectsUserBundle:User:loginNameCheck }    
+    defaults: { _controller: ObjectsUserBundle:User:loginNameCheck }
