@@ -282,6 +282,10 @@
                 <source>Did you mean</source>
                 <target>هل تقصد</target>
             </trans-unit>
+            <trans-unit id="71">
+                <source>Your LinkedIN account was successfully Linked to your account</source>
+                <target>لقد تم ربط حسابك الشخصى مع حساب على LinkedIN بنجاح</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

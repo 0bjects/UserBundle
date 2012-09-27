@@ -751,38 +751,47 @@ class UserController extends Controller {
 
         $roleRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:Role');
         $user = $this->get('security.context')->getToken()->getUser();
-        $socialAccounts = $user->getSocialAccounts();
-        if (empty($socialAccounts)) {
-            $socialAccounts = new SocialAccounts();
-            $socialAccounts->setUser($user);
-            $em->persist($socialAccounts);
-        }
-        $socialAccounts->setFacebookId($faceUser->id);
-        $socialAccounts->setAccessToken($longLive_accessToken['access_token']);
-        $socialAccounts->setFbTokenExpireDate(new \DateTime(date('Y-m-d', time() + $longLive_accessToken['expires'])));
-        $user->setSocialAccounts($socialAccounts);
 
-        //activate user if is not activated
-        //get object of notactive Role
-        $notActiveRole = $roleRepository->findOneByName('ROLE_NOTACTIVE');
-        if ($user->getUserRoles()->contains($notActiveRole) && $user->getEmail() == $faceUser->email) {
-            //get a user role object
-            $userRole = $roleRepository->findOneByName('ROLE_USER');
-            //remove notactive Role from user in exist
-            $user->getUserRoles()->removeElement($notActiveRole);
+        $socialAccountsRepo = $this->getDoctrine()->getRepository('ObjectsUserBundle:SocialAccounts');
+        $socialAccount = $socialAccountsRepo->findOneByFacebookId($faceUser->id);
 
-            $user->getUserRoles()->add($userRole);
+        if (!$socialAccount) {
+            $socialAccounts = $user->getSocialAccounts();
+            if (empty($socialAccounts)) {
+                $socialAccounts = new SocialAccounts();
+                $socialAccounts->setUser($user);
+                $em->persist($socialAccounts);
+            }
+            $socialAccounts->setFacebookId($faceUser->id);
+            $socialAccounts->setAccessToken($longLive_accessToken['access_token']);
+            $socialAccounts->setFbTokenExpireDate(new \DateTime(date('Y-m-d', time() + $longLive_accessToken['expires'])));
+            $user->setSocialAccounts($socialAccounts);
 
-            $fbLinkeDAndActivatedmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account') . ' ' . $this->get('translator')->trans('your account is now active');
-            //set flash message to tell user that him/her account has been successfully activated
-            $session->setFlash('notice', $fbLinkeDAndActivatedmessage);
+            //activate user if is not activated
+            //get object of notactive Role
+            $notActiveRole = $roleRepository->findOneByName('ROLE_NOTACTIVE');
+            if ($user->getUserRoles()->contains($notActiveRole) && $user->getEmail() == $faceUser->email) {
+                //get a user role object
+                $userRole = $roleRepository->findOneByName('ROLE_USER');
+                //remove notactive Role from user in exist
+                $user->getUserRoles()->removeElement($notActiveRole);
+
+                $user->getUserRoles()->add($userRole);
+
+                $fbLinkeDAndActivatedmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account') . ' ' . $this->get('translator')->trans('your account is now active');
+                //set flash message to tell user that him/her account has been successfully activated
+                $session->setFlash('notice', $fbLinkeDAndActivatedmessage);
+            } else {
+                $fbLinkeDmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account');
+                //set flash message to tell user that him/her account has been successfully linked
+                $session->setFlash('notice', $fbLinkeDmessage);
+            }
+            $em->flush();
         } else {
-            $fbLinkeDmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account');
+            $fbLinkeDmessage = $this->get('translator')->trans('Facebook linking attempt was unsuccessful.Your Facebook account is already linked to another account.');
             //set flash message to tell user that him/her account has been successfully linked
             $session->setFlash('notice', $fbLinkeDmessage);
         }
-        $em->flush();
-
         return $this->redirect($this->generateUrl('user_edit'));
     }
 
@@ -1306,79 +1315,129 @@ class UserController extends Controller {
                         return $this->redirect($this->generateUrl('login', array(), TRUE));
                     }
                 }
-                //create a new user object
-                $user = new User();
-                //create an email form
-                $form = $this->createFormBuilder($user, array(
-                            'validation_groups' => array('email')
-                        ))
-                        ->add('email', 'repeated', array(
-                            'type' => 'email',
-                            'first_name' => 'Email',
-                            'second_name' => 'ReEmail',
-                            'invalid_message' => "The emails don't match",
-                        ))
-                        ->getForm();
-                //check if this is the user posted his data
-                if ($request->getMethod() == 'POST') {
-                    //fill the form data from the request
-                    $form->bindRequest($request);
-                    //check if the form values are correct
-                    if ($form->isValid()) {
-                        //get the container object
-                        $container = $this->container;
-                        //get the user object from the form
-                        $user = $form->getData();
-                        $newUserName = '';
-                        //set the name 
-                        if (isset($userData['first-name'])) {
-                            $user->setFirstName($userData['first-name']);
-                            $newUserName = $userData['first-name'];
-                        }
-                        if (isset($userData['last-name'])) {
-                            $user->setLastName($userData['last-name']);
-                            $newUserName .= '_' . $userData['last-name'];
-                        }
-                        //set a valid login name
-                        $user->setLoginName($this->suggestLoginName(strtolower($newUserName)));
-                        //set the profile url
-                        if (isset($userData['site-standard-profile-request']['url'])) {
-                            $user->setUrl($userData['site-standard-profile-request']['url']);
-                        }
-                        //set the about text
-                        if (isset($userData['summary'])) {
-                            $user->setAbout($userData['summary']);
-                        }
-                        //set user country code
-                        if (isset($userData['location']['country']['code'])) {
-                            $user->setCountryCode($userData['location']['country']['code']);
-                        }
-                        //try to download the user image from linkedIn if user has one
-                        if (isset($userData['picture-url'])) {
-                            $image = LinkedinController::downloadLinkedInImage($userData['picture-url'], $user->getUploadRootDir());
-                            //check if we got an image
-                            if ($image) {
-                                //add the image to the user
-                                $user->setImage($image);
-                            }
-                        }
 
-                        //create social accounts object
+                /**
+                 *
+                 * the account of the same email as linkedin account maybe exist but not linked so we will link it 
+                 * and directly logging the user
+                 * if the account is not active we automatically activate it
+                 * else will create the account ,sign up the user
+                 * 
+                 * */
+                $userRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:User');
+                $roleRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:Role');
+                $user = $userRepository->findOneByEmail($userData['email-address']);
+                //if user exist only add linkedin account to social accounts record if user have one
+                //if not create new record
+                if ($user) {
+                    $socialAccounts = $user->getSocialAccounts();
+                    if (empty($socialAccounts)) {
                         $socialAccounts = new SocialAccounts();
-                        $socialAccounts->setOauthToken($oauth_token);
-                        $socialAccounts->setOauthTokenSecret($oauth_token_secret);
-                        $socialAccounts->setLinkedInId($userData['id']);
                         $socialAccounts->setUser($user);
-                        //set the user linkedIn info
-                        $user->setSocialAccounts($socialAccounts);
+                    }
+                    $socialAccounts->setOauthToken($oauth_token);
+                    $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                    $socialAccounts->setLinkedInId($userData['id']);
+                    $user->setSocialAccounts($socialAccounts);
 
-                        //user data are valid finish the signup process
-                        return $this->finishSignUp($user);
+                    //activate user if is not activated
+                    //get object of notactive Role
+                    $notActiveRole = $roleRepository->findOneByName('ROLE_NOTACTIVE');
+                    if ($user->getUserRoles()->contains($notActiveRole)) {
+                        //get a user role object
+                        $userRole = $roleRepository->findOneByName('ROLE_USER');
+                        //remove notactive Role from user in exist
+                        $user->getUserRoles()->removeElement($notActiveRole);
+
+                        $user->getUserRoles()->add($userRole);
+
+                        $linkedInActivatedmessage = $this->get('translator')->trans('Your LinkedIN account was successfully Linked to your account') . ' ' . $this->get('translator')->trans('your account is now active');
+                        //set flash message to tell user that him/her account has been successfully activated
+                        $session->setFlash('notice', $linkedInActivatedmessage);
+                    } else {
+                        $linkedInDmessage = $this->get('translator')->trans('Your LinkedIN account was successfully Linked to your account');
+                        //set flash message to tell user that him/her account has been successfully linked
+                        $session->setFlash('notice', $linkedInDmessage);
+                    }
+                    $em->persist($user);
+                    $em->flush();
+
+                    //try to login the user
+                    try {
+                        // create the authentication token
+                        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                        // give it to the security context
+                        $this->get('security.context')->setToken($token);
+                        //redirect the user
+                        return $this->redirectUserAction();
+                    } catch (\Exception $e) {
+                        //can not reload the user object log out the user
+                        $this->get('security.context')->setToken(null);
+                        //invalidate the current user session
+                        $this->getRequest()->getSession()->invalidate();
+                        //redirect to the login page
+                        return $this->redirect($this->generateUrl('login', array(), TRUE));
                     }
                 }
-                return $this->render('ObjectsUserBundle:User:linkedIn_signup.html.twig', array(
-                            'form' => $form->createView()
-                        ));
+
+
+                //create a new user object
+                $user = new User();
+                //get the container object
+                $container = $this->container;
+                $newUserName = '';
+                //set the name 
+                if (isset($userData['first-name'])) {
+                    $user->setFirstName($userData['first-name']);
+                    $newUserName = $userData['first-name'];
+                }
+                if (isset($userData['last-name'])) {
+                    $user->setLastName($userData['last-name']);
+                    $newUserName .= '_' . $userData['last-name'];
+                }
+                //set a valid login name
+                $user->setLoginName($this->suggestLoginName(strtolower($newUserName)));
+                //set the profile url
+                if (isset($userData['site-standard-profile-request']['url'])) {
+                    $user->setUrl($userData['site-standard-profile-request']['url']);
+                }
+                //set the about text
+                if (isset($userData['summary'])) {
+                    $user->setAbout($userData['summary']);
+                }
+                //set user country code
+                if (isset($userData['location']['country']['code'])) {
+                    $user->setCountryCode($userData['location']['country']['code']);
+                }
+                //try to download the user image from linkedIn if user has one
+                if (isset($userData['picture-url'])) {
+                    $image = LinkedinController::downloadLinkedInImage($userData['picture-url'], $user->getUploadRootDir());
+                    //check if we got an image
+                    if ($image) {
+                        //add the image to the user
+                        $user->setImage($image);
+                    }
+                }
+                //set the user email
+                if (isset($userData['email-address'])) {
+                    $user->setEmail($userData['email-address']);
+                }
+                //set the user dateOfBirth
+                if (isset($userData['date-of-birth'])) {
+                    $user->setDateOfBirth(new \DateTime($userData['date-of-birth']['year'] . '-' . $userData['date-of-birth']['month'] . '-' . $userData['date-of-birth']['day']));
+                }
+
+                //create social accounts object
+                $socialAccounts = new SocialAccounts();
+                $socialAccounts->setOauthToken($oauth_token);
+                $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                $socialAccounts->setLinkedInId($userData['id']);
+                $socialAccounts->setUser($user);
+                //set the user linkedIn info
+                $user->setSocialAccounts($socialAccounts);
+
+                //user data are valid finish the signup process
+                return $this->finishSignUp($user);
             } else {
                 //linkedIn data not found go to the login page
                 return $this->redirect($this->generateUrl('login', array(), TRUE));
@@ -1399,11 +1458,11 @@ class UserController extends Controller {
         $em = $this->getDoctrine()->getEntityManager();
         //reload the user object from the database
         $user = $em->getRepository('ObjectsUserBundle:User');
-        
+
         $userObject = $user->findOneBy(array('loginName' => $loginName));
-        if($userObject){
+        if ($userObject) {
             return new Response('exist');
-        }else{
+        } else {
             return new Response('not-exist');
         }
     }
