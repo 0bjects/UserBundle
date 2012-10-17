@@ -177,9 +177,8 @@ class User implements AdvancedUserInterface {
     private $enabled = TRUE;
 
     /**
-     * @ORM\Column(type="string", length="255")
-     *
-     * @var string salt
+     * @var string $salt
+     * @ORM\Column(name="salt", type="string", length=255)
      */
     private $salt;
 
