@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Objects\UserBundle\Entity\User
- * 
+ *
  * @UniqueEntity(fields={"loginName"}, groups={"loginName"})
  * @UniqueEntity(fields={"email"}, groups={"signup", "email"})
  * @ORM\Table(indexes={@ORM\Index(name="search_user_name", columns={"loginName"})})
@@ -81,6 +81,7 @@ class User implements AdvancedUserInterface {
 
     /**
      * @var string $oldPassword
+     * @Assert\NotNull(groups={"oldPassword"})
      */
     private $oldPassword;
 
@@ -92,7 +93,7 @@ class User implements AdvancedUserInterface {
     private $confirmationCode;
 
     /**
-     * @var date $created_at
+     * @var date $createdAt
      *
      * @ORM\Column(name="createdAt", type="date")
      */
@@ -144,20 +145,21 @@ class User implements AdvancedUserInterface {
      * @var string $url
      *
      * @ORM\Column(name="url", type="string", length=255, nullable=true)
-     * Assert\Url
+     * @Assert\Url(groups={"edit", "url"})
      */
     private $url;
 
     /**
      * @var string $countryCode
-     * 
+     *
      * @ORM\Column(name="country_code", type="string", length=2, nullable=true)
+     * @Assert\Country(groups={"edit", "country"})
      */
     private $countryCode;
 
     /**
      * @var string $suggestedLanguage
-     * 
+     *
      * @ORM\Column(name="suggested_language", type="string", length=2, nullable=true)
      */
     private $suggestedLanguage = 'en';
@@ -218,7 +220,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get image
      *
-     * @return string 
+     * @return string
      */
     public function getImage() {
         return $this->image;
@@ -319,7 +321,7 @@ class User implements AdvancedUserInterface {
     }
 
     /**
-     * @return string the relative path of image starting from web directory 
+     * @return string the relative path of image starting from web directory
      */
     public function getWebPath() {
         return NULL === $this->image ? NULL : '/' . $this->getUploadDir() . '/' . $this->image;
@@ -350,7 +352,7 @@ class User implements AdvancedUserInterface {
     }
 
     /**
-     * initialize the main default attributes 
+     * initialize the main default attributes
      */
     public function __construct() {
         $this->createdAt = new \DateTime();
@@ -378,7 +380,7 @@ class User implements AdvancedUserInterface {
             }
         }
     }
-    
+
     /**
      * this function is used by php to know which attributes to serialize
      * the returned array must not contain any one to one or one to many relation object
@@ -402,7 +404,7 @@ class User implements AdvancedUserInterface {
     }
 
     /**
-     * this function will set a valid random password for the user 
+     * this function will set a valid random password for the user
      */
     public function setRandomPassword() {
         $this->setUserPassword(rand());
@@ -465,7 +467,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get oldPassword
      *
-     * @return string 
+     * @return string
      */
     public function getOldPassword() {
         return $this->oldPassword;
@@ -489,7 +491,7 @@ class User implements AdvancedUserInterface {
 
     /**
      * Implementation of getRoles for the UserInterface.
-     * 
+     *
      * @return array An array of Roles
      */
     public function getRoles() {
@@ -579,7 +581,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId() {
         return $this->id;
@@ -597,7 +599,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get loginName
      *
-     * @return string 
+     * @return string
      */
     public function getLoginName() {
         return $this->loginName;
@@ -615,7 +617,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get email
      *
-     * @return string 
+     * @return string
      */
     public function getEmail() {
         return $this->email;
@@ -642,7 +644,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get confirmationCode
      *
-     * @return string 
+     * @return string
      */
     public function getConfirmationCode() {
         return $this->confirmationCode;
@@ -651,7 +653,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get createdAt
      *
-     * @return date 
+     * @return date
      */
     public function getCreatedAt() {
         return $this->createdAt;
@@ -669,7 +671,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get firstName
      *
-     * @return string 
+     * @return string
      */
     public function getFirstName() {
         return $this->firstName;
@@ -687,7 +689,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get lastName
      *
-     * @return string 
+     * @return string
      */
     public function getLastName() {
         return $this->lastName;
@@ -705,7 +707,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get about
      *
-     * @return text 
+     * @return text
      */
     public function getAbout() {
         return $this->about;
@@ -723,7 +725,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get gender
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getGender() {
         return $this->gender;
@@ -770,7 +772,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get dateOfBirth
      *
-     * @return date 
+     * @return date
      */
     public function getDateOfBirth() {
         return $this->dateOfBirth;
@@ -788,7 +790,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get url
      *
-     * @return string 
+     * @return string
      */
     public function getUrl() {
         return $this->url;
@@ -806,7 +808,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get countryCode
      *
-     * @return string 
+     * @return string
      */
     public function getCountryCode() {
         return $this->countryCode;
@@ -824,7 +826,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get suggestedLanguage
      *
-     * @return string 
+     * @return string
      */
     public function getSuggestedLanguage() {
         return $this->suggestedLanguage;
@@ -842,7 +844,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get locked
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getLocked() {
         return $this->locked;
@@ -860,7 +862,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get enabled
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getEnabled() {
         return $this->enabled;
@@ -887,7 +889,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get userRoles
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return Doctrine\Common\Collections\Collection
      */
     public function getUserRoles() {
         return $this->userRoles;
@@ -905,7 +907,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get socialAccounts
      *
-     * @return Objects\UserBundle\Entity\socialAccounts 
+     * @return Objects\UserBundle\Entity\socialAccounts
      */
     public function getSocialAccounts() {
         return $this->socialAccounts;
@@ -923,7 +925,7 @@ class User implements AdvancedUserInterface {
     /**
      * Get lastSeen
      *
-     * @return datetime 
+     * @return datetime
      */
     public function getLastSeen() {
         return $this->lastSeen;

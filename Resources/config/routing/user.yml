@@ -9,7 +9,7 @@ redirect_user:
     defaults: { _controller: ObjectsUserBundle:User:redirectUser }
 
 user_active:
-    pattern: /auth/active/{confirmationCode}
+    pattern: /auth/activation/{confirmationCode}
     defaults: { _controller: ObjectsUserBundle:User:activation }
 
 user_edit:
@@ -27,7 +27,7 @@ facebook_link:
 linkedin_link:
     pattern: /auth/linkedin/link
     defaults: { _controller: ObjectsUserBundle:User:linkedinLink }
-    
+
 social_unlink:
     pattern: /auth/unlink/{social}
     defaults: { _controller: ObjectsUserBundle:User:socialUnlink }
@@ -36,7 +36,7 @@ social_unlink:
 twitter_enter:
     pattern: /twitter/enter
     defaults: { _controller: ObjectsUserBundle:User:TwitterEnter }
-    
+
 facebook_logging:
     pattern: /facebooklogging
     defaults: { _controller: ObjectsUserBundle:User:facebook }

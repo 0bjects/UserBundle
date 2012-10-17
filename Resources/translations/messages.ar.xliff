@@ -43,8 +43,8 @@
                 <target>البريد الألكترونى</target>
             </trans-unit>
             <trans-unit id="11">
-                <source>ReEmail</source>
-                <target>أعد البريد الألكترونى</target>
+                <source>?</source>
+                <target>؟</target>
             </trans-unit>
             <trans-unit id="12">
                 <source>Retype New Password</source>
