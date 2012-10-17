@@ -24,7 +24,7 @@ class SocialAccounts {
 
     /**
      * @ORM\OneToOne(targetEntity="\Objects\UserBundle\Entity\User", inversedBy="socialAccounts")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     private $user;
 
@@ -55,14 +55,14 @@ class SocialAccounts {
      * @ORM\Column(name="linkedInId", type="string", length=255, nullable=true, unique=true)
      */
     private $linkedInId;
-    
+
     /**
      * @var boolean $postToLinkedIn
      *
      * @ORM\Column(name="postToLinkedIn", type="boolean")
      */
     private $postToLinkedIn = TRUE;
-    
+
     /**
      * @var string $screenName
      *
@@ -108,7 +108,7 @@ class SocialAccounts {
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId() {
         return $this->id;
@@ -126,7 +126,7 @@ class SocialAccounts {
     /**
      * Get oauth_token
      *
-     * @return string 
+     * @return string
      */
     public function getOauthToken() {
         return $this->oauth_token;
@@ -144,7 +144,7 @@ class SocialAccounts {
     /**
      * Get oauth_token_secret
      *
-     * @return string 
+     * @return string
      */
     public function getOauthTokenSecret() {
         return $this->oauth_token_secret;
@@ -162,7 +162,7 @@ class SocialAccounts {
     /**
      * Get twitterId
      *
-     * @return string 
+     * @return string
      */
     public function getTwitterId() {
         return $this->twitterId;
@@ -180,7 +180,7 @@ class SocialAccounts {
     /**
      * Get screenName
      *
-     * @return string 
+     * @return string
      */
     public function getScreenName() {
         return $this->screenName;
@@ -198,7 +198,7 @@ class SocialAccounts {
     /**
      * Get postToTwitter
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPostToTwitter() {
         return $this->postToTwitter;
@@ -216,7 +216,7 @@ class SocialAccounts {
     /**
      * Get facebookId
      *
-     * @return string 
+     * @return string
      */
     public function getFacebookId() {
         return $this->facebookId;
@@ -234,7 +234,7 @@ class SocialAccounts {
     /**
      * Get access_token
      *
-     * @return string 
+     * @return string
      */
     public function getAccessToken() {
         return $this->access_token;
@@ -252,7 +252,7 @@ class SocialAccounts {
     /**
      * Get postToFB
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPostToFB() {
         return $this->postToFB;
@@ -270,7 +270,7 @@ class SocialAccounts {
     /**
      * Get user
      *
-     * @return Objects\UserBundle\Entity\User 
+     * @return Objects\UserBundle\Entity\User
      */
     public function getUser() {
         return $this->user;
@@ -288,7 +288,7 @@ class SocialAccounts {
     /**
      * Get fbTokenExpireDate
      *
-     * @return date 
+     * @return date
      */
     public function getFbTokenExpireDate() {
         return $this->fbTokenExpireDate;
@@ -326,7 +326,7 @@ class SocialAccounts {
         }
         return FALSE;
     }
-    
+
     /**
      * this function will unlink the user twitter account data
      */
@@ -354,7 +354,7 @@ class SocialAccounts {
         $this->setOauthTokenSecret(NULL);
         $this->setLinkedInId(NULL);
     }
-    
+
     /**
      * this function will check if we still need this object in the database
      * @return boolean true if the object has any linked social accounts
@@ -380,7 +380,7 @@ class SocialAccounts {
     /**
      * Get linkedInId
      *
-     * @return string 
+     * @return string
      */
     public function getLinkedInId()
     {
@@ -400,7 +400,7 @@ class SocialAccounts {
     /**
      * Get postToLinkedIn
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPostToLinkedIn()
     {

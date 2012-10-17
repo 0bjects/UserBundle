@@ -40,8 +40,8 @@ class User implements AdvancedUserInterface {
     /**
      * @ORM\ManyToMany(targetEntity="\Objects\UserBundle\Entity\Role")
      * @ORM\JoinTable(name="user_role",
-     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE", nullable=false)}
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)}
      * )
      * @var \Doctrine\Common\Collections\ArrayCollection $userRoles
      */
@@ -177,9 +177,8 @@ class User implements AdvancedUserInterface {
     private $enabled = TRUE;
 
     /**
-     * @ORM\Column(type="string", length="255")
-     *
-     * @var string salt
+     * @var string $salt
+     * @ORM\Column(name="salt", type="string", length=255)
      */
     private $salt;
 
