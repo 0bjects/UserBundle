@@ -45,9 +45,9 @@ class SocialAccountsRepository extends EntityRepository {
     public function getUserWithRolesByFaceBookId($facebookId) {
         $query = $this->getEntityManager()
                 ->createQuery('
-                     SELECT u, s, r
+                     SELECT s, u, r
                      FROM Objects\UserBundle\Entity\SocialAccounts s
-                     JOIN u.socialAccounts s
+                     JOIN s.user u
                      LEFT JOIN u.userRoles r
                      WHERE s.facebookId = :facebookId
                     ');
