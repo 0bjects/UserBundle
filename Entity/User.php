@@ -507,16 +507,6 @@ class User implements AdvancedUserInterface {
     }
 
     /**
-     * Implementation of equals for the UserInterface.
-     * Compares this user to another to determine if they are the same.
-     * @param UserInterface $user The user to compare with this user
-     * @return boolean True if equal, false othwerwise.
-     */
-    public function equals(UserInterface $user) {
-        return md5($this->getUserName()) == md5($user->getUserName());
-    }
-
-    /**
      * Implementation of getPassword for the UserInterface.
      * @return string the hashed user password
      */
