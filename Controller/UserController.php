@@ -134,12 +134,7 @@ class UserController extends Controller {
             $formBuilder = $this->createFormBuilder($user, array(
                         'validation_groups' => $formValidationGroups
                     ))
-                    ->add('email', 'repeated', array(
-                        'type' => 'email',
-                        'first_name' => 'Email',
-                        'second_name' => 'ReEmail',
-                        'invalid_message' => "The emails don't match",
-                    ))
+                    ->add('email', 'email')
                     ->add('userPassword', 'repeated', array(
                 'type' => 'password',
                 'first_name' => 'Password',
@@ -617,11 +612,11 @@ class UserController extends Controller {
         } else {
             /**
              *
-             * the account of the same email as facebook account maybe exist but not linked so we will link it 
+             * the account of the same email as facebook account maybe exist but not linked so we will link it
              * and directly logging the user
              * if the account is not active we automatically activate it
              * else will create the account ,sign up the user
-             * 
+             *
              * */
             $userRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:User');
             $roleRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:Role');
@@ -1260,7 +1255,7 @@ class UserController extends Controller {
     /**
      * this function will receive user data and ask user to enter his email in case new user
      * or will signin the user in case linkedIn user
-     * @author Ahmed <a.ibrahim@objects.ws> 
+     * @author Ahmed <a.ibrahim@objects.ws>
      */
     public function linkedInUserDataAction() {
         //check that a logged in user can not access this action
@@ -1323,11 +1318,11 @@ class UserController extends Controller {
 
                 /**
                  *
-                 * the account of the same email as linkedin account maybe exist but not linked so we will link it 
+                 * the account of the same email as linkedin account maybe exist but not linked so we will link it
                  * and directly logging the user
                  * if the account is not active we automatically activate it
                  * else will create the account ,sign up the user
-                 * 
+                 *
                  * */
                 $userRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:User');
                 $roleRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:Role');
@@ -1391,7 +1386,7 @@ class UserController extends Controller {
                 //get the container object
                 $container = $this->container;
                 $newUserName = '';
-                //set the name 
+                //set the name
                 if (isset($userData['first-name'])) {
                     $user->setFirstName($userData['first-name']);
                     $newUserName = $userData['first-name'];

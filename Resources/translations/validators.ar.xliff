@@ -3,14 +3,10 @@
     <file source-language="en" datatype="plaintext" original="validators.en.xliff">
         <body>
             <trans-unit id="1">
-                <source>The emails don't match</source>
-                <target>البريد الألكترونى لا يشبه تكراره</target>
-            </trans-unit>
-            <trans-unit id="2">
                 <source>The passwords don't match</source>
                 <target>كلمة المرور لا تشبه تكرارها</target>
             </trans-unit>
-            <trans-unit id="3">
+            <trans-unit id="2">
                 <source>Only characters, numbers and _</source>
                 <target>فقط حروف و _ و أرقام</target>
             </trans-unit>

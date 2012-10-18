@@ -35,17 +35,9 @@
 
     {{ form_errors(form.email) }}<br>
     <label>{% trans %}Email{% endtrans %}:</label>
-    {% if not popupFlag %}
-    {{ form_widget(form.email.Email) }}<br>
-    <span id="mailcheck-message"></span>
-    <label>{% trans %}ReEmail{% endtrans %}:</label>
-    {{ form_widget(form.email.ReEmail) }}<br>
-    {% else %}
     {{ form_widget(form.email) }}<br>
     <span id="mailcheck-message"></span>
-    {% endif %}
-    
-    
+
     {{ form_errors(form.userPassword) }}<br>
     <label>{% trans %}Password{% endtrans %}:</label>
     {% if not popupFlag %}
@@ -55,7 +47,7 @@
     {% else %}
     {{ form_widget(form.userPassword) }}<br>
     {% endif %}
-    
+
     {{ form_rest(form) }}
 
     <input type="submit" title="{% trans %}Sign up{% endtrans %}" value="{% trans %}Sign up{% endtrans %}" id="user-signup"/>

@@ -1,39 +1,19 @@
 Installation instructions:
 
-1.add this lines to your deps file:
+1.add this lines to your composer.json file in "require" part:
+"facebook/php-sdk": "dev-master",
+"doctrine/doctrine-fixtures-bundle": "dev-master"
 
-[FacebookApiLibrary]
-    git=http://github.com/facebook/php-sdk.git
+2.run composer update
 
-[APIBundle]
-    git=http://github.com/0bjects/APIBundle.git
-    target=../src/Objects/APIBundle
+3.add this lines to your app/AppKernel.php :
 
-[doctrine-fixtures]
-    git=http://github.com/doctrine/data-fixtures.git
-
-[DoctrineFixturesBundle]
-    git=http://github.com/doctrine/DoctrineFixturesBundle.git
-    target=bundles/Symfony/Bundle/DoctrineFixturesBundle
-    version=origin/2.0
-
-[UserBundle]
-    git=http://github.com/0bjects/UserBundle.git
-    target=../src/Objects/UserBundle
-
-2.run bin/vendors update
-
-3.add this line to your app/AppKernel.php :
-
-new Symfony\Bundle\DoctrineFixturesBundle\DoctrineFixturesBundle(),
+new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
 new Objects\APIBundle\ObjectsAPIBundle(),
 new Objects\UserBundle\ObjectsUserBundle(),
 
-4.add this line to the file app/autoload.php
-
-'OAuth'            => __DIR__.'/../src/Objects/APIBundle/libraries/abraham',
-'Doctrine\\Common\\DataFixtures' => __DIR__.'/../vendor/doctrine-fixtures/lib',
-
+4.add this line to the file app/autoload.php after "$loader = require __DIR__.'/../vendor/autoload.php';"
+$loader->add('OAuth', __DIR__.'/../src/Objects/APIBundle/libraries/abraham');
 
 5.add the routes in your app/config/routing.yml:
 
@@ -67,5 +47,4 @@ IMPORTANT NOTE:
 ***********************
 remove the .git folder in src/Objects/APIBundle or in src/Objects/UserBundle
 if you are going to make project specific changes
-so that you do not push them to the bundle repo and remove the deps and deps.lock lines
 ***********************
