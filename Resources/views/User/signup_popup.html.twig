@@ -29,14 +29,14 @@
     {{ form_errors(form.loginName) }}<br>
     <label>{% trans %}Login Name{% endtrans %}:</label>
     {{ form_widget(form.loginName) }}
-    <span id="loginName-error"></span>
+    <span id="loginName-error" style="display: none;"></span>
     <br>
     {% endif %}
 
     {{ form_errors(form.email) }}<br>
     <label>{% trans %}Email{% endtrans %}:</label>
     {{ form_widget(form.email) }}<br>
-    <span id="mailcheck-message"></span>
+    <span id="mailcheck-message" style="display: none;"></span>
 
     {{ form_errors(form.userPassword) }}<br>
     <label>{% trans %}Password{% endtrans %}:</label>

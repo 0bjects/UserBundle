@@ -10,49 +10,54 @@ $(document).ready(function(){
         }
     });
     
-    $('#form_loginName').blur(function(){
+    $('#form_loginName').keyup(function(){
         //user loginName
-        loginName = $('#form_loginName').val();
+        loginName = $.trim($('#form_loginName').val());
         var reg = XRegExp("^[a-zA-Z_0-9\\p{L}]+$");
-        if (reg.test(loginName)) {
-            $('#loginName-error').text('');
-            //check if the login name exist
-            $.ajax({
-                url: loginNameCheckUrl+"/"+loginName,
-                success: function(msg) {
-                    if(msg == 'exist'){
-                        //add repeat flag to loginName field
-                        $('#form_loginName').attr('errorFlag',true);
-                        $('#loginName-error').text(loginNameExist);
-                    }else if(msg == 'not-exist'){
-                        //add repeat flag to loginName field
-                        $('#form_loginName').attr('errorFlag',false);
-                        $('#loginName-error').text(loginNameNotExist);
+        if(loginName.length > 3){
+            if (reg.test(loginName)) {
+                $('#loginName-error').text('');
+                //check if the login name exist
+                $.ajax({
+                    url: loginNameCheckUrl+"/"+loginName,
+                    success: function(msg) {
+                        $('#loginName-error').show();
+                        if(msg == 'exist'){
+                            //add repeat flag to loginName field
+                            $('#form_loginName').attr('errorFlag',true);
+                            $('#loginName-error').text(loginNameExist);
+                        }else if(msg == 'not-exist'){
+                            //add repeat flag to loginName field
+                            $('#form_loginName').attr('errorFlag',false);
+                            $('#loginName-error').text(loginNameNotExist);
+                        }
+                    },
+                    complete: function(msg) {
                     }
-                },
-                complete: function(msg) {
-                }
-            });
+                });
             
-        }else{
-            $('#form_loginName').attr('errorFlag',true);
-            $('#loginName-error').text(loginNameError);
+            }else{
+                $('#loginName-error').show();
+                $('#form_loginName').attr('errorFlag',true);
+                $('#loginName-error').text(loginNameError);
+            }
         }
     });
     
     
-    $('#form_email_Email').blur(function() {
+    $('#form_email').blur(function() {
         $(this).mailcheck({
-//            domains: domains,                       // optional
-//            topLevelDomains: topLevelDomains,       // optional
-//            distanceFunction: superStringDistance,  // optional
+            //            domains: domains,                       // optional
+            //            topLevelDomains: topLevelDomains,       // optional
+            //            distanceFunction: superStringDistance,  // optional
             suggested: function(element, suggestion) {
-            // callback code
-            $('#mailcheck-message').text(mailcheckMessage+" "+suggestion.full);
+                $('#mailcheck-message').show();
+                // callback code
+                $('#mailcheck-message').text(mailcheckMessage+" "+suggestion.full);
             },
             empty: function(element) {
-            // callback code
-            $('#mailcheck-message').text('');
+                // callback code
+                $('#mailcheck-message').text('');
             }
         });
     });
