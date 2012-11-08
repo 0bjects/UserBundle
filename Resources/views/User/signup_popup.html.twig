@@ -38,13 +38,15 @@
     {{ form_widget(form.email) }}<br>
     <span id="mailcheck-message" style="display: none;"></span>
 
-    {{ form_errors(form.userPassword) }}<br>
-    <label>{% trans %}Password{% endtrans %}:</label>
     {% if not popupFlag %}
+    {{ form_errors(form.userPassword.Password) }}<br>
+    <label>{% trans %}Password{% endtrans %}:</label>
     {{ form_widget(form.userPassword.Password) }}<br>
     <label>{% trans %}RePassword{% endtrans %}:</label>
     {{ form_widget(form.userPassword.RePassword) }}<br>
     {% else %}
+    {{ form_errors(form.userPassword) }}<br>
+    <label>{% trans %}Password{% endtrans %}:</label>
     {{ form_widget(form.userPassword) }}<br>
     {% endif %}
 

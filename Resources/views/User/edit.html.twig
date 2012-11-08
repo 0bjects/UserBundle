@@ -39,7 +39,7 @@
         {{ form_widget(form.oldPassword) }}<br>
     {% endif %}
 
-    {{ form_errors(form.userPassword) }}<br>
+    {{ form_errors(form.userPassword.Password) }}<br>
     <label>{% trans %}New Password{% endtrans %}:</label>
     {{ form_widget(form.userPassword.Password, {'attr': {'autocomplete': 'off'} }) }}<br>
 
