@@ -43,6 +43,20 @@ class SocialAccounts {
     private $oauth_token_secret;
 
     /**
+     * @var string $linkedin_oauth_token
+     *
+     * @ORM\Column(name="linkedin_oauth_token", type="string", length=255, nullable=true)
+     */
+    private $linkedin_oauth_token;
+
+    /**
+     * @var string $linkedin_oauth_token_secret
+     *
+     * @ORM\Column(name="linkedin_oauth_token_secret", type="string", length=255, nullable=true)
+     */
+    private $linkedin_oauth_token_secret;
+
+    /**
      * @var string $twitterId
      *
      * @ORM\Column(name="twitterId", type="string", length=255, nullable=true, unique=true)
@@ -350,8 +364,8 @@ class SocialAccounts {
      * this function will unlink the user linkedin account data
      */
     public function unlinkLinkedIn() {
-        $this->setOauthToken(NULL);
-        $this->setOauthTokenSecret(NULL);
+        $this->setLinkedinOauthToken(NULL);
+        $this->setLinkedinOauthTokenSecret(NULL);
         $this->setLinkedInId(NULL);
     }
 
@@ -366,14 +380,12 @@ class SocialAccounts {
         return FALSE;
     }
 
-
     /**
      * Set linkedInId
      *
      * @param string $linkedInId
      */
-    public function setLinkedInId($linkedInId)
-    {
+    public function setLinkedInId($linkedInId) {
         $this->linkedInId = $linkedInId;
     }
 
@@ -382,8 +394,7 @@ class SocialAccounts {
      *
      * @return string
      */
-    public function getLinkedInId()
-    {
+    public function getLinkedInId() {
         return $this->linkedInId;
     }
 
@@ -392,8 +403,7 @@ class SocialAccounts {
      *
      * @param boolean $postToLinkedIn
      */
-    public function setPostToLinkedIn($postToLinkedIn)
-    {
+    public function setPostToLinkedIn($postToLinkedIn) {
         $this->postToLinkedIn = $postToLinkedIn;
     }
 
@@ -402,8 +412,44 @@ class SocialAccounts {
      *
      * @return boolean
      */
-    public function getPostToLinkedIn()
-    {
+    public function getPostToLinkedIn() {
         return $this->postToLinkedIn;
     }
+
+    /**
+     * Set linkedin_oauth_token
+     *
+     * @param string $linkedinOauthToken
+     */
+    public function setLinkedinOauthToken($linkedinOauthToken) {
+        $this->linkedin_oauth_token = $linkedinOauthToken;
+    }
+
+    /**
+     * Get linkedin_oauth_token
+     *
+     * @return string 
+     */
+    public function getLinkedinOauthToken() {
+        return $this->linkedin_oauth_token;
+    }
+
+    /**
+     * Set linkedin_oauth_token_secret
+     *
+     * @param string $linkedinOauthTokenSecret
+     */
+    public function setLinkedinOauthTokenSecret($linkedinOauthTokenSecret) {
+        $this->linkedin_oauth_token_secret = $linkedinOauthTokenSecret;
+    }
+
+    /**
+     * Get linkedin_oauth_token_secret
+     *
+     * @return string 
+     */
+    public function getLinkedinOauthTokenSecret() {
+        return $this->linkedin_oauth_token_secret;
+    }
+
 }

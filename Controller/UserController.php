@@ -1229,8 +1229,8 @@ class UserController extends Controller {
                     $em->persist($socialAccounts);
                 }
 
-                $socialAccounts->setOauthToken($oauth_token);
-                $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                $socialAccounts->setLinkedinOauthToken($oauth_token);
+                $socialAccounts->setLinkedinOauthTokenSecret($oauth_token_secret);
                 $socialAccounts->setLinkedInId($userData['id']);
 
 
@@ -1292,10 +1292,10 @@ class UserController extends Controller {
                 //check if we found the user
                 if ($socialAccounts) {
                     //user found check if the access tokens have changed
-                    if ($socialAccounts->getOauthToken() != $oauth_token) {
+                    if ($socialAccounts->getLinkedinOauthToken() != $oauth_token) {
                         //tokens changed update the tokens
-                        $socialAccounts->setOauthToken($oauth_token);
-                        $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                        $socialAccounts->setLinkedinOauthToken($oauth_token);
+                        $socialAccounts->setLinkedinOauthTokenSecret($oauth_token_secret);
                         //save the new access tokens
                         $em->flush();
                     }
@@ -1335,8 +1335,8 @@ class UserController extends Controller {
                         $socialAccounts = new SocialAccounts();
                         $socialAccounts->setUser($user);
                     }
-                    $socialAccounts->setOauthToken($oauth_token);
-                    $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                    $socialAccounts->setLinkedinOauthToken($oauth_token);
+                    $socialAccounts->setLinkedinOauthTokenSecret($oauth_token_secret);
                     $socialAccounts->setLinkedInId($userData['id']);
                     $user->setSocialAccounts($socialAccounts);
 
@@ -1429,8 +1429,8 @@ class UserController extends Controller {
 
                 //create social accounts object
                 $socialAccounts = new SocialAccounts();
-                $socialAccounts->setOauthToken($oauth_token);
-                $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                $socialAccounts->setLinkedinOauthToken($oauth_token);
+                $socialAccounts->setLinkedinOauthTokenSecret($oauth_token_secret);
                 $socialAccounts->setLinkedInId($userData['id']);
                 $socialAccounts->setUser($user);
                 //set the user linkedIn info
