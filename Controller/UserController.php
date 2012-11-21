@@ -70,7 +70,7 @@ class UserController extends Controller {
         $rediretUrl = $session->get('redirectUrl', FALSE);
         if (!$rediretUrl) {
             //check if firewall redirected the user
-            $rediretUrl = $session->get('_security.target_path');
+            $rediretUrl = $session->get('_security.secured_area.target_path');
             if (!$rediretUrl) {
                 //redirect to home page
                 $rediretUrl = '/';
