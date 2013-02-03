@@ -3,7 +3,6 @@
 namespace Objects\UserBundle\Entity;
 
 use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -196,13 +195,7 @@ class User implements AdvancedUserInterface {
     private $temp;
 
     /**
-     * this flag is for detecting if the image has been handled
-     * @var boolean $imageHandeled
-     */
-    private $imageHandeled = FALSE;
-
-    /**
-     * @Assert\Image(groups={"image"})
+     * @Assert\Image(groups={"image", "edit"})
      * @var \Symfony\Component\HttpFoundation\File\UploadedFile
      */
     public $file;
@@ -211,9 +204,11 @@ class User implements AdvancedUserInterface {
      * Set image
      *
      * @param string $image
+     * @return User
      */
     public function setImage($image) {
         $this->image = $image;
+        return $this;
     }
 
     /**
@@ -226,15 +221,43 @@ class User implements AdvancedUserInterface {
     }
 
     /**
+     * Set file
+     *
+     * @param \Symfony\Component\HttpFoundation\File\UploadedFile $file
+     * @return $this
+     */
+    public function setFile($file) {
+        $this->file = $file;
+        //check if we have an old image
+        if ($this->image) {
+            //store the old name to delete on the update
+            $this->temp = $this->image;
+        }
+        $this->image = NULL;
+        return $this;
+    }
+
+    /**
+     * Get file
+     *
+     * @return \Symfony\Component\HttpFoundation\File\UploadedFile
+     */
+    public function getFile() {
+        return $this->file;
+    }
+
+    /**
      * this function is used to delete the current image
+     * the deleting of the current object will also delete the image and you do not need to call this function
+     * if you call this function before you remove the object the image will not be removed
      */
     public function removeImage() {
         //check if we have an old image
         if ($this->image) {
-            //store the old name to delete the image on the upadate
+            //store the old name to delete on the update
             $this->temp = $this->image;
             //delete the current image
-            $this->setImage(NULL);
+            $this->image = NULL;
         }
     }
 
@@ -243,7 +266,7 @@ class User implements AdvancedUserInterface {
      * @ORM\PreUpdate()
      */
     public function preUpload() {
-        if (NULL !== $this->file && !$this->imageHandeled) {
+        if (NULL !== $this->file && NULL === $this->image) {
             //get the image extension
             $extension = $this->file->guessExtension();
             //generate a random image name
@@ -254,14 +277,14 @@ class User implements AdvancedUserInterface {
             if (!@is_dir($uploadDir)) {
                 //get the old umask
                 $oldumask = umask(0);
-                //not a directory probably the first time for this category try to create the directory
+                //not a directory probably the first time try to create the directory
                 $success = @mkdir($uploadDir, 0755, TRUE);
                 //reset the umask
                 umask($oldumask);
                 //check if we created the folder
                 if (!$success) {
                     //could not create the folder throw an exception to stop the insert
-                    throw new \Exception("Can not create the image directory $uploadDir");
+                    throw new \Exception("Can not create the directory $uploadDir");
                 }
             }
             //check that the file name does not exist
@@ -269,15 +292,8 @@ class User implements AdvancedUserInterface {
                 //try to find a new unique name
                 $img = uniqid();
             }
-            //check if we have an old image
-            if ($this->image) {
-                //store the old name to delete the image on the upadate
-                $this->temp = $this->image;
-            }
             //set the image new name
             $this->image = "$img.$extension";
-            //set the flag to indecate that the image has been handled
-            $this->imageHandeled = TRUE;
         }
     }
 
@@ -298,6 +314,8 @@ class User implements AdvancedUserInterface {
         if ($this->temp) {
             //try to delete the old image
             @unlink($this->getUploadRootDir() . '/' . $this->temp);
+            //clear the temp image
+            $this->temp = NULL;
         }
     }
 
@@ -339,7 +357,7 @@ class User implements AdvancedUserInterface {
      * @param $height the desired image height
      * @return string the htaccess file url pattern which map to timthumb url
      */
-    public function getTimThumbUrl($width = 50, $height = 50) {
+    public function getSmallImageUrl($width = 50, $height = 50) {
         return NULL === $this->image ? NULL : "/user-profile-image/$width/$height/$this->image";
     }
 
