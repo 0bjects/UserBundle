@@ -374,6 +374,12 @@ class UserController extends Controller {
         $translator = $this->get('translator');
         //get the session object
         $session = $request->getSession();
+        //get the user social account object
+        $socialAccounts = $user->getSocialAccounts();
+        //the link twitter account route should not be visible to an already linked user
+        if ($socialAccounts && $socialAccounts->isTwitterLinked()) {
+            $session->setFlash('error', $translator->trans('Your account is already linked to another account.'));
+        }
         //get the oauth token from the session
         $oauth_token = $session->get('oauth_token', FALSE);
         //get the oauth token secret from the session
@@ -384,25 +390,29 @@ class UserController extends Controller {
         $screen_name = $session->get('screen_name', FALSE);
         //check if we got twitter data
         if ($oauth_token && $oauth_token_secret && $twitterId && $screen_name) {
-            //get the user social account object
-            $socialAccounts = $user->getSocialAccounts();
-            //check if the user does not have a social account object
-            if (!$socialAccounts) {
-                //create new social account for the user
-                $socialAccounts = new SocialAccounts();
-                $socialAccounts->setUser($user);
-                $user->setSocialAccounts($socialAccounts);
-                $em->persist($socialAccounts);
+            //check if we have any user linked to this account before
+            $twitterAccount = $em->getRepository('ObjectsUserBundle:SocialAccounts')->findOneByTwitterId($twitterId);
+            if ($twitterAccount) {
+                $session->setFlash('error', $translator->trans('The twitter account is already linked to another account.'));
+            } else {
+                //check if the user does not have a social account object
+                if (!$socialAccounts) {
+                    //create new social account for the user
+                    $socialAccounts = new SocialAccounts();
+                    $socialAccounts->setUser($user);
+                    $user->setSocialAccounts($socialAccounts);
+                    $em->persist($socialAccounts);
+                }
+                //set the user twitter data
+                $socialAccounts->setTwitterId($twitterId);
+                $socialAccounts->setOauthToken($oauth_token);
+                $socialAccounts->setOauthTokenSecret($oauth_token_secret);
+                $socialAccounts->setScreenName($screen_name);
+                //save the data for the user
+                $em->flush();
+                //set the success flag in the session
+                $session->setFlash('success', $translator->trans('Your account is now linked to twitter'));
             }
-            //set the user twitter data
-            $socialAccounts->setTwitterId($twitterId);
-            $socialAccounts->setOauthToken($oauth_token);
-            $socialAccounts->setOauthTokenSecret($oauth_token_secret);
-            $socialAccounts->setScreenName($screen_name);
-            //save the data for the user
-            $em->flush();
-            //set the success flag in the session
-            $session->setFlash('success', $translator->trans('Your account is now linked to twitter'));
         } else {
             //something went wrong clear the session and set a flash to try again
             $session->clear();
@@ -988,7 +998,7 @@ class UserController extends Controller {
         $request = $this->getRequest();
         //prepare the form validation constrains
         $collectionConstraint = new Collection(array(
-                    'email' => new Email()
+            'email' => new Email()
                 ));
         //create the form
         $form = $this->createFormBuilder(null, array(

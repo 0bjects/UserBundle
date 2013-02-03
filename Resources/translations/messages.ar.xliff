@@ -302,6 +302,14 @@
                 <source>Your LinkedIN account was successfully Linked to your account</source>
                 <target>لقد تم ربط حسابك الشخصى مع حساب على LinkedIN بنجاح</target>
             </trans-unit>
+            <trans-unit id="76">
+                <source>Your account is already linked to another account.</source>
+                <target>حسابك مربوط بحساب اخر.</target>
+            </trans-unit>
+            <trans-unit id="77">
+                <source>The twitter account is already linked to another account.</source>
+                <target>حساب تويتر مربوط بحساب اخر.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
