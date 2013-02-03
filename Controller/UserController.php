@@ -926,65 +926,81 @@ class UserController extends Controller {
      * after setting either success flag or error flag
      * @author Mahmoud
      * @param string $confirmationCode
+     * @param string $email
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function activationAction($confirmationCode) {
-        //get the user object from the firewall
-        $user = $this->get('security.context')->getToken()->getUser();
+    public function activationAction($confirmationCode, $email) {
+        //initial flag to know if the user is logged in
+        $loggedIn = FALSE;
         //get the session object
         $session = $this->getRequest()->getSession();
         //get the translator object
         $translator = $this->get('translator');
         //get the entity manager
         $em = $this->getDoctrine()->getEntityManager();
+        //check if the user is already active
+        if (TRUE === $this->get('security.context')->isGranted('ROLE_USER')) {
+            //set a notice flag
+            $session->setFlash('notice', $translator->trans('Your account is already active.'));
+            return $this->redirect($this->generateUrl('user_edit'));
+        }
+        //check if the user is already active
+        if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
+            //get the user object from the firewall
+            $user = $this->get('security.context')->getToken()->getUser();
+            //set the user to logged in
+            $loggedIn = TRUE;
+        } else {
+            //get the user object from the database
+            $user = $em->getRepository('ObjectsUserBundle:User')->findOneBy(array('email' => $email, 'confirmationCode' => $confirmationCode));
+        }
+        if (!$user || $user->getConfirmationCode() != $confirmationCode || $user->getEmail() != $email) {
+            //set an error flag
+            $session->setFlash('error', $translator->trans('Invalid confirmation code.'));
+            //redirect to the login page
+            return $this->redirect($this->generateUrl('login'));
+        }
         //get a user role object
         $roleUser = $em->getRepository('ObjectsUserBundle:Role')->findOneByName('ROLE_USER');
-        //check if the user is already active (the user might visit the link twice)
-        if ($user->getUserRoles()->contains($roleUser)) {
-            //set a notice flag
-            $session->setFlash('notice', $translator->trans('nothing to do'));
-        } else {
-            //check if the confirmation code is correct
-            if ($user->getConfirmationCode() == $confirmationCode) {
-                //get the current user roles
-                $userRoles = $user->getUserRoles();
-                //try to get the not active role
-                foreach ($userRoles as $key => $userRole) {
-                    //check if this role is the not active role
-                    if ($userRole->getName() == 'ROLE_NOTACTIVE') {
-                        //remove the not active role
-                        $userRoles->remove($key);
-                        //end the search
-                        break;
-                    }
-                }
-                //add the user role
-                $user->addRole($roleUser);
-                //save the new role for the user
-                $em->flush();
-                //set a success flag
-                $session->setFlash('success', $translator->trans('your account is now active'));
-                //try to refresh the user object roles in the firewall session
-                try {
-                    // create the authentication token
-                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                    // give it to the security context
-                    $this->get('security.context')->setToken($token);
-                } catch (\Exception $e) {
-                    //can not reload the user object log out the user
-                    $this->get('security.context')->setToken(null);
-                    //invalidate the current user session
-                    $this->getRequest()->getSession()->invalidate();
-                    //redirect to the login page
-                    return $this->redirect($this->generateUrl('login'));
-                }
-            } else {
-                //set an error flag
-                $session->setFlash('error', $translator->trans('invalid confirmation code'));
+        //get the current user roles
+        $userRoles = $user->getUserRoles();
+        //try to get the not active role
+        foreach ($userRoles as $key => $userRole) {
+            //check if this role is the not active role
+            if ($userRole->getName() == 'ROLE_NOTACTIVE') {
+                //remove the not active role
+                $userRoles->remove($key);
+                //end the search
+                break;
             }
         }
-        //go to the edit profile page
-        return $this->redirect($this->generateUrl('user_edit'));
+        //add the user role
+        $user->addRole($roleUser);
+        //save the new role for the user
+        $em->flush();
+        //set a success flag
+        $session->setFlash('success', $translator->trans('Your account is now active.'));
+        //check if the user is logged in
+        if ($loggedIn) {
+            //try to refresh the user object roles in the firewall session
+            try {
+                // create the authentication token
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                // give it to the security context
+                $this->get('security.context')->setToken($token);
+            } catch (\Exception $e) {
+                //can not reload the user object log out the user
+                $this->get('security.context')->setToken(null);
+                //invalidate the current user session
+                $this->getRequest()->getSession()->invalidate();
+                //redirect to the login page
+                return $this->redirect($this->generateUrl('login'));
+            }
+            //go to the edit profile page
+            return $this->redirect($this->generateUrl('user_edit'));
+        }
+        //redirect to the login page
+        return $this->redirect($this->generateUrl('login'));
     }
 
     /**

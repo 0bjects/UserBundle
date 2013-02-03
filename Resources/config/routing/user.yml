@@ -8,10 +8,6 @@ redirect_user:
     pattern: /auth/redirect/user
     defaults: { _controller: ObjectsUserBundle:User:redirectUser }
 
-user_active:
-    pattern: /auth/activation/{confirmationCode}
-    defaults: { _controller: ObjectsUserBundle:User:activation }
-
 user_edit:
     pattern: /auth/edit
     defaults: { _controller: ObjectsUserBundle:User:edit }
@@ -33,6 +29,10 @@ social_unlink:
     defaults: { _controller: ObjectsUserBundle:User:socialUnlink }
 
 # routes visible for every one
+user_active:
+    pattern: /activation/{confirmationCode}/{email}
+    defaults: { _controller: ObjectsUserBundle:User:activation }
+
 twitter_enter:
     pattern: /twitter/enter
     defaults: { _controller: ObjectsUserBundle:User:TwitterEnter }
