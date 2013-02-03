@@ -63,16 +63,16 @@
                 <target>أضغط على اللينك التالى لتفعيل حسابك</target>
             </trans-unit>
             <trans-unit id="16">
-                <source>your account is now active</source>
+                <source>Your account is now active.</source>
                 <target>لقد تم تفعيل حسابك</target>
             </trans-unit>
             <trans-unit id="17">
-                <source>invalid confirmation code</source>
+                <source>Invalid confirmation code.</source>
                 <target>خطأ فى تأكيد الحساب</target>
             </trans-unit>
             <trans-unit id="18">
-                <source>nothing to do</source>
-                <target>لم يحدث اى تغيير</target>
+                <source>Your account is already active.</source>
+                <target>الحساب مفعل.</target>
             </trans-unit>
             <trans-unit id="19">
                 <source>the entered email was not found</source>

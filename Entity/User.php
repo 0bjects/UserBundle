@@ -756,13 +756,17 @@ class User implements AdvancedUserInterface {
 
     /**
      * this function will return the user country name
+     * @param string $locale the language code to display the country name in example: ar, en.
      * @return NULL|string the country name
      */
-    public function getCountryName() {
+    public function getCountryName($locale = null) {
         //check if we have a country code
         if ($this->countryCode) {
+            if (!$locale) {
+                $locale = $this->suggestedLanguage;
+            }
             //return the country name
-            return Locale::getDisplayRegion($this->suggestedLanguage . '_' . $this->countryCode);
+            return Locale::getDisplayRegion($this->suggestedLanguage . '_' . $this->countryCode, $locale);
         }
         return NULL;
     }

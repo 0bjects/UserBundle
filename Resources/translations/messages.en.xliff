@@ -63,16 +63,16 @@
                 <target>press on the next link to activate your account</target>
             </trans-unit>
             <trans-unit id="16">
-                <source>your account is now active</source>
-                <target>your account is now active</target>
+                <source>Your account is now active.</source>
+                <target>Your account is now active.</target>
             </trans-unit>
             <trans-unit id="17">
-                <source>invalid confirmation code</source>
-                <target>invalid confirmation code</target>
+                <source>Invalid confirmation code.</source>
+                <target>Invalid confirmation code.</target>
             </trans-unit>
             <trans-unit id="18">
-                <source>nothing to do</source>
-                <target>nothing to do</target>
+                <source>Your account is already active.</source>
+                <target>Your account is already active.</target>
             </trans-unit>
             <trans-unit id="19">
                 <source>the entered email was not found</source>
