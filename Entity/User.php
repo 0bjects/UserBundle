@@ -747,10 +747,10 @@ class User implements AdvancedUserInterface {
             return 'unknown';
         }
         if ($this->gender === 0) {
-            return 'female';
+            return 'Female';
         }
         if ($this->gender === 1) {
-            return 'male';
+            return 'Male';
         }
     }
 
