@@ -395,7 +395,7 @@ class User implements AdvancedUserInterface {
             if ($this->loginName) {
                 return $this->loginName;
             } else {
-                return $this->email;
+                return (string) $this->email;
             }
         }
     }
