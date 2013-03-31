@@ -42,13 +42,13 @@ class Role implements RoleInterface {
     private $description;
 
     public function __toString() {
-        return $this->getName();
+        return (string) $this->name;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId() {
         return $this->id;
@@ -66,7 +66,7 @@ class Role implements RoleInterface {
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName() {
         return $this->name;
@@ -84,7 +84,7 @@ class Role implements RoleInterface {
     /**
      * Get description
      *
-     * @return text 
+     * @return text
      */
     public function getDescription() {
         return $this->description;
@@ -92,7 +92,7 @@ class Role implements RoleInterface {
 
     /**
      * Implementation of getRole for the RoleInterface.
-     * 
+     *
      * @return string The role.
      */
     public function getRole() {
