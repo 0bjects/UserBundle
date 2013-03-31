@@ -198,7 +198,7 @@ class User implements AdvancedUserInterface {
      * @Assert\Image(groups={"image", "edit"})
      * @var \Symfony\Component\HttpFoundation\File\UploadedFile
      */
-    public $file;
+    private $file;
 
     /**
      * Set image
@@ -224,7 +224,7 @@ class User implements AdvancedUserInterface {
      * Set file
      *
      * @param \Symfony\Component\HttpFoundation\File\UploadedFile $file
-     * @return $this
+     * @return User
      */
     public function setFile($file) {
         $this->file = $file;
@@ -232,8 +232,10 @@ class User implements AdvancedUserInterface {
         if ($this->image) {
             //store the old name to delete on the update
             $this->temp = $this->image;
+            $this->image = NULL;
+        } else {
+            $this->image = 'initial';
         }
-        $this->image = NULL;
         return $this;
     }
 
@@ -266,7 +268,7 @@ class User implements AdvancedUserInterface {
      * @ORM\PreUpdate()
      */
     public function preUpload() {
-        if (NULL !== $this->file && NULL === $this->image) {
+        if (NULL !== $this->file && (NULL === $this->image || 'initial' === $this->image)) {
             //get the image extension
             $extension = $this->file->guessExtension();
             //generate a random image name
