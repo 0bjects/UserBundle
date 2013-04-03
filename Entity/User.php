@@ -159,6 +159,7 @@ class User implements AdvancedUserInterface {
     /**
      * @var string $suggestedLanguage
      *
+     * @Assert\Language(groups={"edit", "language"})
      * @ORM\Column(name="suggested_language", type="string", length=2, nullable=true)
      */
     private $suggestedLanguage = 'en';
@@ -499,6 +500,7 @@ class User implements AdvancedUserInterface {
      */
     public function setUserPassword($password) {
         $this->userPassword = $password;
+        $this->password = null;
     }
 
     /**
