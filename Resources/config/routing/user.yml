@@ -28,6 +28,10 @@ social_unlink:
     pattern: /auth/unlink/{social}
     defaults: { _controller: ObjectsUserBundle:User:socialUnlink }
 
+user_reActivation:
+    pattern: /user_reActivation
+    defaults: { _controller: ObjectsUserBundle:User:reActivation }
+    
 # routes visible for every one
 user_active:
     pattern: /activation/{confirmationCode}/{email}
