@@ -524,8 +524,8 @@ class User implements AdvancedUserInterface {
      */
     public function eraseCredentials() {
         //remove the user password
-        $this->setUserPassword(NULL);
-        $this->setOldPassword(NULL);
+        $this->userPassword = null;
+        $this->oldPassword = null;
     }
 
     /**
