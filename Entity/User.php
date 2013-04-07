@@ -604,7 +604,7 @@ class User implements AdvancedUserInterface {
      * @param string $loginName
      */
     public function setLoginName($loginName) {
-        $this->loginName = trim(preg_replace('/\W+/u', '_', $loginName));
+        $this->loginName = preg_replace('/\W+/u', '_', trim($loginName));
     }
 
     /**
