@@ -6,7 +6,6 @@ use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Locale\Locale;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -770,7 +769,7 @@ class User implements AdvancedUserInterface {
                 $locale = $this->suggestedLanguage;
             }
             //return the country name
-            return Locale::getDisplayRegion($this->suggestedLanguage . '_' . $this->countryCode, $locale);
+            return \Locale::getDisplayRegion($this->suggestedLanguage . '_' . $this->countryCode, $locale);
         }
         return NULL;
     }
