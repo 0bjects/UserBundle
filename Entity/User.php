@@ -106,8 +106,8 @@ class User implements AdvancedUserInterface {
 
     /**
      * @var string $firstName
-     *
-     * @ORM\Column(name="firstName", type="string", length=255, nullable=true)
+     * @Assert\NotBlank(groups={"edit"})
+     * @ORM\Column(name="firstName", type="string", length=255)
      */
     private $firstName;
 
@@ -385,19 +385,10 @@ class User implements AdvancedUserInterface {
      * @return string the object name
      */
     public function __toString() {
-        if ($this->firstName) {
-            if ($this->lastName) {
-                return "$this->firstName $this->lastName";
-            } else {
-                return $this->firstName;
-            }
-        } else {
-            if ($this->loginName) {
-                return $this->loginName;
-            } else {
-                return (string) $this->email;
-            }
+        if ($this->lastName) {
+            return "$this->firstName $this->lastName";
         }
+        return $this->firstName;
     }
 
     /**
@@ -427,6 +418,16 @@ class User implements AdvancedUserInterface {
      */
     public function setRandomPassword() {
         $this->setUserPassword(rand());
+    }
+
+    /**
+     * set the first name for the user
+     * @ORM\PrePersist()
+     */
+    public function setValidFirstName() {
+        if (!$this->firstName) {
+            $this->setFirstName($this->getUsername());
+        }
     }
 
     /**
