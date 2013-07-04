@@ -7,7 +7,7 @@
 {% endif %}
 <form action="{{ path('twitter_enter') }}" method="post" {{ form_enctype(form) }}>
 
-    {{ form_errors(form.email) }}<br>
+    {{ form_errors(form.email.Email) }}<br>
     <label>{% trans %}Email{% endtrans %}:</label>
     {{ form_widget(form.email.Email) }}<br/>
 
