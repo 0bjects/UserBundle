@@ -155,7 +155,7 @@ class UserController extends Controller {
         //check if this is the user posted his data
         if ($request->getMethod() == 'POST') {
             //fill the form data from the request
-            $form->bindRequest($request);
+            $form->handleRequest($request);
             //check if the form values are correct
             if ($form->isValid()) {
                 //get the user object from the form
@@ -266,7 +266,7 @@ class UserController extends Controller {
         //check if this is the user posted his data
         if ($request->getMethod() == 'POST') {
             //fill the form data from the request
-            $form->bindRequest($request);
+            $form->handleRequest($request);
             //check if the form values are correct
             if ($form->isValid()) {
                 //get the user object from the form
@@ -549,7 +549,7 @@ class UserController extends Controller {
             //check if this is the user posted his data
             if ($request->getMethod() == 'POST') {
                 //fill the form data from the request
-                $form->bindRequest($request);
+                $form->handleRequest($request);
                 //check if the form values are correct
                 if ($form->isValid()) {
                     //get the container object
@@ -1077,7 +1077,7 @@ class UserController extends Controller {
         //check if form is posted
         if ($request->getMethod() == 'POST') {
             //bind the user data to the form
-            $form->bindRequest($request);
+            $form->handleRequest($request);
             //check if form is valid
             if ($form->isValid()) {
                 //get the translator object
@@ -1159,7 +1159,7 @@ class UserController extends Controller {
         //check if form is posted
         if ($request->getMethod() == 'POST') {
             //bind the user data to the form
-            $form->bindRequest($request);
+            $form->handleRequest($request);
             //check if form is valid
             if ($form->isValid()) {
                 //set the password for the user
