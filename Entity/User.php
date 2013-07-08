@@ -2,6 +2,7 @@
 
 namespace Objects\UserBundle\Entity;
 
+use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
 use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -80,6 +81,7 @@ class User implements AdvancedUserInterface {
     /**
      * @var string $oldPassword
      * @Assert\NotBlank(groups={"oldPassword"})
+     * @SecurityAssert\UserPassword(groups={"oldPassword"})
      */
     private $oldPassword;
 
@@ -464,18 +466,6 @@ class User implements AdvancedUserInterface {
     }
 
     /**
-     * this function will check if the user entered a valid old password
-     * @Assert\True(message = "the old password is wrong", groups={"oldPassword"})
-     */
-    public function isOldPasswordCorrect() {
-        if ($this->hashPassword($this->getOldPassword()) == $this->getPassword()) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
-    }
-
-    /**
      * Set oldPassword
      *
      * @param string $oldPassword
@@ -500,7 +490,6 @@ class User implements AdvancedUserInterface {
      */
     public function setUserPassword($password) {
         $this->userPassword = $password;
-        $this->password = null;
     }
 
     /**
