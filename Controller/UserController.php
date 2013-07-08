@@ -182,7 +182,7 @@ class UserController extends Controller {
         //get the session object
         $session = $request->getSession();
         //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         //get the container object
         $container = $this->container;
         //get the translator object
@@ -371,7 +371,7 @@ class UserController extends Controller {
         //get the session object
         $session = $this->getRequest()->getSession();
         //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         //check if we have a logged in user or company
         if (FALSE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
             $session->setFlash('note', $translator->trans('You need to Login first.'));
@@ -418,7 +418,7 @@ class UserController extends Controller {
      */
     public function twitterLinkAction() {
         //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         //reload the user object from the database
         $user = $em->getRepository('ObjectsUserBundle:User')->getUserWithSocialAccounts($this->get('security.context')->getToken()->getUser()->getId());
         //get the request object
@@ -498,7 +498,7 @@ class UserController extends Controller {
         //check if we got twitter data
         if ($oauth_token && $oauth_token_secret && $twitterId && $screen_name) {
             //get the entity manager
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             //check if the user twitter id is in our database
             $user = $em->getRepository('ObjectsUserBundle:SocialAccounts')->getUserWithRolesByTwitterId($twitterId);
             //check if we found the user
@@ -643,7 +643,7 @@ class UserController extends Controller {
         //generate long-live facebook access token access token and expiration date
         $longLive_accessToken = FacebookController::getLongLiveFaceboockAccessToken($this->container->getParameter('fb_app_id'), $this->container->getParameter('fb_app_secret'), $shortLive_access_token);
 
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
         //check if the user facebook id is in our database
         $socialAccounts = $em->getRepository('ObjectsUserBundle:SocialAccounts')->getUserWithRolesByFaceBookId($faceUser->id);
@@ -800,7 +800,7 @@ class UserController extends Controller {
         //generate long-live facebook access token access token and expiration date
         $longLive_accessToken = FacebookController::getLongLiveFaceboockAccessToken($this->container->getParameter('fb_app_id'), $this->container->getParameter('fb_app_secret'), $shortLive_access_token);
 
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
         $roleRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:Role');
         $user = $this->get('security.context')->getToken()->getUser();
@@ -857,7 +857,7 @@ class UserController extends Controller {
         //get the logged in user object
         $user = $this->get('security.context')->getToken()->getUser();
         //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         //get the user social account object
         $socialAccounts = $user->getSocialAccounts();
         if ($social == 'facebook') {
@@ -900,7 +900,7 @@ class UserController extends Controller {
             $active = $this->container->getParameter('auto_active');
         }
         //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         //add the new user to the entity manager
         $em->persist($user);
         //prepare the body of the email
@@ -990,7 +990,7 @@ class UserController extends Controller {
         //get the translator object
         $translator = $this->get('translator');
         //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         //check if the user is already active
         if (TRUE === $this->get('security.context')->isGranted('ROLE_USER')) {
             //set a notice flag
@@ -1097,7 +1097,7 @@ class UserController extends Controller {
                     //set a new token for the user
                     $user->setConfirmationCode(md5(uniqid(rand())));
                     //save the new user token into database
-                    $this->getDoctrine()->getEntityManager()->flush();
+                    $this->getDoctrine()->getManager()->flush();
                     //prepare the body of the email
                     $body = $this->renderView('ObjectsUserBundle:User:Emails\forgot_your_password.txt.twig', array('user' => $user));
                     //prepare the message object
@@ -1139,7 +1139,7 @@ class UserController extends Controller {
         //get the translator object
         $translator = $this->get('translator');
         //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         //try to get the user from the database
         $user = $em->getRepository('ObjectsUserBundle:User')->findoneBy(array('email' => $email, 'confirmationCode' => $confirmationCode));
         //check if we found the user
@@ -1223,7 +1223,7 @@ class UserController extends Controller {
             //set the delete flag
             $user->setEnabled(FALSE);
             //get the entity manager
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             //get the social accounts object
             $socialAccounts = $user->getSocialAccounts();
             //remove the social accounts object if exist
@@ -1254,7 +1254,7 @@ class UserController extends Controller {
      */
     private function suggestLoginName($loginName) {
         //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         //get the user repo
         $userRepository = $em->getRepository('ObjectsUserBundle:User');
         //try to check if the given name does not exist
@@ -1273,7 +1273,7 @@ class UserController extends Controller {
      */
     public function linkedinLinkAction() {
         //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         //reload the user object from the database
         $user = $em->getRepository('ObjectsUserBundle:User')->getUserWithSocialAccounts($this->get('security.context')->getToken()->getUser()->getId());
         //get the request object
@@ -1365,7 +1365,7 @@ class UserController extends Controller {
                 $userData = json_decode(json_encode((array) simplexml_load_string($userData)), 1);
 
                 //get the entity manager
-                $em = $this->getDoctrine()->getEntityManager();
+                $em = $this->getDoctrine()->getManager();
                 //check if the user linkedId id is in our database
                 $socialAccounts = $em->getRepository('ObjectsUserBundle:SocialAccounts')->findOneBy(array('linkedInId' => $userData['id']));
                 //check if we found the user
@@ -1534,7 +1534,7 @@ class UserController extends Controller {
      */
     public function loginNameCheckAction($loginName) {
         //get the entity manager
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         //reload the user object from the database
         $user = $em->getRepository('ObjectsUserBundle:User');
 
