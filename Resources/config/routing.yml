@@ -9,10 +9,6 @@ login:
     path:  /login
     defaults: { _controller: ObjectsUserBundle:User:login }
 
-signup:
-    path: /signup
-    defaults: { _controller: ObjectsUserBundle:User:signUp }
-
 # routing files
 user:
     resource: "@ObjectsUserBundle/Resources/config/routing/user.yml"

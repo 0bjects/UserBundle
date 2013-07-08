@@ -33,6 +33,10 @@ user_reActivation:
     defaults: { _controller: ObjectsUserBundle:User:reActivation }
 
 # routes visible for every one
+signup:
+    path: /signup
+    defaults: { _controller: ObjectsUserBundle:User:signUp }
+
 user_active:
     path: /activation/{confirmationCode}/{email}
     defaults: { _controller: ObjectsUserBundle:User:activation }
