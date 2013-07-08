@@ -1,7 +1,3 @@
-jms_security_extra:
-    secure_all_services: false
-    expressions: true
-
 security:
     encoders:
         Objects\UserBundle\Entity\User:
@@ -27,14 +23,14 @@ security:
             pattern:    ^/
             anonymous: ~
             form_login:
-                check_path: /login_check
-                login_path: /login
+                check_path: login_check
+                login_path: login
                 always_use_default_target_path: true
                 use_forward: true
                 default_target_path: /user/auth/redirect/user
 
             logout:
-                path:   /logout
+                path:   logout
                 target: /
 
             remember_me:
@@ -48,5 +44,4 @@ security:
          - { path: ^/user/auth, roles: ROLE_NOTACTIVE }
          - { path: ^/user/auth/active, roles: ROLE_USER }
          - { path: ^/user/auth/fully, roles: IS_AUTHENTICATED_FULLY }
-#        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: http }
-#        - { path: ^/_internal, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
+        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
