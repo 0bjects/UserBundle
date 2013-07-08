@@ -189,7 +189,7 @@ class UserController extends Controller {
         //get the translator object
         $translator = $this->get('translator');
         //get the user object from the firewall
-        $loggedInUser = $this->get('security.context')->getToken()->getUser();
+        $loggedInUser = $this->getUser();
         //get the user social accounts object
         $socialAccounts = $loggedInUser->getSocialAccounts();
         //initialize the success message
@@ -387,7 +387,7 @@ class UserController extends Controller {
         }
 
         //get the logedin user
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
 
         //get the not active role object
         $role = $em->getRepository('ObjectsUserBundle:Role')->findOneByName('ROLE_NOTACTIVE');
@@ -421,7 +421,7 @@ class UserController extends Controller {
         //get the entity manager
         $em = $this->getDoctrine()->getManager();
         //reload the user object from the database
-        $user = $em->getRepository('ObjectsUserBundle:User')->getUserWithSocialAccounts($this->get('security.context')->getToken()->getUser()->getId());
+        $user = $em->getRepository('ObjectsUserBundle:User')->getUserWithSocialAccounts($this->getUser()->getId());
         //get the request object
         $request = $this->getRequest();
         //get the translator object
@@ -804,7 +804,7 @@ class UserController extends Controller {
         $em = $this->getDoctrine()->getManager();
 
         $roleRepository = $this->getDoctrine()->getRepository('ObjectsUserBundle:Role');
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
 
         $socialAccountsRepo = $this->getDoctrine()->getRepository('ObjectsUserBundle:SocialAccounts');
         $socialAccount = $socialAccountsRepo->findOneByFacebookId($faceUser->id);
@@ -856,7 +856,7 @@ class UserController extends Controller {
      */
     public function socialUnlinkAction($social) {
         //get the logged in user object
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
         //get the entity manager
         $em = $this->getDoctrine()->getManager();
         //get the user social account object
@@ -1001,7 +1001,7 @@ class UserController extends Controller {
         //check if the user is already active
         if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
             //get the user object from the firewall
-            $user = $this->get('security.context')->getToken()->getUser();
+            $user = $this->getUser();
             //set the user to logged in
             $loggedIn = TRUE;
         } else {
@@ -1220,7 +1220,7 @@ class UserController extends Controller {
             //get the session object
             $session = $request->getSession();
             //get the user object from the firewall
-            $user = $this->get('security.context')->getToken()->getUser();
+            $user = $this->getUser();
             //set the delete flag
             $user->setEnabled(FALSE);
             //get the entity manager
@@ -1276,7 +1276,7 @@ class UserController extends Controller {
         //get the entity manager
         $em = $this->getDoctrine()->getManager();
         //reload the user object from the database
-        $user = $em->getRepository('ObjectsUserBundle:User')->getUserWithSocialAccounts($this->get('security.context')->getToken()->getUser()->getId());
+        $user = $em->getRepository('ObjectsUserBundle:User')->getUserWithSocialAccounts($this->getUser()->getId());
         //get the request object
         $request = $this->getRequest();
         //get the translator object
