@@ -126,6 +126,7 @@ class UserController extends Controller {
                         'validation_groups' => $formValidationGroups
                     ))
                     ->add('email')
+                    ->add('firstName')
                     ->add('userPassword');
             //use the popup twig
             $view = 'ObjectsUserBundle:User:signup_popup.html.twig';
@@ -136,6 +137,7 @@ class UserController extends Controller {
                         'validation_groups' => $formValidationGroups
                     ))
                     ->add('email', 'email')
+                    ->add('firstName')
                     ->add('userPassword', 'repeated', array(
                 'type' => 'password',
                 'first_name' => 'Password',

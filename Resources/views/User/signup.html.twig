@@ -12,9 +12,9 @@
     var loginNameNotExist = "{% trans %}valid{% endtrans %}";
     var loginNameExist = "{% trans %}This value is already used{% endtrans %}";
     var mailcheckMessage = "{% trans %}Did you mean{% endtrans %}";
-    var loginNameCheckUrl = "{{url('login_name_check',{'loginName' : ''})}}"; 
-</script>    
-<script src="{{asset('bundles/objectsuser/js/xregexp-all.js')}}"></script>
-<script src="{{asset('bundles/objectsuser/js/mailcheck.js')}}"></script>
-<script src="{{asset('bundles/objectsuser/js/signUp.js')}}"></script>
+    var loginNameCheckUrl = "{{ path('login_name_check') }}";
+</script>
+<script src="{{ asset('bundles/objectsuser/js/xregexp-all.js') }}"></script>
+<script src="{{ asset('bundles/objectsuser/js/mailcheck.js') }}"></script>
+<script src="{{ asset('bundles/objectsuser/js/signUp.js') }}"></script>
 {% endblock %}

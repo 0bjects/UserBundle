@@ -1,18 +1,21 @@
-{% if app.session.hasFlash('notice') %}
-<div class="alert-message fail">
-    {{ app.session.flash('notice') | raw }}
+{% for flashMessage in app.session.flashbag.get('notice') %}
+<div class="alert alert-info">
+    {{ flashMessage | raw }}
 </div>
-{% endif %}
-{% if app.session.hasFlash('success') %}
-<div class="alert-message success">
-    {{ app.session.flash('success') | raw }}
+{% endfor %}
+
+{% for flashMessage in app.session.flashbag.get('success') %}
+<div class="alert alert-success">
+    {{ flashMessage | raw }}
 </div>
-{% endif %}
-{% if app.session.hasFlash('error') %}
-<div class="alert-message error">
-    {{ app.session.flash('error') | raw }}
+{% endfor %}
+
+{% for flashMessage in app.session.flashbag.get('error') %}
+<div class="alert alert-error">
+    {{ flashMessage | raw }}
 </div>
-{% endif %}
+{% endfor %}
+
 {% if message %}
 <div class="alert-message fail">
     {{ message | raw }}
@@ -25,6 +28,11 @@
 {% endif %}
 
 <form action="{{ path('signup') }}" method="post" {{ form_enctype(form) }}>
+
+    {{ form_errors(form.firstName) }}<br>
+    <label>{% trans %}Your Name{% endtrans %}:</label>
+    {{ form_widget(form.firstName) }}<br>
+
     {% if loginNameRequired %}
     {{ form_errors(form.loginName) }}<br>
     <label>{% trans %}Login Name{% endtrans %}:</label>
@@ -54,6 +62,6 @@
 
     <input type="submit" title="{% trans %}Sign up{% endtrans %}" value="{% trans %}Sign up{% endtrans %}" id="user-signup"/>
 </form>
-{% render "ObjectsAPIBundle:Facebook:facebookButton" with {'facebookUserHandleRoute' : 'facebook_logging','permissions': 'email,publish_stream','cssClass' : '' , 'linkText' : 'facebook'} %}<br>
+{% render url('facebook_button', {'facebookUserHandleRoute': 'facebook_logging', 'permissions': 'email,publish_stream', 'cssClass' : 'facebook', 'linkText' : 'facebook signup'|trans}) %}<br>
 <a onclick="newWindow = window.open('{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter', 'popup': 'yes'}) }}', '{% trans %}Twitter Sign up{% endtrans %}', 'height=200, width=200');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}Twitter Sign up{% endtrans %}" href="{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Sign up{% endtrans %}</a><br>
 <a onclick="newWindow = window.open('{{ path('linkedInButton', {'callbackUrl': 'linkedIn_user_data','popup' : 'yes'}) }}', '{% trans %}LinkedIn Sign up{% endtrans %}', 'height=400, width=600');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}LinkedIn Sign up{% endtrans %}" href="{{ path('linkedInButton', {'callbackUrl': 'linkedIn_user_data'}) }}">{% trans %}LinkedIn Sign up{% endtrans %}</a>

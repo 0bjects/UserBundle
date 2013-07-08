@@ -63,4 +63,4 @@ linkedIn_user_data:
 
 login_name_check:
     path: /login_name_check/{loginName}
-    defaults: { _controller: ObjectsUserBundle:User:loginNameCheck }
+    defaults: { _controller: ObjectsUserBundle:User:loginNameCheck, loginName: ~ }
