@@ -388,7 +388,7 @@ class User implements AdvancedUserInterface {
         if ($this->lastName) {
             return "$this->firstName $this->lastName";
         }
-        return $this->firstName;
+        return (string) $this->firstName;
     }
 
     /**
