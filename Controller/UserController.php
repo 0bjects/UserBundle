@@ -5,7 +5,7 @@ namespace Objects\UserBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\SecurityContext;
-use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\HttpFoundation\Response;
 use Objects\APIBundle\Controller\TwitterController;
@@ -1066,14 +1066,9 @@ class UserController extends Controller {
     public function forgotPasswordAction() {
         //get the request object
         $request = $this->getRequest();
-        //prepare the form validation constrains
-        $collectionConstraint = new Collection(array(
-            'email' => new Email()
-        ));
         //create the form
-        $form = $this->createFormBuilder(null, array(
-                    'validation_constraint' => $collectionConstraint,
-                ))->add('email', 'email')
+        $form = $this->createFormBuilder()
+                ->add('email', 'email', array('constraints' => array(new Email(), new NotBlank())))
                 ->getForm();
         //initialze the error string
         $error = FALSE;
