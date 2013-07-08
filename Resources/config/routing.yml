@@ -1,16 +1,16 @@
 # Login routes
 login_check:
-    pattern:  /login_check
+    path:  /login_check
 
 logout:
-    pattern:  /logout
+    path:  /logout
 
 login:
-    pattern:  /login
+    path:  /login
     defaults: { _controller: ObjectsUserBundle:User:login }
 
 signup:
-    pattern: /signup
+    path: /signup
     defaults: { _controller: ObjectsUserBundle:User:signUp }
 
 # routing files

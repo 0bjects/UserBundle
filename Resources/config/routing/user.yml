@@ -1,11 +1,11 @@
 # routes that requires a login from the login page
 user_delete:
-    pattern: /auth/fully/delete
+    path: /auth/fully/delete
     defaults: { _controller: ObjectsUserBundle:User:deleteAccount }
 
 # routes that requires logged in user
 redirect_user:
-    pattern: /auth/redirect/user
+    path: /auth/redirect/user
     defaults: { _controller: ObjectsUserBundle:User:redirectUser }
 
 user_edit:
@@ -13,28 +13,28 @@ user_edit:
     defaults: { _controller: ObjectsUserBundle:User:edit }
 
 twitter_link:
-    pattern: /auth/twitter/link
+    path: /auth/twitter/link
     defaults: { _controller: ObjectsUserBundle:User:twitterLink }
 
 facebook_link:
-    pattern: /auth/facebook/link
+    path: /auth/facebook/link
     defaults: { _controller: ObjectsUserBundle:User:facebookLink }
 
 linkedin_link:
-    pattern: /auth/linkedin/link
+    path: /auth/linkedin/link
     defaults: { _controller: ObjectsUserBundle:User:linkedinLink }
 
 social_unlink:
-    pattern: /auth/unlink/{social}
+    path: /auth/unlink/{social}
     defaults: { _controller: ObjectsUserBundle:User:socialUnlink }
 
 user_reActivation:
-    pattern: /user_reActivation
+    path: /user_reActivation
     defaults: { _controller: ObjectsUserBundle:User:reActivation }
-    
+
 # routes visible for every one
 user_active:
-    pattern: /activation/{confirmationCode}/{email}
+    path: /activation/{confirmationCode}/{email}
     defaults: { _controller: ObjectsUserBundle:User:activation }
 
 twitter_enter:
@@ -42,21 +42,21 @@ twitter_enter:
     defaults: { _controller: ObjectsUserBundle:User:TwitterEnter }
 
 facebook_logging:
-    pattern: /facebooklogging
+    path: /facebooklogging
     defaults: { _controller: ObjectsUserBundle:User:facebook }
 
 forgot_password:
-    pattern: /forgot/password
+    path: /forgot/password
     defaults: { _controller: ObjectsUserBundle:User:forgotPassword }
 
 change_password:
-    pattern: /change/password/{confirmationCode}/{email}
+    path: /change/password/{confirmationCode}/{email}
     defaults: { _controller: ObjectsUserBundle:User:changePassword }
 
 linkedIn_user_data:
-    pattern:  /linkedIn
+    path:  /linkedIn
     defaults: { _controller: ObjectsUserBundle:User:linkedInUserData }
 
 login_name_check:
-    pattern: /login_name_check/{loginName}
+    path: /login_name_check/{loginName}
     defaults: { _controller: ObjectsUserBundle:User:loginNameCheck }
