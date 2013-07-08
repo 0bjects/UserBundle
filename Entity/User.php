@@ -49,7 +49,7 @@ class User implements AdvancedUserInterface {
      * @var string $loginName
      *
      * @ORM\Column(name="loginName", type="string", length=255, nullable=true, unique=true)
-     * @Assert\NotNull(groups={"loginName"})
+     * @Assert\NotBlank(groups={"loginName"})
      * @Assert\Regex(pattern="/^\w+$/u", groups={"loginName"}, message="Only characters, numbers and _")
      */
     private $loginName;
@@ -58,7 +58,7 @@ class User implements AdvancedUserInterface {
      * @var string $email
      *
      * @ORM\Column(name="email", type="string", length=255, unique=true)
-     * @Assert\NotNull(groups={"signup", "email"})
+     * @Assert\NotBlank(groups={"signup", "email"})
      * @Assert\Email(groups={"signup", "email"})
      */
     private $email;
@@ -73,13 +73,13 @@ class User implements AdvancedUserInterface {
     /**
      * @var string $userPassword
      * @Assert\Length(min=6, groups={"signup", "edit", "password"})
-     * @Assert\NotNull(groups={"signup", "password"})
+     * @Assert\NotBlank(groups={"signup", "password"})
      */
     private $userPassword;
 
     /**
      * @var string $oldPassword
-     * @Assert\NotNull(groups={"oldPassword"})
+     * @Assert\NotBlank(groups={"oldPassword"})
      */
     private $oldPassword;
 
