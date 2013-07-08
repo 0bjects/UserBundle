@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Objects\UserBundle\Entity\User
  *
  * @UniqueEntity(fields={"loginName"}, groups={"loginName"})
- * @UniqueEntity(fields={"email"}, groups={"signup", "email"})
+ * @UniqueEntity(fields={"email"}, groups={"signup", "edit", "email"})
  * @ORM\Table(indexes={@ORM\Index(name="search_user_name", columns={"loginName"})})
  * @ORM\Entity(repositoryClass="Objects\UserBundle\Entity\UserRepository")
  * @ORM\HasLifecycleCallbacks
@@ -58,8 +58,8 @@ class User implements AdvancedUserInterface {
      * @var string $email
      *
      * @ORM\Column(name="email", type="string", length=255, unique=true)
-     * @Assert\NotBlank(groups={"signup", "email"})
-     * @Assert\Email(groups={"signup", "email"})
+     * @Assert\NotBlank(groups={"signup", "edit", "email"})
+     * @Assert\Email(groups={"signup", "edit", "email"})
      */
     private $email;
 
