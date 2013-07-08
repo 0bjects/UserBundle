@@ -72,7 +72,7 @@ class User implements AdvancedUserInterface {
 
     /**
      * @var string $userPassword
-     * @Assert\MinLength(limit=6, groups={"signup", "edit", "password"})
+     * @Assert\Length(min=6, groups={"signup", "edit", "password"})
      * @Assert\NotNull(groups={"signup", "password"})
      */
     private $userPassword;
