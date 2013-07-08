@@ -47,7 +47,7 @@ class UserController extends Controller {
                         'last_username' => $session->get(SecurityContext::LAST_USERNAME),
                         'error' => $error,
                         'message' => $message
-                    ));
+            ));
         }
         //return the main page
         return $this->render('ObjectsUserBundle:User:login.html.twig', array(
@@ -55,7 +55,7 @@ class UserController extends Controller {
                     'last_username' => $session->get(SecurityContext::LAST_USERNAME),
                     'error' => $error,
                     'message' => $message
-                ));
+        ));
     }
 
     /**
@@ -140,7 +140,7 @@ class UserController extends Controller {
                 'first_name' => 'Password',
                 'second_name' => 'RePassword',
                 'invalid_message' => "The passwords don't match",
-                    ));
+            ));
             //use the signup page
             $view = 'ObjectsUserBundle:User:signup.html.twig';
         }
@@ -168,7 +168,7 @@ class UserController extends Controller {
                     'loginNameRequired' => $loginNameRequired,
                     'message' => $message,
                     'popupFlag' => $popupFlag
-                ));
+        ));
     }
 
     /**
@@ -356,7 +356,7 @@ class UserController extends Controller {
                     'changeUserName' => $changeUserName,
                     'message' => $message,
                     'socialAccounts' => $socialAccounts
-                ));
+        ));
     }
 
     /**
@@ -599,7 +599,7 @@ class UserController extends Controller {
             }
             return $this->render('ObjectsUserBundle:User:twitter_signup.html.twig', array(
                         'form' => $form->createView()
-                    ));
+            ));
         } else {
             //something went wrong clear the session and set a flash to try again
             $session->clear();
@@ -908,7 +908,7 @@ class UserController extends Controller {
             'user' => $user,
             'password' => $user->getUserPassword(),
             'active' => $active
-                ));
+        ));
         //check if the user should be active by email or auto activated
         if ($active) {
             //auto active user
@@ -1067,8 +1067,8 @@ class UserController extends Controller {
         $request = $this->getRequest();
         //prepare the form validation constrains
         $collectionConstraint = new Collection(array(
-                    'email' => new Email()
-                ));
+            'email' => new Email()
+        ));
         //create the form
         $form = $this->createFormBuilder(null, array(
                     'validation_constraint' => $collectionConstraint,
@@ -1121,7 +1121,7 @@ class UserController extends Controller {
                     'form' => $form->createView(),
                     'error' => $error,
                     'success' => $success
-                ));
+        ));
     }
 
     /**
@@ -1202,7 +1202,7 @@ class UserController extends Controller {
         return $this->render('ObjectsUserBundle:User:change_password.html.twig', array(
                     'form' => $form->createView(),
                     'user' => $user
-                ));
+        ));
     }
 
     /**
