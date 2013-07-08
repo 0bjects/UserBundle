@@ -1187,7 +1187,7 @@ class UserController extends Controller {
                 //check if the user is active
                 if (FALSE === $this->get('security.context')->isGranted('ROLE_USER')) {
                     //activate the user if not active
-                    $this->activationAction($confirmationCode);
+                    $this->activationAction($confirmationCode, $email);
                     //clear the flashes set by the activation action
                     $session->clearFlashes();
                 }
