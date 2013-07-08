@@ -88,7 +88,7 @@ class User implements AdvancedUserInterface {
     /**
      * @var string $confirmationCode
      *
-     * @ORM\Column(name="confirmationCode", type="string", length=64)
+     * @ORM\Column(name="confirmationCode", type="string", length=32)
      */
     private $confirmationCode;
 
@@ -179,7 +179,7 @@ class User implements AdvancedUserInterface {
 
     /**
      * @var string $salt
-     * @ORM\Column(name="salt", type="string", length=255)
+     * @ORM\Column(name="salt", type="string", length=32)
      */
     private $salt;
 
