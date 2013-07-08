@@ -898,7 +898,9 @@ class User implements AdvancedUserInterface {
      * @param Objects\UserBundle\Entity\Role $userRoles
      */
     public function addRole(\Objects\UserBundle\Entity\Role $userRoles) {
-        $this->userRoles[] = $userRoles;
+        if (!$this->userRoles->contains($userRoles)) {
+            $this->userRoles[] = $userRoles;
+        }
     }
 
     /**
