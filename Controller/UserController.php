@@ -1189,7 +1189,7 @@ class UserController extends Controller {
                     //activate the user if not active
                     $this->activationAction($confirmationCode, $email);
                     //clear the flashes set by the activation action
-                    $session->clearFlashes();
+                    $session->getFlashBag()->clear();
                 }
                 //set the success flag
                 $session->getFlashBag()->set('success', $translator->trans('password changed'));
