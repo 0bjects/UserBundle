@@ -331,7 +331,7 @@ class UserController extends Controller {
                 //check if we need to redirect the user
                 if ($redirect) {
                     //set the success flash
-                    $session->setFlash('success', $translator->trans('Done'));
+                    $session->getFlashBag()->set('success', $translator->trans('Done'));
                     //make the user fully authenticated and refresh his roles
                     try {
                         // create the authentication token
@@ -377,14 +377,14 @@ class UserController extends Controller {
         $em = $this->getDoctrine()->getManager();
         //check if we have a logged in user or company
         if (FALSE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
-            $session->setFlash('note', $translator->trans('You need to Login first.'));
+            $session->getFlashBag()->set('note', $translator->trans('You need to Login first.'));
             return $this->redirect($this->generateUrl('login'));
         }
 
         //check if the user is already active
         if (TRUE === $this->get('security.context')->isGranted('ROLE_USER')) {
             //set a notice flag
-            $session->setFlash('notice', $translator->trans('Your acount is active.'));
+            $session->getFlashBag()->set('notice', $translator->trans('Your acount is active.'));
             return $this->redirect($this->generateUrl('user_edit'));
         }
 
@@ -410,7 +410,7 @@ class UserController extends Controller {
         //send the activation mail to the user
         $this->get('mailer')->send($message);
         //set the success flag in the session
-        $session->setFlash('success', $this->get('translator')->trans('check your email for your activation link'));
+        $session->getFlashBag()->set('success', $this->get('translator')->trans('check your email for your activation link'));
         //redirect the user to portal
         return $this->redirect($this->generateUrl('user_edit'));
     }
@@ -434,7 +434,7 @@ class UserController extends Controller {
         $socialAccounts = $user->getSocialAccounts();
         //the link twitter account route should not be visible to an already linked user
         if ($socialAccounts && $socialAccounts->isTwitterLinked()) {
-            $session->setFlash('error', $translator->trans('Your account is already linked to another account.'));
+            $session->getFlashBag()->set('error', $translator->trans('Your account is already linked to another account.'));
         }
         //get the oauth token from the session
         $oauth_token = $session->get('oauth_token', FALSE);
@@ -449,7 +449,7 @@ class UserController extends Controller {
             //check if we have any user linked to this account before
             $twitterAccount = $em->getRepository('ObjectsUserBundle:SocialAccounts')->findOneByTwitterId($twitterId);
             if ($twitterAccount) {
-                $session->setFlash('error', $translator->trans('The twitter account is already linked to another account.'));
+                $session->getFlashBag()->set('error', $translator->trans('The twitter account is already linked to another account.'));
             } else {
                 //check if the user does not have a social account object
                 if (!$socialAccounts) {
@@ -467,13 +467,13 @@ class UserController extends Controller {
                 //save the data for the user
                 $em->flush();
                 //set the success flag in the session
-                $session->setFlash('success', $translator->trans('Your account is now linked to twitter'));
+                $session->getFlashBag()->set('success', $translator->trans('Your account is now linked to twitter'));
             }
         } else {
             //something went wrong clear the session and set a flash to try again
             $session->clear();
             //set the error flag in the session
-            $session->setFlash('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_link'), TRUE) . '">' . $translator->trans('try again') . '</a>');
+            $session->getFlashBag()->set('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_link'), TRUE) . '">' . $translator->trans('try again') . '</a>');
         }
         //twitter data not found go to the edit page
         return $this->redirect($this->generateUrl('user_edit'));
@@ -526,7 +526,7 @@ class UserController extends Controller {
                     return $this->redirectUserAction();
                 } catch (\Exception $e) {
                     //set the error flag in the session
-                    $session->setFlash('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_enter')) . '">' . $translator->trans('try again') . '</a>');
+                    $session->getFlashBag()->set('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_enter')) . '">' . $translator->trans('try again') . '</a>');
                     //can not reload the user object log out the user
                     $this->get('security.context')->setToken(null);
                     //invalidate the current user session
@@ -607,7 +607,7 @@ class UserController extends Controller {
             //something went wrong clear the session and set a flash to try again
             $session->clear();
             //set the error flag in the session
-            $session->setFlash('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_enter')) . '">' . $translator->trans('try again') . '</a>');
+            $session->getFlashBag()->set('error', $translator->trans('twitter connection error') . ' <a href="' . $this->generateUrl('twitter_authentication', array('redirectRoute' => 'twitter_enter')) . '">' . $translator->trans('try again') . '</a>');
             //twitter data not found go to the login page
             return $this->redirect($this->generateUrl('login', array(), TRUE));
         }
@@ -713,11 +713,11 @@ class UserController extends Controller {
 
                     $fbLinkeDAndActivatedmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account') . ' ' . $this->get('translator')->trans('your account is now active');
                     //set flash message to tell user that him/her account has been successfully activated
-                    $session->setFlash('notice', $fbLinkeDAndActivatedmessage);
+                    $session->getFlashBag()->set('notice', $fbLinkeDAndActivatedmessage);
                 } else {
                     $fbLinkeDmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account');
                     //set flash message to tell user that him/her account has been successfully linked
-                    $session->setFlash('notice', $fbLinkeDmessage);
+                    $session->getFlashBag()->set('notice', $fbLinkeDmessage);
                 }
                 $em->persist($user);
                 $em->flush();
@@ -773,7 +773,7 @@ class UserController extends Controller {
                 //send feed to user profile with sign up
                 //FacebookController::postOnUserWallAndFeedAction($faceUser->id, $longLive_accessToken['access_token'], $translator->trans('I have new account on this cool site'), $translator->trans('PROJECT_NAME'), $translator->trans('SITE_DESCRIPTION'), 'PROJECT_ORIGINAL_URL', 'SITE_PICTURE');
                 //set flash message to tell user that him/her account has been successfully activated
-                $session->setFlash('notice', $translator->trans('your account is now active'));
+                $session->getFlashBag()->set('notice', $translator->trans('your account is now active'));
                 //user data are valid finish the signup process
                 return $this->finishSignUp($user, TRUE);
             }
@@ -836,17 +836,17 @@ class UserController extends Controller {
 
                 $fbLinkeDAndActivatedmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account') . ' ' . $this->get('translator')->trans('your account is now active');
                 //set flash message to tell user that him/her account has been successfully activated
-                $session->setFlash('notice', $fbLinkeDAndActivatedmessage);
+                $session->getFlashBag()->set('notice', $fbLinkeDAndActivatedmessage);
             } else {
                 $fbLinkeDmessage = $this->get('translator')->trans('Your Facebook account was successfully Linked to your account');
                 //set flash message to tell user that him/her account has been successfully linked
-                $session->setFlash('notice', $fbLinkeDmessage);
+                $session->getFlashBag()->set('notice', $fbLinkeDmessage);
             }
             $em->flush();
         } else {
             $fbLinkeDmessage = $this->get('translator')->trans('Facebook linking attempt was unsuccessful.Your Facebook account is already linked to another account.');
             //set flash message to tell user that him/her account has been successfully linked
-            $session->setFlash('notice', $fbLinkeDmessage);
+            $session->getFlashBag()->set('notice', $fbLinkeDmessage);
         }
         return $this->redirect($this->generateUrl('user_edit'));
     }
@@ -883,7 +883,7 @@ class UserController extends Controller {
         //save the changes
         $em->flush();
         //set a success flag in the session
-        $this->getRequest()->getSession()->setFlash('success', $this->get('translator')->trans('Unlinked successfully'));
+        $this->getRequest()->getSession()->getFlashBag()->set('success', $this->get('translator')->trans('Unlinked successfully'));
         //redirect the user to the edit page
         return $this->redirect($this->generateUrl('user_edit'));
     }
@@ -949,7 +949,7 @@ class UserController extends Controller {
             $welcomeMessage .= ' ' . $this->get('translator')->trans('check your email for your activation link');
         }
         //set the success flag in the session
-        $this->getRequest()->getSession()->setFlash('success', $welcomeMessage);
+        $this->getRequest()->getSession()->getFlashBag()->set('success', $welcomeMessage);
         //try to login the user
         try {
             // create the authentication token
@@ -997,7 +997,7 @@ class UserController extends Controller {
         //check if the user is already active
         if (TRUE === $this->get('security.context')->isGranted('ROLE_USER')) {
             //set a notice flag
-            $session->setFlash('notice', $translator->trans('Your account is already active.'));
+            $session->getFlashBag()->set('notice', $translator->trans('Your account is already active.'));
             return $this->redirect($this->generateUrl('user_edit'));
         }
         //check if the user is already active
@@ -1012,7 +1012,7 @@ class UserController extends Controller {
         }
         if (!$user || $user->getConfirmationCode() != $confirmationCode || $user->getEmail() != $email) {
             //set an error flag
-            $session->setFlash('error', $translator->trans('Invalid confirmation code.'));
+            $session->getFlashBag()->set('error', $translator->trans('Invalid confirmation code.'));
             //redirect to the login page
             return $this->redirect($this->generateUrl('login'));
         }
@@ -1035,7 +1035,7 @@ class UserController extends Controller {
         //save the new role for the user
         $em->flush();
         //set a success flag
-        $session->setFlash('success', $translator->trans('Your account is now active.'));
+        $session->getFlashBag()->set('success', $translator->trans('Your account is now active.'));
         //check if the user is logged in
         if ($loggedIn) {
             //try to refresh the user object roles in the firewall session
@@ -1143,7 +1143,7 @@ class UserController extends Controller {
         //check if we found the user
         if (!$user) {
             //set an error flag
-            $session->setFlash('error', $translator->trans('invalid email or confirmation code'));
+            $session->getFlashBag()->set('error', $translator->trans('invalid email or confirmation code'));
             //go to the login page
             return $this->redirect($this->generateUrl('login'));
         }
@@ -1180,7 +1180,7 @@ class UserController extends Controller {
                     //invalidate the current user session
                     $session->invalidate();
                     //set the success flag
-                    $session->setFlash('success', $translator->trans('password changed'));
+                    $session->getFlashBag()->set('success', $translator->trans('password changed'));
                     //redirect to the login page
                     return $this->redirect($this->generateUrl('login'));
                 }
@@ -1192,7 +1192,7 @@ class UserController extends Controller {
                     $session->clearFlashes();
                 }
                 //set the success flag
-                $session->setFlash('success', $translator->trans('password changed'));
+                $session->getFlashBag()->set('success', $translator->trans('password changed'));
                 //go to the edit profile page
                 return $this->redirect($this->generateUrl('user_edit'));
             }
@@ -1235,7 +1235,7 @@ class UserController extends Controller {
             //invalidate the current user session
             $session->invalidate();
             //set the success flag
-            $session->setFlash('success', $this->get('translator')->trans('Your account has been deleted'));
+            $session->getFlashBag()->set('success', $this->get('translator')->trans('Your account has been deleted'));
             //redirect to the login page
             return $this->redirect($this->generateUrl('login'));
         }
@@ -1314,7 +1314,7 @@ class UserController extends Controller {
                 //save the data for the user
                 $em->flush();
                 //set the success flag in the session
-                $session->setFlash('success', $translator->trans('Your account is now linked to linkedin'));
+                $session->getFlashBag()->set('success', $translator->trans('Your account is now linked to linkedin'));
             } else {
                 //linkedIn data not found go to the edit page
                 return $this->redirect($this->generateUrl('user_edit'));
@@ -1323,7 +1323,7 @@ class UserController extends Controller {
             //something went wrong clear the session and set a flash to try again
             $session->clear();
             //set the error flag in the session
-            $session->setFlash('error', $translator->trans('linkedin connection error') . ' <a href="' . $this->generateUrl('linkedInButton', array('redirectRoute' => 'linkedin_link'), TRUE) . '">' . $translator->trans('try again') . '</a>');
+            $session->getFlashBag()->set('error', $translator->trans('linkedin connection error') . ' <a href="' . $this->generateUrl('linkedInButton', array('redirectRoute' => 'linkedin_link'), TRUE) . '">' . $translator->trans('try again') . '</a>');
         }
         //linkedIn data not found go to the edit page
         return $this->redirect($this->generateUrl('user_edit'));
@@ -1430,11 +1430,11 @@ class UserController extends Controller {
 
                         $linkedInActivatedmessage = $this->get('translator')->trans('Your LinkedIN account was successfully Linked to your account') . ' ' . $this->get('translator')->trans('your account is now active');
                         //set flash message to tell user that him/her account has been successfully activated
-                        $session->setFlash('notice', $linkedInActivatedmessage);
+                        $session->getFlashBag()->set('notice', $linkedInActivatedmessage);
                     } else {
                         $linkedInDmessage = $this->get('translator')->trans('Your LinkedIN account was successfully Linked to your account');
                         //set flash message to tell user that him/her account has been successfully linked
-                        $session->setFlash('notice', $linkedInDmessage);
+                        $session->getFlashBag()->set('notice', $linkedInDmessage);
                     }
                     $em->persist($user);
                     $em->flush();
