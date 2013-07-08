@@ -108,7 +108,7 @@ class User implements AdvancedUserInterface {
 
     /**
      * @var string $firstName
-     * @Assert\NotBlank(groups={"signup", "edit"})
+     * @Assert\NotBlank(groups={"firstName", "edit"})
      * @ORM\Column(name="firstName", type="string", length=255)
      */
     private $firstName;
