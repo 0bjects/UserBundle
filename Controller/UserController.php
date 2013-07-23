@@ -373,8 +373,6 @@ class UserController extends Controller {
         $translator = $this->get('translator');
         //get the session object
         $session = $this->getRequest()->getSession();
-        //get the entity manager
-        $em = $this->getDoctrine()->getManager();
         //check if we have a logged in user or company
         if (FALSE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
             $session->getFlashBag()->set('note', $translator->trans('You need to Login first.'));
