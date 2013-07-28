@@ -904,16 +904,16 @@ class User implements AdvancedUserInterface {
     /**
      * Set socialAccounts
      *
-     * @param Objects\UserBundle\Entity\socialAccounts $socialAccounts
+     * @param Objects\UserBundle\Entity\SocialAccounts $socialAccounts
      */
-    public function setSocialAccounts(\Objects\UserBundle\Entity\socialAccounts $socialAccounts) {
+    public function setSocialAccounts(\Objects\UserBundle\Entity\SocialAccounts $socialAccounts) {
         $this->socialAccounts = $socialAccounts;
     }
 
     /**
      * Get socialAccounts
      *
-     * @return Objects\UserBundle\Entity\socialAccounts
+     * @return Objects\UserBundle\Entity\SocialAccounts
      */
     public function getSocialAccounts() {
         return $this->socialAccounts;
