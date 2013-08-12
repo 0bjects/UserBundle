@@ -1,11 +1,16 @@
 {% extends '::base.html.twig' %}
+
 {% block title %}{% trans %}Twitter Sign up{% endtrans %}{% endblock %}
 
 {% block body %}
-{% if form_errors(form) %}
-    <div>{{ form_errors(form) }}</div>
-{% endif %}
-<form action="{{ path('twitter_enter') }}" method="post" {{ form_enctype(form) }}>
+
+{% for elementError in form.vars.errors %}
+<div class="alert alert-error">
+    {{ elementError.message }}<a href="#" class="close" data-dismiss="alert">&times;</a>
+</div>
+{% endfor %}
+
+{{ form_start(form) }}
 
     {{ form_errors(form.email.Email) }}<br>
     <label>{% trans %}Email{% endtrans %}:</label>
@@ -14,8 +19,6 @@
     <label>{% trans %}ReEmail{% endtrans %}:</label>
     {{ form_widget(form.email.ReEmail) }}<br>
 
-    {{ form_rest(form) }}
-
     <input type="submit" title="{% trans %}Sign up{% endtrans %}" value="{% trans %}Sign up{% endtrans %}" />
-</form>
+{{ form_end(form) }}
 {% endblock %}

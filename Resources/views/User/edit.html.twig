@@ -1,4 +1,5 @@
 {% extends '::base.html.twig' %}
+
 {% block title %}{% trans %}Edit My Account{% endtrans %}{% endblock %}
 
 {% block body %}
@@ -27,13 +28,13 @@
 </div>
 {% endif %}
 
-{% if form_errors(form) %}
-<div class="alert-message error">
-{{ form_errors(form) }}
+{% for elementError in form.vars.errors %}
+<div class="alert alert-error">
+    {{ elementError.message }}<a href="#" class="close" data-dismiss="alert">&times;</a>
 </div>
-{% endif %}
+{% endfor %}
 
-<form action="{{ path('user_edit') }}" method="post" {{ form_enctype(form) }}>
+{{ form_start(form) }}
 
     {% if oldPassword %}
         {{ form_errors(form.oldPassword) }}<br>
@@ -87,10 +88,8 @@
     <label>{% trans %}About You{% endtrans %}:</label>
     {{ form_widget(form.about) }}<br>
 
-    {{ form_rest(form) }}
-
     <input type="submit" value="{% trans %}Edit{% endtrans %}" title="{% trans %}Edit{% endtrans %}">
-</form>
+{{ form_end(form) }}
 
 <br>
 

@@ -21,13 +21,14 @@
     {{ message | raw }}
 </div>
 {% endif %}
-{% if form_errors(form) %}
-<div class="alert-message error">
-    {{ form_errors(form) }}
-</div>
-{% endif %}
 
-<form action="{{ path('signup') }}" method="post" {{ form_enctype(form) }}>
+{% for elementError in form.vars.errors %}
+<div class="alert alert-error">
+    {{ elementError.message }}<a href="#" class="close" data-dismiss="alert">&times;</a>
+</div>
+{% endfor %}
+
+{{ form_start(form, {'action': path('signup')}) }}
 
     {{ form_errors(form.firstName) }}<br>
     <label>{% trans %}Your Name{% endtrans %}:</label>
@@ -58,10 +59,8 @@
     {{ form_widget(form.userPassword) }}<br>
     {% endif %}
 
-    {{ form_rest(form) }}
-
     <input type="submit" title="{% trans %}Sign up{% endtrans %}" value="{% trans %}Sign up{% endtrans %}" id="user-signup"/>
-</form>
+{{ form_end(form) }}
 {% render url('facebook_button', {'facebookUserHandleRoute': 'facebook_logging', 'permissions': 'email,publish_stream', 'cssClass' : 'facebook', 'linkText' : 'facebook signup'|trans}) %}<br>
 <a onclick="newWindow = window.open('{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter', 'popup': 'yes'}) }}', '{% trans %}Twitter Sign up{% endtrans %}', 'height=200, width=200');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}Twitter Sign up{% endtrans %}" href="{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Sign up{% endtrans %}</a><br>
 <a onclick="newWindow = window.open('{{ path('linkedInButton', {'callbackUrl': 'linkedIn_user_data','popup' : 'yes'}) }}', '{% trans %}LinkedIn Sign up{% endtrans %}', 'height=400, width=600');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}LinkedIn Sign up{% endtrans %}" href="{{ path('linkedInButton', {'callbackUrl': 'linkedIn_user_data'}) }}">{% trans %}LinkedIn Sign up{% endtrans %}</a>
