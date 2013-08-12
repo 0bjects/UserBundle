@@ -345,7 +345,7 @@ class User implements AdvancedUserInterface {
      * @return string the relative path of image starting from web directory
      */
     public function getWebPath() {
-        return NULL === $this->image ? NULL : '/' . $this->getUploadDir() . '/' . $this->image;
+        return NULL === $this->image ? NULL : $this->getUploadDir() . '/' . $this->image;
     }
 
     /**
@@ -362,14 +362,14 @@ class User implements AdvancedUserInterface {
      * @return string the htaccess file url pattern which map to timthumb url
      */
     public function getSmallImageUrl($width = 50, $height = 50) {
-        return NULL === $this->image ? NULL : "/user-profile-image/$width/$height/$this->image";
+        return NULL === $this->image ? NULL : "user-profile-image/$width/$height/$this->image";
     }
 
     /**
      * @return string the document upload directory path starting from web folder
      */
     private function getUploadDir() {
-        return 'images/users-profiles-images';
+        return 'uploads/users-profile-images';
     }
 
     /**
