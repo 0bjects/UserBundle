@@ -373,8 +373,6 @@ class UserController extends Controller {
         $translator = $this->get('translator');
         //get the session object
         $session = $this->getRequest()->getSession();
-        //get the entity manager
-        $em = $this->getDoctrine()->getManager();
         //check if we have a logged in user or company
         if (FALSE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
             $session->getFlashBag()->set('note', $translator->trans('You need to Login first.'));
@@ -391,13 +389,6 @@ class UserController extends Controller {
         //get the logedin user
         $user = $this->getUser();
 
-        //get the not active role object
-        $role = $em->getRepository('ObjectsUserBundle:Role')->findOneByName('ROLE_NOTACTIVE');
-        //check if the user already has the role
-        if (!$user->getUserRoles()->contains($role)) {
-            //add the role to the user
-            $user->addRole($role);
-        }
         //prepare the body of the email
         $body = $this->renderView('ObjectsUserBundle:User:Emails\activate_email.txt.twig', array('user' => $user));
         //prepare the message object
