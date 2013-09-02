@@ -735,7 +735,7 @@ class UserController extends Controller {
                 $user = new User();
                 $user->setEmail($faceUser->email);
                 //set a valid login name
-                $user->setLoginName($this->suggestLoginName(strtolower($faceUser->name)));
+                $user->setLoginName($this->suggestLoginName($faceUser->name));
                 $user->setFirstName($faceUser->first_name);
                 $user->setLastName($faceUser->last_name);
                 if ($faceUser->gender == 'female') {
@@ -1242,6 +1242,7 @@ class UserController extends Controller {
      * @return string a valid login name to use
      */
     private function suggestLoginName($loginName) {
+        $loginName = preg_replace('/[\W_]+/u', '-', strtolower(trim($loginName)));
         //get the entity manager
         $em = $this->getDoctrine()->getManager();
         //get the user repo
@@ -1464,7 +1465,7 @@ class UserController extends Controller {
                     $newUserName .= '_' . $userData['last-name'];
                 }
                 //set a valid login name
-                $user->setLoginName($this->suggestLoginName(strtolower($newUserName)));
+                $user->setLoginName($this->suggestLoginName($newUserName));
                 //set the profile url
                 if (isset($userData['site-standard-profile-request']['url'])) {
                     $user->setUrl($userData['site-standard-profile-request']['url']);
