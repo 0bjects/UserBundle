@@ -1536,4 +1536,69 @@ class UserController extends Controller {
         }
     }
 
+    /**
+     * signup or login using google oauth
+     * @author Mahmoud
+     */
+    public function googleEnterAction() {
+        $session = $this->get('session');
+        $googleUser = $session->get('googleUserInfo');
+        $googleId = $googleUser['id'];
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('ObjectsUserBundle:User')->getUserWithRolesByGoogleId($googleId);
+        if ($user) {
+            try {
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.context')->setToken($token);
+                return $this->redirectUserAction();
+            } catch (\Exception $e) {
+                $this->get('security.context')->setToken(null);
+                $session->invalidate();
+                return $this->redirect($this->generateUrl('login'));
+            }
+        }
+        $container = $this->container;
+        $user = new User();
+        $user->setEmail($googleUser['email']);
+        $user->setGoogleId($googleId);
+        $name = '';
+        if (isset($googleUser['name'])) {
+            $name = $googleUser['name'];
+        } elseif (isset($googleUser['given_name'])) {
+            $name = $googleUser['given_name'];
+        } else {
+            $name = 'user';
+        }
+        $nameParts = explode(' ', $name);
+        if (!empty($nameParts[0])) {
+            $user->setFirstName($nameParts[0]);
+        }
+        if (!empty($nameParts[1])) {
+            $user->setLastName($nameParts[1]);
+        }
+        if ($container->getParameter('login_name_required')) {
+            $user->setLoginName($this->suggestLoginName($name));
+        }
+        if (isset($googleUser['link'])) {
+            $user->setUrl($googleUser['link']);
+        }
+        if (isset($googleUser['gender'])) {
+            if ($googleUser['gender'] === 'male') {
+                $user->setGender(1);
+            } elseif ($googleUser['gender'] === 'female') {
+                $user->setGender(0);
+            }
+        }
+        if (isset($googleUser['locale'])) {
+            $user->setSuggestedLanguage($googleUser['locale']);
+        }
+        if (isset($googleUser['birthday'])) {
+            $user->setDateOfBirth(new \DateTime($googleUser['birthday']));
+        }
+        if (isset($googleUser['picture'])) {
+            $user->setImageFromUrl($googleUser['picture']);
+        }
+        return $this->finishSignUp($user, true);
+    }
+
 }

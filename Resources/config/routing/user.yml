@@ -41,6 +41,10 @@ user_active:
     path: /activation/{confirmationCode}/{email}
     defaults: { _controller: ObjectsUserBundle:User:activation }
 
+google_enter:
+    pattern: /google/enter
+    defaults: { _controller: ObjectsUserBundle:User:GoogleEnter }
+
 twitter_enter:
     pattern: /twitter/enter
     defaults: { _controller: ObjectsUserBundle:User:TwitterEnter }

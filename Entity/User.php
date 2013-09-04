@@ -166,6 +166,13 @@ class User implements AdvancedUserInterface {
     private $suggestedLanguage = 'en';
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="googleId", type="string", length=255, nullable=true, unique=true)
+     */
+    private $googleId;
+
+    /**
      * @var boolean $locked
      * @ORM\Column(name="locked", type="boolean")
      */
@@ -266,6 +273,22 @@ class User implements AdvancedUserInterface {
     }
 
     /**
+     * create the the directory if not found
+     * @param string $directoryPath
+     * @throws \Exception if the directory can not be created
+     */
+    private function createDirectory($directoryPath) {
+        if (!@is_dir($directoryPath)) {
+            $oldumask = umask(0);
+            $success = @mkdir($directoryPath, 0755, TRUE);
+            umask($oldumask);
+            if (!$success) {
+                throw new \Exception("Can not create the directory $directoryPath");
+            }
+        }
+    }
+
+    /**
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
      */
@@ -277,20 +300,7 @@ class User implements AdvancedUserInterface {
             $img = uniqid();
             //get the image upload directory
             $uploadDir = $this->getUploadRootDir();
-            //check if the upload directory exists
-            if (!@is_dir($uploadDir)) {
-                //get the old umask
-                $oldumask = umask(0);
-                //not a directory probably the first time try to create the directory
-                $success = @mkdir($uploadDir, 0755, TRUE);
-                //reset the umask
-                umask($oldumask);
-                //check if we created the folder
-                if (!$success) {
-                    //could not create the folder throw an exception to stop the insert
-                    throw new \Exception("Can not create the directory $uploadDir");
-                }
-            }
+            $this->createDirectory($uploadDir);
             //check that the file name does not exist
             while (@file_exists("$uploadDir/$img.$extension")) {
                 //try to find a new unique name
@@ -370,6 +380,38 @@ class User implements AdvancedUserInterface {
      */
     private function getUploadDir() {
         return 'uploads/users-profile-images';
+    }
+
+    /**
+     * download and set the image from url
+     * @param string $imageUrl
+     * @return boolean true on success and false on failure
+     */
+    public function setImageFromUrl($imageUrl) {
+        $urlParts = explode('.', $imageUrl);
+        if (count($urlParts) > 1) {
+            $extension = array_pop($urlParts);
+            if (strcasecmp($extension, 'jpg') === 0 || strcasecmp($extension, 'jpeg') === 0 || strcasecmp($extension, 'png') === 0 || strcasecmp($extension, 'gif') === 0) {
+                $fileContent = @file_get_contents($imageUrl);
+                if ($fileContent !== false) {
+                    $uploadDir = $this->getUploadRootDir();
+                    $this->createDirectory($uploadDir);
+                    $img = uniqid();
+                    while (@file_exists("$uploadDir/$img.$extension")) {
+                        $img = uniqid();
+                    }
+                    $inserted = @file_put_contents("$uploadDir/$img.$extension", $fileContent);
+                    if ($inserted !== false) {
+                        if ($this->image) {
+                            $this->temp = $this->image;
+                        }
+                        $this->image = "$img.$extension";
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -935,6 +977,26 @@ class User implements AdvancedUserInterface {
      */
     public function getLastSeen() {
         return $this->lastSeen;
+    }
+
+    /**
+     * Set googleId
+     *
+     * @param string $googleId
+     * @return User
+     */
+    public function setGoogleId($googleId) {
+        $this->googleId = $googleId;
+        return $this;
+    }
+
+    /**
+     * Get googleId
+     *
+     * @return string
+     */
+    public function getGoogleId() {
+        return $this->googleId;
     }
 
 }

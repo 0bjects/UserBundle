@@ -20,7 +20,7 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
      * implementation of loadUserByUsername for UserProviderInterface
      * @param type $username
      * @return type
-     * @throws UsernameNotFoundException 
+     * @throws UsernameNotFoundException
      */
     public function loadUserByUsername($username) {
         $q = $this
@@ -46,7 +46,7 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
      * implementation of refreshUser for UserProviderInterface
      * @param UserInterface $user
      * @return type
-     * @throws UnsupportedUserException 
+     * @throws UnsupportedUserException
      */
     public function refreshUser(UserInterface $user) {
         $class = get_class($user);
@@ -59,7 +59,7 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
     /**
      * implementation of supportsClass for UserProviderInterface
      * @param type $class
-     * @return type 
+     * @return type
      */
     public function supportsClass($class) {
         return $this->getEntityName() === $class || is_subclass_of($class, $this->getEntityName());
@@ -89,7 +89,7 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
      * this function will get the count of the logged in users
      * the UpdateUserLastSeenListener service must be active to return valid number
      * @author Mahmoud
-     * @return integer the count of the logged in users 
+     * @return integer the count of the logged in users
      */
     public function getLoggedUsersCount() {
         $queryString = '
@@ -121,6 +121,30 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
                      WHERE u.id = :userId
                     ');
         $query->setParameter('userId', $userId);
+        try {
+            $user = $query->getSingleResult();
+        } catch (\Exception $e) {
+            $user = NULL;
+        }
+        return $user;
+    }
+
+    /**
+     * this function will get the user object and his roles by the google id
+     * @author Mahmoud
+     * @param integer $googleId the user google id
+     * @return null|\Objects\UserBundle\Entity\User
+     */
+    public function getUserWithRolesByGoogleId($googleId) {
+        $query = $this->getEntityManager()
+                ->createQuery('
+                     SELECT u, s, r
+                     FROM Objects\UserBundle\Entity\User u
+                     LEFT JOIN u.socialAccounts s
+                     LEFT JOIN u.userRoles r
+                     WHERE u.googleId = :googleId
+                    ');
+        $query->setParameter('googleId', $googleId);
         try {
             $user = $query->getSingleResult();
         } catch (\Exception $e) {
