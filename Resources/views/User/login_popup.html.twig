@@ -16,12 +16,12 @@
 </div>
 {% endfor %}
 {% if message %}
-<div class="alert-message fail">
+<div class="alert">
     {{ message | raw }}
 </div>
 {% endif %}
 {% if error %}
-<div class="alert-message error">
+<div class="alert alert-error">
     {{ error.message | trans }}
 </div>
 {% endif %}
@@ -34,7 +34,7 @@
     <input type="password" id="password" name="_password" required="" placeholder="{% trans %}Password{% endtrans %}" /><br>
 
     <label for="remember_me">{% trans %}Remember me{% endtrans %}:</label>
-    <input type="checkbox" id="remember_me" name="_remember_me" checked /><br>
+    <input type="checkbox" id="remember_me" name="_remember_me" checked="" /><br>
 
     <input type="submit" title="{% trans %}Login{% endtrans %}" value="{% trans %}Login{% endtrans %}" />
 </form>
