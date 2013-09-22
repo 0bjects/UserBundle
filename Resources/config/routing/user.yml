@@ -9,7 +9,7 @@ redirect_user:
     defaults: { _controller: ObjectsUserBundle:User:redirectUser }
 
 user_edit:
-    pattern: /auth/edit
+    path: /auth/edit
     defaults: { _controller: ObjectsUserBundle:User:edit }
 
 twitter_link:
@@ -42,11 +42,11 @@ user_active:
     defaults: { _controller: ObjectsUserBundle:User:activation }
 
 google_enter:
-    pattern: /google/enter
+    path: /google/enter
     defaults: { _controller: ObjectsUserBundle:User:GoogleEnter }
 
 twitter_enter:
-    pattern: /twitter/enter
+    path: /twitter/enter
     defaults: { _controller: ObjectsUserBundle:User:TwitterEnter }
 
 facebook_logging:
