@@ -25,7 +25,7 @@ class UserController extends Controller {
         //initialize an emtpy message string
         $message = '';
         //check if we have a logged in user
-        if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
+        if ($this->has('security.context') && $this->getUser() && TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
             //set a hint message for the user
             $message = $this->get('translator')->trans('you will be logged out and logged in as the new user');
         }
