@@ -61,7 +61,15 @@
 
     <input type="submit" title="{% trans %}Sign up{% endtrans %}" value="{% trans %}Sign up{% endtrans %}" id="user-signup"/>
 {{ form_end(form) }}
+{% if facebookSignupEnabled %}
 {% render url('facebook_button', {'facebookUserHandleRoute': 'facebook_logging', 'permissions': 'email,publish_stream', 'cssClass' : 'facebook', 'linkText' : 'facebook signup'|trans}) %}<br>
+{% endif %}
+{% if googleSignupEnabled %}
 <a onclick="newWindow = window.open('{{ path('google_oauth', {'redirectRoute': 'google_enter', 'popup': 'yes'}) }}', '{% trans %}Google Sign up{% endtrans %}', 'height=200, width=200');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}Google Sign up{% endtrans %}" href="{{ path('google_oauth', {'redirectRoute': 'google_enter'}) }}">{% trans %}Google Sign up{% endtrans %}</a><br>
+{% endif %}
+{% if twitterSignupEnabled %}
 <a onclick="newWindow = window.open('{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter', 'popup': 'yes'}) }}', '{% trans %}Twitter Sign up{% endtrans %}', 'height=200, width=200');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}Twitter Sign up{% endtrans %}" href="{{ path('twitter_authentication', {'redirectRoute': 'twitter_enter'}) }}">{% trans %}Twitter Sign up{% endtrans %}</a><br>
+{% endif %}
+{% if linkedinSignupEnabled %}
 <a onclick="newWindow = window.open('{{ path('linkedInButton', {'callbackUrl': 'linkedIn_user_data','popup' : 'yes'}) }}', '{% trans %}LinkedIn Sign up{% endtrans %}', 'height=400, width=600');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}LinkedIn Sign up{% endtrans %}" href="{{ path('linkedInButton', {'callbackUrl': 'linkedIn_user_data'}) }}">{% trans %}LinkedIn Sign up{% endtrans %}</a>
+{% endif %}

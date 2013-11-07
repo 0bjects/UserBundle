@@ -93,18 +93,23 @@
 
 <br>
 
+{% if facebookSignupEnabled %}
 {% if socialAccounts and socialAccounts.isFacebookLinked() %}
 <a href="{{ path('social_unlink', {'social': 'facebook'}) }}" title="{% trans %}unlink facebook{% endtrans %}">{% trans %}unlink facebook{% endtrans %}</a><br><br>
 {% else %}
 {% render url('facebook_button', {'facebookUserHandleRoute': 'facebook_link', 'permissions': 'email,publish_stream', 'cssClass' : 'facebook', 'linkText' : 'link facebook'|trans}) %}<br>
 {% endif %}
+{% endif %}
 
+{% if linkedinSignupEnabled %}
 {% if socialAccounts and socialAccounts.isLinkedInLinked() %}
 <a href="{{ path('social_unlink', {'social': 'linkedin'}) }}" title="{% trans %}unlink linkedin{% endtrans %}">{% trans %}unlink linkedin{% endtrans %}</a><br/><br/>
 {% else %}
 <a onclick="newWindow = window.open('{{ path('linkedInButton', {'callbackUrl': 'linkedin_link','popup' : 'yes'}) }}', '{% trans %}LinkedIn Link{% endtrans %}', 'height=400, width=600');if(window.focus)newWindow.focus();return false;" target="_blank" title="{% trans %}LinkedIn Link{% endtrans %}" href="{{ path('linkedInButton', {'callbackUrl': 'linkedin_link'}) }}">{% trans %}LinkedIn Link{% endtrans %}</a><br/><br/>
 {% endif %}
+{% endif %}
 
+{% if twitterSignupEnabled %}
 {% if socialAccounts and socialAccounts.isTwitterLinked() %}
 <a href="{{ path('social_unlink', {'social': 'twitter'}) }}" title="{% trans %}unlink twitter{% endtrans %}">{% trans %}unlink twitter{% endtrans %}</a>
 {% else %}
@@ -119,6 +124,7 @@
         }
     }
 </script>
+{% endif %}
 
 <br>
 <br>

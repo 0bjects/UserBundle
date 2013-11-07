@@ -1,3 +1,7 @@
 parameters:
     auto_active: false
     login_name_required: true
+    twitter_signup_enabled: true
+    facebook_signup_enabled: true
+    linkedin_signup_enabled: true
+    google_signup_enabled: true

@@ -40,22 +40,23 @@ class UserController extends Controller {
             $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
             $session->remove(SecurityContext::AUTHENTICATION_ERROR);
         }
-        //check if it is an ajax request
+        $view = 'ObjectsUserBundle:User:login.html.twig';
         if ($request->isXmlHttpRequest()) {
-            //return a pop up render
-            return $this->render('ObjectsUserBundle:User:login_popup.html.twig', array(
-                        // last username entered by the user
-                        'last_username' => $session->get(SecurityContext::LAST_USERNAME),
-                        'error' => $error,
-                        'message' => $message
-            ));
+            $view = 'ObjectsUserBundle:User:login_popup.html.twig';
         }
-        //return the main page
-        return $this->render('ObjectsUserBundle:User:login.html.twig', array(
-                    // last username entered by the user
+        $container = $this->container;
+        $twitterSignupEnabled = $container->getParameter('twitter_signup_enabled');
+        $facebookSignupEnabled = $container->getParameter('facebook_signup_enabled');
+        $linkedinSignupEnabled = $container->getParameter('linkedin_signup_enabled');
+        $googleSignupEnabled = $container->getParameter('google_signup_enabled');
+        return $this->render($view, array(
                     'last_username' => $session->get(SecurityContext::LAST_USERNAME),
                     'error' => $error,
-                    'message' => $message
+                    'message' => $message,
+                    'twitterSignupEnabled' => $twitterSignupEnabled,
+                    'facebookSignupEnabled' => $facebookSignupEnabled,
+                    'linkedinSignupEnabled' => $linkedinSignupEnabled,
+                    'googleSignupEnabled' => $googleSignupEnabled
         ));
     }
 
@@ -100,14 +101,15 @@ class UserController extends Controller {
         //initialize an emtpy message string
         $message = '';
         //check if we have a logged in user
-        if (TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
+        if ($this->has('security.context') && $this->getUser() && TRUE === $this->get('security.context')->isGranted('ROLE_NOTACTIVE')) {
             //set a hint message for the user
             $message = $this->get('translator')->trans('you will be logged out and logged in as the new user');
         }
         //initialize the form validation groups array
         $formValidationGroups = array('signup');
+        $container = $this->container;
         //get the login name configuration
-        $loginNameRequired = $this->container->getParameter('login_name_required');
+        $loginNameRequired = $container->getParameter('login_name_required');
         //check if the login name is required
         if ($loginNameRequired) {
             //add the login name group to the form validation array
@@ -166,11 +168,19 @@ class UserController extends Controller {
                 return $this->finishSignUp($user);
             }
         }
+        $twitterSignupEnabled = $container->getParameter('twitter_signup_enabled');
+        $facebookSignupEnabled = $container->getParameter('facebook_signup_enabled');
+        $linkedinSignupEnabled = $container->getParameter('linkedin_signup_enabled');
+        $googleSignupEnabled = $container->getParameter('google_signup_enabled');
         return $this->render($view, array(
                     'form' => $form->createView(),
                     'loginNameRequired' => $loginNameRequired,
                     'message' => $message,
-                    'popupFlag' => $popupFlag
+                    'popupFlag' => $popupFlag,
+                    'twitterSignupEnabled' => $twitterSignupEnabled,
+                    'facebookSignupEnabled' => $facebookSignupEnabled,
+                    'linkedinSignupEnabled' => $linkedinSignupEnabled,
+                    'googleSignupEnabled' => $googleSignupEnabled
         ));
     }
 
@@ -353,12 +363,20 @@ class UserController extends Controller {
                 $message = $translator->trans('Done');
             }
         }
+        $twitterSignupEnabled = $container->getParameter('twitter_signup_enabled');
+        $facebookSignupEnabled = $container->getParameter('facebook_signup_enabled');
+        $linkedinSignupEnabled = $container->getParameter('linkedin_signup_enabled');
+        $googleSignupEnabled = $container->getParameter('google_signup_enabled');
         return $this->render('ObjectsUserBundle:User:edit.html.twig', array(
                     'form' => $form->createView(),
                     'oldPassword' => $oldPassword,
                     'changeUserName' => $changeUserName,
                     'message' => $message,
-                    'socialAccounts' => $socialAccounts
+                    'socialAccounts' => $socialAccounts,
+                    'twitterSignupEnabled' => $twitterSignupEnabled,
+                    'facebookSignupEnabled' => $facebookSignupEnabled,
+                    'linkedinSignupEnabled' => $linkedinSignupEnabled,
+                    'googleSignupEnabled' => $googleSignupEnabled
         ));
     }
 
