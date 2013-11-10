@@ -35,3 +35,5 @@ optional:
 configure the parameters in Resources/config/config.yml file in the bundles
 enable the last seen listener in Resources/config/services.yml
 install api bundle if you want the social sites login and signup
+add to your web htaccess file the next rewrite role
+    RewriteRule ^user-profile-image/([0-9]+)/([0-9]+)/([0-9a-zA-Z\-_]+).([a-zA-Z]{3,4})$ timthumb.php?src=/uploads/users-profile-images/$3.$4&w=$1&h=$2&zc=1&q=80 [NC,L]
