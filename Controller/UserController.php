@@ -253,6 +253,7 @@ class UserController extends Controller {
                     'choices' => array('1' => $translator->trans('Male'), '0' => $translator->trans('Female')),
                     'required' => false,
                     'expanded' => true,
+                    'empty_value' => false,
                     'multiple' => false
                 ))
                 ->add('dateOfBirth', 'date', array('years' => range(1960, date('Y')), 'required' => FALSE))
