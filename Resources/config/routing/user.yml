@@ -5,7 +5,7 @@ user_delete:
 
 # routes that requires logged in user
 redirect_user:
-    path: /auth/redirect/user
+    path: /auth/redirect-user
     defaults: { _controller: ObjectsUserBundle:User:redirectUser }
 
 user_edit:
@@ -13,15 +13,15 @@ user_edit:
     defaults: { _controller: ObjectsUserBundle:User:edit }
 
 twitter_link:
-    path: /auth/twitter/link
+    path: /auth/twitter-link
     defaults: { _controller: ObjectsUserBundle:User:twitterLink }
 
 facebook_link:
-    path: /auth/facebook/link
+    path: /auth/facebook-link
     defaults: { _controller: ObjectsUserBundle:User:facebookLink }
 
 linkedin_link:
-    path: /auth/linkedin/link
+    path: /auth/linkedin-link
     defaults: { _controller: ObjectsUserBundle:User:linkedinLink }
 
 social_unlink:
@@ -29,7 +29,7 @@ social_unlink:
     defaults: { _controller: ObjectsUserBundle:User:socialUnlink }
 
 user_reActivation:
-    path: /user_reActivation
+    path: /user-reActivation
     defaults: { _controller: ObjectsUserBundle:User:reActivation }
 
 # routes visible for every one
@@ -42,29 +42,29 @@ user_active:
     defaults: { _controller: ObjectsUserBundle:User:activation }
 
 google_enter:
-    path: /google/enter
+    path: /google-enter
     defaults: { _controller: ObjectsUserBundle:User:GoogleEnter }
 
 twitter_enter:
-    path: /twitter/enter
+    path: /twitter-enter
     defaults: { _controller: ObjectsUserBundle:User:TwitterEnter }
 
 facebook_logging:
-    path: /facebooklogging
+    path: /facebook-logging
     defaults: { _controller: ObjectsUserBundle:User:facebook }
 
 forgot_password:
-    path: /forgot/password
+    path: /forgot-password
     defaults: { _controller: ObjectsUserBundle:User:forgotPassword }
 
 change_password:
-    path: /change/password/{confirmationCode}/{email}
+    path: /change-password/{confirmationCode}/{email}
     defaults: { _controller: ObjectsUserBundle:User:changePassword }
 
 linkedIn_user_data:
-    path:  /linkedIn
+    path:  /linkedin
     defaults: { _controller: ObjectsUserBundle:User:linkedInUserData }
 
 login_name_check:
-    path: /login_name_check/{loginName}
+    path: /login-name-check/{loginName}
     defaults: { _controller: ObjectsUserBundle:User:loginNameCheck, loginName: ~ }
