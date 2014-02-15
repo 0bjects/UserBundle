@@ -205,7 +205,7 @@ class UserController extends Controller {
         //get the user social accounts object
         $socialAccounts = $loggedInUser->getSocialAccounts();
         //initialize the success message
-        $message = FALSE;
+        $successMessage = FALSE;
         //initialize the redirect flag
         $redirect = FALSE;
         //initialize the form validation groups array
@@ -361,7 +361,7 @@ class UserController extends Controller {
                     return $this->redirect($this->generateUrl('user_edit'));
                 }
                 //set the success message
-                $message = $translator->trans('Done');
+                $successMessage = $translator->trans('Done');
             }
         }
         $twitterSignupEnabled = $container->getParameter('twitter_signup_enabled');
@@ -372,7 +372,7 @@ class UserController extends Controller {
                     'form' => $form->createView(),
                     'oldPassword' => $oldPassword,
                     'changeUserName' => $changeUserName,
-                    'message' => $message,
+                    'message' => $successMessage,
                     'socialAccounts' => $socialAccounts,
                     'twitterSignupEnabled' => $twitterSignupEnabled,
                     'facebookSignupEnabled' => $facebookSignupEnabled,
