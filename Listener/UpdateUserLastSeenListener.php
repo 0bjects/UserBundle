@@ -7,7 +7,7 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 /**
  * this class is for listenning on each request the user make
  * if the user last seen time is old this class will update the user last seen time
- * @author Mahmoud 
+ * @author Mahmoud
  */
 class UpdateUserLastSeenListener {
 
@@ -16,7 +16,7 @@ class UpdateUserLastSeenListener {
 
     public function __construct(SecurityContextInterface $securityContext, $doctrine) {
         $this->securityContext = $securityContext;
-        $this->entityManager = $doctrine->getEntityManager();
+        $this->entityManager = $doctrine->getManager();
     }
 
     public function onRequest() {
