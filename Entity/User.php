@@ -547,7 +547,11 @@ class User implements AdvancedUserInterface {
      * @return array An array of Roles
      */
     public function getRoles() {
-        return $this->getUserRoles()->toArray();
+        $roles = array();
+        foreach ($this->userRoles as $role) {
+            $roles[] = $role->getRole();
+        }
+        return $roles;
     }
 
     /**
