@@ -49,7 +49,7 @@ class User implements AdvancedUserInterface {
     /**
      * @var string $loginName
      *
-     * @ORM\Column(name="loginName", type="string", length=255, nullable=true, unique=true)
+     * @ORM\Column(name="loginName", type="string", length=255, unique=true)
      * @Assert\NotBlank(groups={"loginName"})
      * @Assert\Regex(pattern="/^\w+$/u", groups={"loginName"}, message="Only characters, numbers and _")
      */

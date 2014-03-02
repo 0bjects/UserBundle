@@ -164,6 +164,9 @@ class UserController extends Controller {
             if ($form->isValid()) {
                 //get the user object from the form
                 $user = $form->getData();
+                if (!$loginNameRequired) {
+                    $user->setLoginName($this->suggestLoginName($user->__toString()));
+                }
                 //user data are valid finish the signup process
                 return $this->finishSignUp($user);
             }
