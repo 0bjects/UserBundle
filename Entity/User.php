@@ -441,12 +441,10 @@ class User implements AdvancedUserInterface {
      * @return array
      */
     public function __sleep() {
-        return array(
-            'id', 'loginName', 'email', 'password', 'confirmationCode',
-            'createdAt', 'lastSeen', 'firstName', 'lastName', 'about',
-            'gender', 'dateOfBirth', 'url', 'countryCode', 'suggestedLanguage',
-            'locked', 'enabled', 'salt', 'image'
-        );
+        $classVars = get_class_vars(__CLASS__);
+        // unset all object proxies not the collections
+        unset($classVars['socialAccounts']);
+        return array_keys($classVars);
     }
 
     /**
