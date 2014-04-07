@@ -23,7 +23,7 @@ security:
             pattern:    ^/
             anonymous: ~
             form_login:
-                check_path: login-check
+                check_path: login_check
                 login_path: login
                 always_use_default_target_path: true
                 use_forward: true
