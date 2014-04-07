@@ -56,7 +56,8 @@ class UserController extends Controller {
                     'twitterSignupEnabled' => $twitterSignupEnabled,
                     'facebookSignupEnabled' => $facebookSignupEnabled,
                     'linkedinSignupEnabled' => $linkedinSignupEnabled,
-                    'googleSignupEnabled' => $googleSignupEnabled
+                    'googleSignupEnabled' => $googleSignupEnabled,
+                    'loginNameRequired' => $container->getParameter('login_name_required')
         ));
     }
 
