@@ -506,40 +506,6 @@ class User implements AdvancedUserInterface {
     }
 
     /**
-     * Set oldPassword
-     *
-     * @param string $oldPassword
-     */
-    public function setOldPassword($oldPassword) {
-        $this->oldPassword = $oldPassword;
-    }
-
-    /**
-     * Get oldPassword
-     *
-     * @return string
-     */
-    public function getOldPassword() {
-        return $this->oldPassword;
-    }
-
-    /**
-     * Set userPassword
-     *
-     * @param string $password
-     */
-    public function setUserPassword($password) {
-        $this->userPassword = $password;
-    }
-
-    /**
-     * @return string the user password
-     */
-    public function getUserPassword() {
-        return $this->userPassword;
-    }
-
-    /**
      * Implementation of getRoles for the UserInterface.
      *
      * @return array An array of Roles
@@ -623,159 +589,6 @@ class User implements AdvancedUserInterface {
     }
 
     /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId() {
-        return $this->id;
-    }
-
-    /**
-     * Set loginName
-     *
-     * @param string $loginName
-     */
-    public function setLoginName($loginName) {
-        $this->loginName = $loginName;
-    }
-
-    /**
-     * Get loginName
-     *
-     * @return string
-     */
-    public function getLoginName() {
-        return $this->loginName;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     */
-    public function setEmail($email) {
-        $this->email = $email;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail() {
-        return $this->email;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     */
-    public function setPassword($password) {
-        $this->password = $password;
-    }
-
-    /**
-     * Set confirmationCode
-     *
-     * @param string $confirmationCode
-     */
-    public function setConfirmationCode($confirmationCode) {
-        $this->confirmationCode = $confirmationCode;
-    }
-
-    /**
-     * Get confirmationCode
-     *
-     * @return string
-     */
-    public function getConfirmationCode() {
-        return $this->confirmationCode;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return date
-     */
-    public function getCreatedAt() {
-        return $this->createdAt;
-    }
-
-    /**
-     * Set firstName
-     *
-     * @param string $firstName
-     */
-    public function setFirstName($firstName) {
-        $this->firstName = $firstName;
-    }
-
-    /**
-     * Get firstName
-     *
-     * @return string
-     */
-    public function getFirstName() {
-        return $this->firstName;
-    }
-
-    /**
-     * Set lastName
-     *
-     * @param string $lastName
-     */
-    public function setLastName($lastName) {
-        $this->lastName = $lastName;
-    }
-
-    /**
-     * Get lastName
-     *
-     * @return string
-     */
-    public function getLastName() {
-        return $this->lastName;
-    }
-
-    /**
-     * Set about
-     *
-     * @param text $about
-     */
-    public function setAbout($about) {
-        $this->about = $about;
-    }
-
-    /**
-     * Get about
-     *
-     * @return text
-     */
-    public function getAbout() {
-        return $this->about;
-    }
-
-    /**
-     * Set gender
-     *
-     * @param boolean $gender
-     */
-    public function setGender($gender) {
-        $this->gender = $gender;
-    }
-
-    /**
-     * Get gender
-     *
-     * @return boolean
-     */
-    public function getGender() {
-        return $this->gender;
-    }
-
-    /**
      * this function will return the string representing the user gender
      * @return string gender type
      */
@@ -809,18 +622,231 @@ class User implements AdvancedUserInterface {
     }
 
     /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * Set loginName
+     *
+     * @param string $loginName
+     * @return User
+     */
+    public function setLoginName($loginName) {
+        $this->loginName = $loginName;
+
+        return $this;
+    }
+
+    /**
+     * Get loginName
+     *
+     * @return string
+     */
+    public function getLoginName() {
+        return $this->loginName;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return User
+     */
+    public function setEmail($email) {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail() {
+        return $this->email;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     * @return User
+     */
+    public function setPassword($password) {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Set confirmationCode
+     *
+     * @param string $confirmationCode
+     * @return User
+     */
+    public function setConfirmationCode($confirmationCode) {
+        $this->confirmationCode = $confirmationCode;
+
+        return $this;
+    }
+
+    /**
+     * Get confirmationCode
+     *
+     * @return string
+     */
+    public function getConfirmationCode() {
+        return $this->confirmationCode;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     * @return User
+     */
+    public function setCreatedAt($createdAt) {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt() {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set lastSeen
+     *
+     * @param \DateTime $lastSeen
+     * @return User
+     */
+    public function setLastSeen($lastSeen) {
+        $this->lastSeen = $lastSeen;
+
+        return $this;
+    }
+
+    /**
+     * Get lastSeen
+     *
+     * @return \DateTime
+     */
+    public function getLastSeen() {
+        return $this->lastSeen;
+    }
+
+    /**
+     * Set firstName
+     *
+     * @param string $firstName
+     * @return User
+     */
+    public function setFirstName($firstName) {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    /**
+     * Get firstName
+     *
+     * @return string
+     */
+    public function getFirstName() {
+        return $this->firstName;
+    }
+
+    /**
+     * Set lastName
+     *
+     * @param string $lastName
+     * @return User
+     */
+    public function setLastName($lastName) {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    /**
+     * Get lastName
+     *
+     * @return string
+     */
+    public function getLastName() {
+        return $this->lastName;
+    }
+
+    /**
+     * Set about
+     *
+     * @param string $about
+     * @return User
+     */
+    public function setAbout($about) {
+        $this->about = $about;
+
+        return $this;
+    }
+
+    /**
+     * Get about
+     *
+     * @return string
+     */
+    public function getAbout() {
+        return $this->about;
+    }
+
+    /**
+     * Set gender
+     *
+     * @param boolean $gender
+     * @return User
+     */
+    public function setGender($gender) {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    /**
+     * Get gender
+     *
+     * @return boolean
+     */
+    public function getGender() {
+        return $this->gender;
+    }
+
+    /**
      * Set dateOfBirth
      *
-     * @param date $dateOfBirth
+     * @param \DateTime $dateOfBirth
+     * @return User
      */
     public function setDateOfBirth($dateOfBirth) {
         $this->dateOfBirth = $dateOfBirth;
+
+        return $this;
     }
 
     /**
      * Get dateOfBirth
      *
-     * @return date
+     * @return \DateTime
      */
     public function getDateOfBirth() {
         return $this->dateOfBirth;
@@ -830,9 +856,12 @@ class User implements AdvancedUserInterface {
      * Set url
      *
      * @param string $url
+     * @return User
      */
     public function setUrl($url) {
         $this->url = $url;
+
+        return $this;
     }
 
     /**
@@ -848,9 +877,12 @@ class User implements AdvancedUserInterface {
      * Set countryCode
      *
      * @param string $countryCode
+     * @return User
      */
     public function setCountryCode($countryCode) {
         $this->countryCode = $countryCode;
+
+        return $this;
     }
 
     /**
@@ -866,9 +898,12 @@ class User implements AdvancedUserInterface {
      * Set suggestedLanguage
      *
      * @param string $suggestedLanguage
+     * @return User
      */
     public function setSuggestedLanguage($suggestedLanguage) {
         $this->suggestedLanguage = $suggestedLanguage;
+
+        return $this;
     }
 
     /**
@@ -881,12 +916,36 @@ class User implements AdvancedUserInterface {
     }
 
     /**
+     * Set googleId
+     *
+     * @param string $googleId
+     * @return User
+     */
+    public function setGoogleId($googleId) {
+        $this->googleId = $googleId;
+
+        return $this;
+    }
+
+    /**
+     * Get googleId
+     *
+     * @return string
+     */
+    public function getGoogleId() {
+        return $this->googleId;
+    }
+
+    /**
      * Set locked
      *
      * @param boolean $locked
+     * @return User
      */
     public function setLocked($locked) {
         $this->locked = $locked;
+
+        return $this;
     }
 
     /**
@@ -902,9 +961,12 @@ class User implements AdvancedUserInterface {
      * Set enabled
      *
      * @param boolean $enabled
+     * @return User
      */
     public function setEnabled($enabled) {
         $this->enabled = $enabled;
+
+        return $this;
     }
 
     /**
@@ -920,85 +982,65 @@ class User implements AdvancedUserInterface {
      * Set salt
      *
      * @param string $salt
+     * @return User
      */
     public function setSalt($salt) {
         $this->salt = $salt;
-    }
 
-    /**
-     * Add userRoles
-     *
-     * @param Objects\UserBundle\Entity\Role $userRoles
-     */
-    public function addRole(\Objects\UserBundle\Entity\Role $userRoles) {
-        if (!$this->userRoles->contains($userRoles)) {
-            $this->userRoles[] = $userRoles;
-        }
-    }
-
-    /**
-     * Get userRoles
-     *
-     * @return Doctrine\Common\Collections\Collection
-     */
-    public function getUserRoles() {
-        return $this->userRoles;
+        return $this;
     }
 
     /**
      * Set socialAccounts
      *
-     * @param Objects\UserBundle\Entity\SocialAccounts $socialAccounts
+     * @param \Objects\UserBundle\Entity\SocialAccounts $socialAccounts
+     * @return User
      */
-    public function setSocialAccounts(\Objects\UserBundle\Entity\SocialAccounts $socialAccounts) {
+    public function setSocialAccounts(\Objects\UserBundle\Entity\SocialAccounts $socialAccounts = null) {
         $this->socialAccounts = $socialAccounts;
+
+        return $this;
     }
 
     /**
      * Get socialAccounts
      *
-     * @return Objects\UserBundle\Entity\SocialAccounts
+     * @return \Objects\UserBundle\Entity\SocialAccounts
      */
     public function getSocialAccounts() {
         return $this->socialAccounts;
     }
 
     /**
-     * Set lastSeen
+     * Add userRoles
      *
-     * @param datetime $lastSeen
-     */
-    public function setLastSeen($lastSeen) {
-        $this->lastSeen = $lastSeen;
-    }
-
-    /**
-     * Get lastSeen
-     *
-     * @return datetime
-     */
-    public function getLastSeen() {
-        return $this->lastSeen;
-    }
-
-    /**
-     * Set googleId
-     *
-     * @param string $googleId
+     * @param \Objects\UserBundle\Entity\Role $userRoles
      * @return User
      */
-    public function setGoogleId($googleId) {
-        $this->googleId = $googleId;
+    public function addUserRole(\Objects\UserBundle\Entity\Role $userRoles) {
+        if (!$this->userRoles->contains($userRoles)) {
+            $this->userRoles[] = $userRoles;
+        }
+
         return $this;
     }
 
     /**
-     * Get googleId
+     * Remove userRoles
      *
-     * @return string
+     * @param \Objects\UserBundle\Entity\Role $userRoles
      */
-    public function getGoogleId() {
-        return $this->googleId;
+    public function removeUserRole(\Objects\UserBundle\Entity\Role $userRoles) {
+        $this->userRoles->removeElement($userRoles);
+    }
+
+    /**
+     * Get userRoles
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUserRoles() {
+        return $this->userRoles;
     }
 
 }

@@ -305,7 +305,7 @@ class UserController extends Controller {
                     //check if the user already has the role
                     if (!$user->getUserRoles()->contains($role)) {
                         //add the role to the user
-                        $user->addRole($role);
+                        $user->addUserRole($role);
                     }
                     //prepare the body of the email
                     $body = $this->renderView('ObjectsUserBundle:User:Emails\activate_email.txt.twig', array('user' => $user));
@@ -941,8 +941,8 @@ class UserController extends Controller {
         //get a update userName role object
         $roleUpdateUserName = $roleRepository->findOneByName('ROLE_UPDATABLE_USERNAME');
         //set user roles
-        $user->addRole($role);
-        $user->addRole($roleUpdateUserName);
+        $user->addUserRole($role);
+        $user->addUserRole($roleUpdateUserName);
         //store the object in the database
         $em->flush();
         //prepare the message object
@@ -1045,7 +1045,7 @@ class UserController extends Controller {
             }
         }
         //add the user role
-        $user->addRole($roleUser);
+        $user->addUserRole($roleUser);
         //save the new role for the user
         $em->flush();
         //set a success flag
