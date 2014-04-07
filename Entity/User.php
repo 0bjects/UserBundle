@@ -622,6 +622,48 @@ class User implements AdvancedUserInterface {
     }
 
     /**
+     * Set oldPassword
+     *
+     * @param string $oldPassword
+     * @return User
+     */
+    public function setOldPassword($oldPassword) {
+        $this->oldPassword = $oldPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get oldPassword
+     *
+     * @return string
+     */
+    public function getOldPassword() {
+        return $this->oldPassword;
+    }
+
+    /**
+     * Set userPassword
+     *
+     * @param string $userPassword
+     * @return User
+     */
+    public function setUserPassword($userPassword) {
+        $this->userPassword = $userPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get userPassword
+     *
+     * @return string
+     */
+    public function getUserPassword() {
+        return $this->userPassword;
+    }
+
+    /**
      * Get id
      *
      * @return integer
