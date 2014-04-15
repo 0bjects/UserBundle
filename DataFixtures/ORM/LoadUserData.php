@@ -50,7 +50,7 @@ class LoadUserData implements FixtureInterface {
         $user1->setLoginName('mahmoud');
         $user1->setUserPassword('123');
         $user1->setEmail('mahmoud@objects.ws');
-        $user->setFirstName('mahmoud');
+        $user1->setFirstName('mahmoud');
         $user1->getUserRoles()->add($roleAdmin);
         $manager->persist($user1);
 
@@ -59,7 +59,7 @@ class LoadUserData implements FixtureInterface {
         $user2->setLoginName('Ahmed');
         $user2->setUserPassword('123');
         $user2->setEmail('ahmed@objects.ws');
-        $user->setFirstName('Ahmed');
+        $user2->setFirstName('Ahmed');
         $user2->getUserRoles()->add($roleUser);
         $manager->persist($user2);
 
@@ -69,7 +69,7 @@ class LoadUserData implements FixtureInterface {
         $user3->setLoginName('mirehan');
         $user3->setUserPassword('123');
         $user3->setEmail('mirehan@objects.ws');
-        $user->setFirstName('mirehan');
+        $user3->setFirstName('mirehan');
         $user3->getUserRoles()->add($roleUser);
         $user3->getUserRoles()->add($roleUserName);
         $manager->persist($user3);
@@ -79,7 +79,7 @@ class LoadUserData implements FixtureInterface {
         $user4->setLoginName('notactive');
         $user4->setUserPassword('123');
         $user4->setEmail('notactive@objects.ws');
-        $user->setFirstName('notactive');
+        $user4->setFirstName('notactive');
         $user4->getUserRoles()->add($roleNotActive);
         $manager->persist($user4);
 
