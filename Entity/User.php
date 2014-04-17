@@ -444,6 +444,7 @@ class User implements AdvancedUserInterface {
         $classVars = get_class_vars(__CLASS__);
         // unset all object proxies not the collections
         unset($classVars['socialAccounts']);
+        unset($classVars['file']);
         return array_keys($classVars);
     }
 
