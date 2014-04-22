@@ -36,8 +36,8 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
             // The Query::getSingleResult() method throws an exception
             // if there is no record matching the criteria.
             $user = $q->getSingleResult();
-        } catch (NoResultException $e) {
-            throw new UsernameNotFoundException(sprintf('Unable to find the specified user: "%s"', $username), null, 0, $e);
+        } catch (\Exception $e) {
+            throw new UsernameNotFoundException(sprintf('Unable to find the specified user: "%s"', $username), 0, $e);
         }
         return $user;
     }
